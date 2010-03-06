@@ -26,7 +26,8 @@ CREATE TABLE campaign (
   configuration_id smallint(4) unsigned default NULL,
   PRIMARY KEY (id),
   UNIQUE KEY (subdomain),
-  CONSTRAINT FOREIGN KEY (configuration_id) REFERENCES configuration (id) 
+  UNIQUE KEY (name),
+  CONSTRAINT FOREIGN KEY (configuration_id) REFERENCES configuration (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------------------------
@@ -36,6 +37,7 @@ CREATE TABLE campaign (
 CREATE TABLE user (
   id smallint(6) unsigned NOT NULL auto_increment,
   login_id varchar(15) NOT NULL,
+  enabled bit NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (login_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -63,8 +65,8 @@ CREATE TABLE user_user_personal (
 	user_id smallint(6) unsigned NOT NULL,
 	user_personal_id smallint(6) unsigned NOT NULL,
 	PRIMARY KEY (user_id, user_personal_id),
-	CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id),
-	CONSTRAINT FOREIGN KEY (user_personal_id) REFERENCES user_personal (id)
+	CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT FOREIGN KEY (user_personal_id) REFERENCES user_personal (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
@@ -72,7 +74,7 @@ CREATE TABLE user_user_personal (
 -- --------------------------------------------------------------------
 CREATE TABLE user_role (
   id tinyint(1) unsigned NOT NULL auto_increment,
-  label tinytext NOT NULL,
+  label varchar(50) NOT NULL,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -87,7 +89,7 @@ CREATE TABLE user_role_campaign (
   PRIMARY KEY (id),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FOREIGN KEY (campaign_id) REFERENCES campaign (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT FOREIGN KEY (user_role_id) REFERENCES user_role (id)
+  CONSTRAINT FOREIGN KEY (user_role_id) REFERENCES user_role (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
@@ -99,7 +101,7 @@ CREATE TABLE campaign_prompt_version (
   version_id smallint(4) unsigned NOT NULL,     -- static id shared with phone configuration
   PRIMARY KEY (id),
   UNIQUE (campaign_id, version_id),
-  CONSTRAINT FOREIGN KEY (campaign_id) REFERENCES campaign (id)
+  CONSTRAINT FOREIGN KEY (campaign_id) REFERENCES campaign (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------------------------------------------------
@@ -111,11 +113,12 @@ CREATE TABLE campaign_prompt_group (
   campaign_id smallint(4) unsigned NOT NULL, 
   campaign_prompt_version_id smallint(4) unsigned NOT NULL,
   group_id smallint(4) unsigned NOT NULL,     -- static id shared with phone configuration
-  group_name tinytext NOT NULL,               -- static name shared with phone configuration
+  group_name varchar(100) NOT NULL,           -- static name shared with phone configuration
   PRIMARY KEY (id),
   UNIQUE (campaign_id, campaign_prompt_version_id, group_id),
-  CONSTRAINT FOREIGN KEY (campaign_id) REFERENCES campaign (id),
-  CONSTRAINT FOREIGN KEY (campaign_prompt_version_id) REFERENCES campaign_prompt_version (id)
+  UNIQUE (campaign_id, campaign_prompt_version_id, group_name),
+  CONSTRAINT FOREIGN KEY (campaign_id) REFERENCES campaign (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (campaign_prompt_version_id) REFERENCES campaign_prompt_version (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
@@ -147,9 +150,9 @@ CREATE TABLE prompt (
   PRIMARY KEY (id),
   UNIQUE (campaign_prompt_group_id, campaign_prompt_version_id, prompt_config_id),
   UNIQUE (legend_text(255)),
-  CONSTRAINT FOREIGN KEY (prompt_type_id) REFERENCES prompt_type (id),
-  CONSTRAINT FOREIGN KEY (campaign_prompt_group_id) REFERENCES campaign_prompt_group (id),
-  CONSTRAINT FOREIGN KEY (campaign_prompt_version_id) REFERENCES campaign_prompt_version (id),
+  CONSTRAINT FOREIGN KEY (prompt_type_id) REFERENCES prompt_type (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (campaign_prompt_group_id) REFERENCES campaign_prompt_group (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (campaign_prompt_version_id) REFERENCES campaign_prompt_version (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FOREIGN KEY (campaign_prompt_group_id, campaign_prompt_version_id, parent_config_id) REFERENCES prompt (campaign_prompt_group_id, campaign_prompt_version_id, prompt_config_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -168,7 +171,8 @@ CREATE TABLE prompt (
   json_data text NOT NULL, -- the structure of the json_data is dependent on the prompt_type
   PRIMARY KEY (id),
   INDEX (user_id),
-  CONSTRAINT FOREIGN KEY (prompt_id) REFERENCES prompt (id),
+  UNIQUE (user_id, prompt_id, utc_epoch_millis, json_data(25)), -- the number 25 is not arbitrary; it is the size of the longest JSON response we currently have
+  CONSTRAINT FOREIGN KEY (prompt_id) REFERENCES prompt (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -192,8 +196,8 @@ CREATE TABLE prompt (
   prompt_response_id integer unsigned NOT NULL,
   tag_id integer unsigned NOT NULL,
   PRIMARY KEY (id),
-  CONSTRAINT FOREIGN KEY (prompt_response_id) REFERENCES prompt_response (id),
-  CONSTRAINT FOREIGN KEY (tag_id) REFERENCES tag (id)
+  CONSTRAINT FOREIGN KEY (prompt_response_id) REFERENCES prompt_response (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE ON UPDATE CASCADE
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------
@@ -204,8 +208,8 @@ CREATE TABLE prompt (
   campaign_prompt_group_id smallint(4) unsigned NOT NULL,
   tag_id integer unsigned NOT NULL,
   PRIMARY KEY (id),
-  CONSTRAINT FOREIGN KEY (campaign_prompt_group_id) REFERENCES campaign_prompt_group (id),
-  CONSTRAINT FOREIGN KEY (tag_id) REFERENCES tag (id)
+  CONSTRAINT FOREIGN KEY (campaign_prompt_group_id) REFERENCES campaign_prompt_group (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE ON UPDATE CASCADE
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------------------------
@@ -256,7 +260,7 @@ CREATE TABLE mobility_mode_features_entry (
   average double NOT NULL,
   fft varchar(300) NOT NULL, -- A comma separated list of 10 FFT floating-point values. The reason the array is not unpacked  
                              -- into separate columns is because the data will not be used outside of a debugging scenario.
-                             -- It is simply stored the way it is sent by the phone (minus the JSON array brackets). 
+                             -- It is simply stored the way it is sent by the phone (as a JSON array). 
   PRIMARY KEY (id),
   UNIQUE INDEX (user_id, utc_epoch_millis),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -304,6 +308,6 @@ CREATE TABLE prompt_response_weekly_summary (
   PRIMARY KEY (id),
   UNIQUE INDEX (user_id, prompt_id, week_start),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT FOREIGN KEY (prompt_id) REFERENCES prompt(id)
+  CONSTRAINT FOREIGN KEY (prompt_id) REFERENCES prompt(id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
