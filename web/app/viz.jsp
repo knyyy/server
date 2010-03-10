@@ -137,6 +137,25 @@
 	
 	<script type="text/javascript">
 	
+	// Extend jQuery with a simple plugin called context to allow 
+	// storage of context when making asynchronous calls from 
+	// within an object.
+    jQuery.extend({
+      context: function(context) {
+        var co = {
+          callback: function(method) {
+            if (typeof method == 'string') method = context[method];
+            var cb = function() { 
+			    method.apply(context, arguments); 
+			};
+            return cb;
+          }
+        };
+        return co;
+      }
+    }); 
+	
+	
 	// Holds the currently requested start date and number of days
 	var startDate = new Date();
 	var numDays = 0;
@@ -263,10 +282,10 @@
 			return;
 	    }
 		
-		// Make sure we found data
-		if (json_data == null || json_data.length == 0 || !(json_data instanceof Array)) {
+		// Make sure we found JSON
+		if (json_data == null || json_data.length == 0) {
 			if (log.isWarnEnabled()) {
-				log.warn("No data found from server!");
+				log.warn("Bad response from server!");
 			}
 			
 			// Turn off the loading graphic
@@ -276,6 +295,22 @@
 		
 	    // Run through possible error codes from server
 	    // TODO: Check for error codes in JSON
+		
+		// 0104 is session expired, redirect to the passed URL
+		if (json_data.error_code != null && json_data.error_code == "0104") {
+			log.info("Session expired, redirecting to: " + json_data.error_text);
+			
+			window.location = json_data.error_text;
+			return false;
+		}
+		
+		// Make sure we have an array of data points
+		if (!json_data instanceof Array) {
+			if (log.isWarnEnabled()) {
+                log.warn("No data found from server!");
+            }
+		}
+		
 		
 		// DATA PREPROCESSING, MOVE TO SERVER OR IN TO A JS CLASS
 		
@@ -303,8 +338,11 @@
 				var start_render_time = new Date().getTime();
             }
 			
+			// Also filter out SKIPPED points for now
 			var new_data = data.filter(function(data_point) {
-		        return ((prompt_id == data_point.prompt_id) && (group_id == data_point.prompt_group_id));
+		        return ((prompt_id == data_point.prompt_id) && 
+				        (group_id == data_point.prompt_group_id) &&
+						(data_point.response != "RESPONSE_SKIPPED"));
 		    });
 			
 			// Check if any data was found
@@ -314,7 +352,7 @@
 				}
 				
 				// Hide the graph that has no data
-				$("#ProtoGraph_" + group_id + "_" + "prompt_id").hide();
+				$("#ProtoGraph_" + group_id + "_" + prompt_id).hide();
 			}
 			
 			// Apply data to the graph
@@ -326,7 +364,7 @@
             graph.render();
 			
 			// Make sure the graph is shown
-			$("#ProtoGraph_" + group_id + "_" + "prompt_id").show();
+			$("#ProtoGraph_" + group_id + "_" + prompt_id).show();
 			
             if (log.isDebugEnabled()) {
 				var time_to_render = new Date().getTime() - start_render_time;
