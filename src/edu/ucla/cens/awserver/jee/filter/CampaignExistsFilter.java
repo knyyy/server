@@ -107,8 +107,8 @@ public class CampaignExistsFilter implements Filter {
 		}
 		catch(ControllerException ce) {
 			_logger.error("", ce); // make sure the stack trace gets into our app log
-			throw ce; // re-throw and allow Tomcat to redirect to the configured error page. the stack trace will also end up
-			          // in catalina.out
+			throw new ServletException(ce); // re-throw and allow Tomcat to redirect to the configured error page. the stack trace will also end up
+			                                // in catalina.out
 		}
 	}
 }
