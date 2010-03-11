@@ -22,6 +22,7 @@
     <property name="validators">
       <list>
         <ref bean="formBasedLoginUserNameValidator" />
+        <ref bean="formBasedLoginPasswordValidator" />
         <ref bean="emptySubdomainValidator" />
       </list>      
     </property>
@@ -43,6 +44,7 @@
   <!-- Interact with database -->
   <bean id="authenticationDao" class="edu.ucla.cens.awserver.dao.AuthenticationDao">
     <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
+    <constructor-arg index="1"><value>$2a$10$5NPdIK4MqwRej.vjRVblW.</value></constructor-arg>
   </bean>
 	
   <!--  Annotate the AwRequest in the case of failed authentication -->	

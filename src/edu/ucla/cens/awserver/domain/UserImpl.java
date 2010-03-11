@@ -11,6 +11,7 @@ public class UserImpl implements User {
 	private String  _userName;
     private int _campaignId;
 	private boolean _loggedIn;
+	private String _password;
 	
 	public UserImpl() {
 		
@@ -60,9 +61,17 @@ public class UserImpl implements User {
 	public void setLoggedIn(boolean loggedIn) {
 		_loggedIn = loggedIn;
 	}
+	
+	public void setPassword(String password) {
+		_password = password;
+	}
 
+	public String getPassword() {
+		return _password;
+	}
+	
 	@Override
-	public String toString() {
+	public String toString() { // _password is deliberately omitted here
 		return "UserImpl [_campaignId=" + _campaignId + ", _id=" + _id
 				+ ", _loggedIn=" + _loggedIn + ", _userName=" + _userName + "]";
 	}

@@ -5,10 +5,13 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import jbcrypt.BCrypt;
+
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 
 import edu.ucla.cens.awserver.request.AwRequest;
+import edu.ucla.cens.awserver.util.StringUtils;
 
 /**
  * Performs a lookup against the database to check user existence within a particular campaign.
@@ -17,21 +20,31 @@ import edu.ucla.cens.awserver.request.AwRequest;
  */
 public class AuthenticationDao extends AbstractDao {
 	private static Logger _logger = Logger.getLogger(AuthenticationDao.class);
+	private String _salt;
 	
 	// Note that the user role is not checked - future feature
 	// Also, in the future, we may have users that belong to multiple campaigns in which case
 	// the authentication flow will have to be rethought a bit.
-	private static final String _selectSql = "select user.id, user.enabled, campaign.id from campaign, user, user_role_campaign " +
+	private static final String _selectSql = "select user.id, user.enabled, user.new_account, campaign.id from campaign, user, user_role_campaign " +
 			                                 "where user.login_id = ? " +
+			                                     "and user.password = ? " + 
 			                                     "and user.id = user_role_campaign.user_id " +
 			                                     "and campaign.subdomain = ? " + 
 			                                     "and campaign.id = user_role_campaign.campaign_id";
 	
 	/**
 	 * Creates an instance of this class that will use the supplied DataSource for data retrieval.
+	 * 
+	 * @throws IllegalArgumentException if the provided salt is empty, null, or all whitespace
 	 */
-	public AuthenticationDao(DataSource dataSource) {
+	public AuthenticationDao(DataSource dataSource, String salt) {
 		super(dataSource);
+		
+		if(StringUtils.isEmptyOrWhitespaceOnly(salt)) {
+			throw new IllegalArgumentException("a salt value is required");
+		}
+		
+		_salt = salt;
 	}
 	
 	/**
@@ -43,13 +56,15 @@ public class AuthenticationDao extends AbstractDao {
 		
 		try {
 			awRequest.setResultList(getJdbcTemplate().query(_selectSql, 
-					             new String[]{awRequest.getUser().getUserName(), awRequest.getSubdomain()}, 
+					             new String[]{awRequest.getUser().getUserName(), 
+					                          BCrypt.hashpw(awRequest.getUser().getPassword(), _salt), 
+					                          awRequest.getSubdomain()}, 
 					             new QueryRowMapper()));
 			
 		} catch (org.springframework.dao.DataAccessException dae) {
 			
 			_logger.error("caught DataAccessException when running SQL '" + _selectSql + "' with the following paramters: " + 
-					awRequest.getUser().getUserName() + ", " + awRequest.getSubdomain());
+					awRequest.getUser().getUserName() + ", " + awRequest.getSubdomain() + " (password omitted)");
 			
 			throw new DataAccessException(dae); // Wrap the Spring exception and re-throw in order to avoid outside dependencies
 			                                    // on the Spring Exception (in case Spring JDBC is replaced with another lib in 
@@ -69,7 +84,8 @@ public class AuthenticationDao extends AbstractDao {
 			LoginResult lr = new LoginResult();
 			lr.setUserId(rs.getInt(1));
 			lr.setEnabled(rs.getBoolean(2));
-			lr.setCampaignId(rs.getInt(3));
+			lr.setNew(rs.getBoolean(3));
+			lr.setCampaignId(rs.getInt(4));
 			return lr;
 		}
 	}
@@ -83,6 +99,7 @@ public class AuthenticationDao extends AbstractDao {
 		private int _campaignId;
 		private int _userId;
 		private boolean _enabled;
+		private boolean _new;
 		
 		public int getCampaignId() {
 			return _campaignId;
@@ -101,6 +118,12 @@ public class AuthenticationDao extends AbstractDao {
 		}
 		public void setEnabled(boolean enabled) {
 			_enabled = enabled;
+		}
+		public boolean isNew() {
+			return _new;
+		}
+		public void setNew(boolean bnew) {
+			_new = bnew;
 		}
 	}
 }

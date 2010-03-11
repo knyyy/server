@@ -38,20 +38,19 @@
 		    <fieldset>
 
 	          <c:if test="${sessionScope.failedLogin == true}">
-			    <div class="notification error">You have entered an incorrect user name.</div>
+			    <div class="notification error">You have entered an incorrect user name or password.</div>
 			  </c:if>
-			  
-			  <!-- 
-			    <div class="notification notice">That looks like a weird city to live in.</div>
-	          -->
-	                
-                        				
+			            				
 		      <div class="form-item">
 			    <label for="userName">User Name:</label>
 				<input tabindex="1" id="userName" type="text" name="u" />
+			  </div>
+			  <div class="form-item">
+				<label for="password">Password:</label>
+				<input tabindex="2" id="password" type="text" name="p" />
 			  </div>	
-			  <button>Send</button>
-					
+			  <button tabindex="3" id="send" type="submit">Send</button>
+						
 		    </fieldset>
 		  </form>
         </div>

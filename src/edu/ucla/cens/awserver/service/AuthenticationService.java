@@ -67,19 +67,29 @@ public class AuthenticationService extends AbstractAnnotatingDaoService {
 				
 				LoginResult loginResult = (LoginResult) results.get(0);
 				
-				// Determine if the user is enabled (i.e., allowed to access the application)
-				if(loginResult.isEnabled()) {
+				// Determine if the user is enabled and not "new" (i.e., allowed to access the application). New users are users
+				// that have not created their own password from a phone
+				if(loginResult.isEnabled() && ! loginResult.isNew()) {
 					
-					awRequest.getUser().setCampaignId(loginResult.getCampaignId());
+					awRequest.getUser().setCampaignId(loginResult.getCampaignId()); // eventually users may belong to more than one campaign
 					awRequest.getUser().setId(loginResult.getUserId());
 					awRequest.getUser().setLoggedIn(true);
+					
+					// remove the password from the user object just to be on the safe side (it is not needed again anyway)
+					awRequest.getUser().setPassword(null);
 					
 					_logger.info("user " + awRequest.getUser().getUserName() + " successfully logged in");
 				
 				} else {
 					
 					getAnnotator().annotate(awRequest, _disabledMessage);
-					_logger.info("user " + awRequest.getUser().getUserName() + " is not enabled for access");
+					if(! loginResult.isEnabled()) {
+						_logger.info("user " + awRequest.getUser().getUserName() + " is not enabled for access");
+					} 
+					if(loginResult.isNew()) {
+						_logger.info("user " + awRequest.getUser().getUserName() + " is new and must change their password via " +
+							"phone before being granted access");
+					}
 				}
 				
 			} else { // no user found

@@ -14,6 +14,9 @@ public interface User {
 	public String getUserName();
 	public void setUserName(String string);
 
+	public String getPassword();
+	public void setPassword(String string);
+	
 // future	
 //	public List<Integer> getCampaignIds();
 //	public void setCampaignIds(List<Integer> ids);
