@@ -217,8 +217,7 @@
 		$("#startDate").val(today);
 		
 		// Setup the dashboard
-		log.debug("panes width is: " + $('.panes').width());
-		dashBoard = new DashBoard(response_list, $('.panes').width());
+		dashBoard = new DashBoard(response_list);
 		
 		// Run the default query
 		send_json_request(null);

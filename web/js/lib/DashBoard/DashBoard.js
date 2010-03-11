@@ -7,9 +7,9 @@
 // DashBoard consturctor - For now the config is read locally and
 // is simply a list of question types.  The graph_width is the total
 // width in pixels the graphs will take.
-function DashBoard(json_config, graph_width) {
+function DashBoard(json_config) {
     // Configure the HTML and CSS for the dashboard
-    this.configure_html(json_config, graph_width);
+    this.configure_html(json_config);
 }
 
 // Logger for the dashboard
@@ -18,7 +18,7 @@ DashBoard._logger = log4javascript.getLogger();
 // Dashboard functions
 
 // Setup the HTML and CSS according to the configuration JSON.
-DashBoard.prototype.configure_html = function(json_config, graph_width) {
+DashBoard.prototype.configure_html = function(json_config) {
     var cur_group = -1;
     
     // Loop over each graph type
@@ -52,7 +52,8 @@ DashBoard.prototype.configure_html = function(json_config, graph_width) {
             .append('<div id="' + div_id + '"></div>');
         
         // Finally create a new graph and add it to the div
-        var new_graph = ProtoGraph.factory(config, div_id, graph_width);
+        // Make the graph have the width of the tab panes
+        var new_graph = ProtoGraph.factory(config, div_id, $('div.panes').width());
         $('#' + div_id)
             .data('graph', new_graph)
             .data('prompt_id', config.prompt_id)
