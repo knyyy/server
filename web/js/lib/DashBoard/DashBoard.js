@@ -8,7 +8,9 @@
 // is simply a list of question types.  The graph_width is the total
 // width in pixels the graphs will take.
 function DashBoard(json_config) {
-    // Configure the HTML and CSS for the dashboard
+    // 
+    
+    // Configure the HTML and CSS for the graphs/tabs
     this.configure_html(json_config);
 }
 
@@ -119,12 +121,16 @@ DashBoard.prototype.load_data = function(json_data) {
 // Enable/disable the loading graphic
 DashBoard.prototype.loading = function(enable) {
     if (enable) {
+        // Hide the graphs while loading
+        $("div.ProtoGraph").hide();
         // Show the loading graphic in the displayed pane
         $('div.panes .loading').show();
     }
     else {
         // Hide all the loading divs in the panes
         $('div.panes .loading').hide();
+        // And reshow the graphs
+        $("div.ProtoGraph").show();
     }
 }
 

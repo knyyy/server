@@ -247,10 +247,8 @@
 		// Load the data into the dashboard
 		dashBoard.load_data(json_data);
 		
-		// Hide the loading graphic
-		$(".loading").hide();
-		// Reshow the graphs
-		$(".ProtoGraph").show();
+		// Switch off the loading graphic
+        dashBoard.loading(false);
 	}
 	
 
@@ -288,11 +286,8 @@
   <div id="main">
 	  <ul class="tabs"></ul> 
 	  <div class="panes"></div>
-  </dev>
+  </div>
   
-  
- <div id="map">
- </div>
  
  <div id="footer">
  	Question? Comment? Problem? Email us at andwellness-info@cens.ucla.edu.
