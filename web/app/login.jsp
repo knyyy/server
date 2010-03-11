@@ -17,23 +17,33 @@
     <style type="text/css">
 		
 		.content .padding {
-			padding: 50px 50px 50px 50px;
+			padding: 50px;
 		}
-		.footer {
-		   color: #BEBEBE;
+		.p-bottom {
+			padding-bottom: 10px; 
+		}
+		.f {
+		  font-family: Arial, sans-serif;
+		}
+		.h {
+		  font-size: 36px;   	
+	      line-height: 36px;
+	      font-weight: normal;
 		}
 	</style>
     
   </head>
   <body>
   
-  <div class="zp-wrapper">
+  <div class="zp-wrapper f">
     <div class="zp-100 content">
 		 <div class="padding">
-  	
-  		  <h1>Welcome to AndWellness.</h1>
-  		  <h2>Please log in.</h2>
-    
+  	      
+  	      <div class="f h p-bottom">
+  		    Welcome to AndWellness.
+  		  </div>
+    	  
+    	  
           <form method="post" action="/app/login">
 		    <fieldset>
 
@@ -53,17 +63,11 @@
 						
 		    </fieldset>
 		  </form>
-        </div>
+		  
+		  <p>Question? Comment? Problem? Email us at andwellness-info@cens.ucla.edu.</p>
+		  
+		  </div>
       </div>
     </div>
-    
-    <div class="zp-wrapper">
-    <div class="zp-100 content">
-      <div class="padding">
-        <p class="footer">Question? Comment? Problem? Email us at andwellness-info@cens.ucla.edu.</p>
-      </div>
-    </div>
-  </div>
-  
   </body>
 </html>

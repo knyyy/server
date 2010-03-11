@@ -130,7 +130,14 @@
 			display: none;
 			height: 75px;
 		}
-		
+		.f {
+		  font-family: Arial, sans-serif;
+		}
+		.h {
+		  font-size: 36px;   	
+	      line-height: 36px;
+	      font-weight: normal;
+		}
 	</style>
     
 	
@@ -407,7 +414,7 @@
   
   <!-- Get some CSS layout going here -->
   <div id="banner">
-	<h1>EMA Visualizations for <c:out value="${sessionScope.user.userName}"></c:out>.</h1>
+	<div class="f h">EMA Visualizations for <c:out value="${sessionScope.user.userName}"></c:out>.</div>
 	<div id="logout"><a href="/app/logout">Logout</a></div>
   </div>
   
