@@ -47,7 +47,7 @@
 			  </div>
 			  <div class="form-item">
 				<label for="password">Password:</label>
-				<input tabindex="2" id="password" type="text" name="p" />
+				<input tabindex="2" id="password" type="password" name="p" />
 			  </div>	
 			  <button tabindex="3" id="send" type="submit">Send</button>
 						
