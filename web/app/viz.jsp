@@ -45,6 +45,7 @@
 	<!-- Generates the different graph types using Protovis -->
 	<script type="text/javascript" src="/js/lib/DataSource/DataSource.js"></script>
 	<script type="text/javascript" src="/js/lib/Graph/ProtoGraph.js"></script>
+	<script type="text/javascript" src="/js/lib/DashBoard/DashBoard.js"></script>
 	<!-- Contains the query response visualization types -->
 	<script type="text/javascript" src="/js/response_list.js"></script>
     
@@ -61,34 +62,52 @@
 		    padding:15px 10px;
 		    border:1px solid #999;
 		    border-top:0;
-		    width:830px;
 		    font-size:14px;
 		    background-color:#fff;
 		}
 		
 		ul.tabs {
-		    width:852px;
 		}
 		
 		body {
-		    margin:0px 10px;
-			width: 1000px;
+			margin: 0;
+			padding: 0;
+			background-color: #EEEEEE;
+		}
+		
+		#wrapper{
+			width:1000px;
 		}
 
         #banner {
-        	padding: 10px;
+        	padding-left: 5px;
+			padding-right: 5px;
 			position: relative;
+			background-color: white;
         }
+		
+		#main {
+			padding-left: 5px;
+			padding-right: 5px;
+			margin-right:155px;
+			background-color: white;
+		}
 		
 		#logout {
 			position: absolute;
-            right:0;
-			top:0;
+            right: 5px;
+			top: 0;
         }
 
 		#controls {
+			padding-right: 5px;
 			float: right;
 			width: 150px;
+			background-color: white;
+		}
+		
+		#footer {
+			
 		}
 		
 		#grabDateForm {
@@ -108,12 +127,10 @@
 			margin-left: 65px;
 			margin-top: 2px;
 			background-color: #CBD893;
-			font-family: "Century Gothic", "Gill Sans", Arial, sans-serif;
 		}
 		
 		#startDate {
 		    background-color: #FBEF99;
-            font-family: "Century Gothic", "Gill Sans", Arial, sans-serif;
 			width: 85px;
 			height: 25px;
 			margin-top: -2px;
@@ -167,8 +184,9 @@
 	var startDate = new Date();
 	var numDays = 0;
 
-	// Stores all instantiated graphs on the webpage, leave here for now
-	var graphList = [];	
+    // Holds the current page's DashBoard setup
+	// Need to make a singleton
+    var dashBoard = null;
 	
 	// Handles retrieval and filtering of data
 	//var dataSource = new DataSourceJson('/app/viz');
@@ -194,15 +212,13 @@
 	    // Override the default submit function for the form
 	    $("#grabDateForm").submit(send_json_request);
 
-	    // Loop over the questions in the response list, setup the HTML for the graphs
-        response_list.forEach(handleResponse);
-
-        // setup ul.tabs to work as tabs for each div directly under div.panes 
-        $("ul.tabs").tabs("div.panes > div");
-		
 		// Set initial start date to 2 weeks ago
 		var today = new Date().incrementDay(-13).dateFormat('Y-m-d');
 		$("#startDate").val(today);
+		
+		// Setup the dashboard
+		log.debug("panes width is: " + $('.panes').width());
+		dashBoard = new DashBoard(response_list, $('.panes').width());
 		
 		// Run the default query
 		send_json_request(null);
@@ -246,10 +262,8 @@
 	        return false;	    	 
 	    }
 		
-		// Hide the current graphs while the new ones load
-		$(".ProtoGraph").hide();
-		// Show the loading graphic
-		$(".loading").show();
+		// Switch on the loading graphic
+		dashBoard.loading(true);
 		
 		// Set global start and number of days
 		startDate = Date.parseDate(start_date, "Y-m-d");
@@ -301,7 +315,6 @@
 		}
 		
 	    // Run through possible error codes from server
-	    // TODO: Check for error codes in JSON
 		
 		// 0104 is session expired, redirect to the passed URL
 		if (json_data.error_code != null && json_data.error_code == "0104") {
@@ -334,51 +347,8 @@
 			}
 		});		
 		
-		// Give the new data to the graphs
-		var data = json_data;
-		graphList.forEach(function(graph) {
-			var prompt_id = graph.prompt_id;
-			var group_id = graph.group_id;
-			
-			if (log.isDebugEnabled()) {
-                log.debug("Rendering graph with prompt_id " + prompt_id + " group_id " + group_id);
-				var start_render_time = new Date().getTime();
-            }
-			
-			// Also filter out SKIPPED points for now
-			var new_data = data.filter(function(data_point) {
-		        return ((prompt_id == data_point.prompt_id) && 
-				        (group_id == data_point.prompt_group_id) &&
-						(data_point.response != "RESPONSE_SKIPPED"));
-		    });
-			
-			// Check if any data was found
-			if (new_data.length == 0) {
-				if (log.isInfoEnabled()) {
-					log.info("No data found for group_id " + group_id + " prompt_id " + prompt_id);
-				}
-				
-				// Hide the graph that has no data
-				$("#ProtoGraph_" + group_id + "_" + prompt_id).hide();
-			}
-			
-			// Apply data to the graph
-            graph.apply_data(new_data, 
-                             startDate, 
-                             numDays);
-							 
-            // Re-render graph with the new data
-            graph.render();
-			
-			// Make sure the graph is shown
-			$("#ProtoGraph_" + group_id + "_" + prompt_id).show();
-			
-            if (log.isDebugEnabled()) {
-				var time_to_render = new Date().getTime() - start_render_time;
-				
-                log.debug("Time to render graph: " + time_to_render + " ms");
-            }				
-		});
+		// Load the data into the dashboard
+		dashBoard.load_data(json_data);
 		
 		// Hide the loading graphic
 		$(".loading").hide();
@@ -386,39 +356,21 @@
 		$(".ProtoGraph").show();
 	}
 	
-	/*
-	 * Pass a single object describing a data type.  Will create a Protovis graph for that type.
-	 */ 
-	function handleResponse(graph_description) {		
-	    // Create a unique div_id for each Graph
-        var new_div_id = 'ProtovisGraph_' + graph_description.group_id + '_' + graph_description.prompt_id;
-        // Append a new div on to the DOM for the new graph     
-        $('#' + graph_description.group_id).append('<div id="' + new_div_id + '"></div>');    
-		
-		// Create a new graph object using the graph information
-		var new_graph = ProtoGraph.factory(graph_description, new_div_id);
 
-        // Set group and prompt ID on each graph for later retrieval
-		new_graph.prompt_id = graph_description.prompt_id;
-		new_graph.group_id = graph_description.group_id;
-		
-		// Add graph to the global list for now
-		graphList.push(new_graph);
-	}
 	
     </script>
 	
   </head>
   <body>
-  
+  <div id="wrapper">
   
   <!-- Get some CSS layout going here -->
   <div id="banner">
-	<div class="f h">EMA Visualizations for <c:out value="${sessionScope.user.userName}"></c:out>.</div>
+	<span class="f h">EMA Visualizations for <c:out value="${sessionScope.user.userName}"></c:out>.</span>
 	<div id="logout"><a href="/app/logout">Logout</a></div>
   </div>
   
-    <div id="controls">
+    <div id="controls" class="f">
     	Choose a time period:
 		
         <form method="post" action="/app/viz" id="grabDateForm">
@@ -436,31 +388,19 @@
          </form>
   </div>
   
-  <div id="main">
-	  <!-- Let's try to setup some tabs manually -->
-	  <ul class="tabs"> 
-	    <li><a href="#saliva">Saliva</a></li> 
-	    <li><a href="#sleep">Sleep</a></li> 
-	    <li><a href="#emotional_state">Emotional State</a></li>
-	    <li><a href="#diary">Diary</a></li> 
-	  </ul> 
-	  
-	  <div class="panes"> 
-	    <div id="0"><div class="loading"></div></div>
-	    <div id="1"><div class="loading"></div></div> 
-	    <div id="2"><div class="loading"></div></div>
-	    <div id="3"><div class="loading"></div></div>
-	  </div>
+  <div id="main" class="f">
+	  <ul class="tabs"></ul> 
+	  <div class="panes"></div>
   </dev>
   
   
- <div id="map">
+ <div id="map" class="f">
  </div>
  
- <div id="footer">
+ <div id="footer" class="f">
  	Question? Comment? Problem? Email us at andwellness-info@cens.ucla.edu.
  </div>
   
-  
+  </div>
   </body>
 </html>

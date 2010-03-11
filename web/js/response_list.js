@@ -37,7 +37,7 @@
 	{group_id:3, prompt_id:10, text:'Did you exercise today?', type:3},
 	{group_id:3, prompt_id:11, text:'If yes, what type of exercise did you today?', type:2, y_labels:['none', 'light', 'moderate', 'vigorous']},
 	{group_id:3, prompt_id:12, text:'If you exercised, for how many minutes did you exercise?', type:2, y_labels:['10','20','30','40','50','60+']},
-	{group_id:3, prompt_id:13, text:'Did any of the following interfere with your plan to exercise today?', type:1, y_labels:['lack of time','lack of self-discipline','fatigue','procrastination','lack of interest','family work or responsibilities']},
+	{group_id:3, prompt_id:13, text:'Did any of the following interfere with your plan to exercise today?', type:1, y_labels:['lack of time','lack of self-discipline','fatigue','procrastination','lack of interest','responsibilities']},
 	{group_id:3, prompt_id:14, text:'How many cigarettes did you smoke today?', type:2, y_labels:['0','1','2','3','4','5','6','7','8','9','10+']},
 	{group_id:3, prompt_id:15, text:'How many alcoholic beverages did you have today?', type:2, y_labels:['0','1','2','3','4','5','6','7','8','9','10+']},
 	{group_id:3, prompt_id:16, text:'How many caffeinated beverages did you have today?', type:2, y_labels:['0','1','2','3','4','5','6','7','8','9','10+']},
