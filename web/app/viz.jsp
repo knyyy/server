@@ -23,6 +23,7 @@
 	<link type="text/css" href="/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
 	<link type="text/css" href="/css/jquery-validity.css" rel="stylesheet" />
 	<link type="text/css" href="/css/tabs.css" rel="stylesheet" />
+	<link type="text/css" href="/css/dashboard.css" rel="stylesheet" />
     
 
 	<!-- A large number of javascript includes, will reduce -->
@@ -53,109 +54,6 @@
     <!--[if IE]>
 	<link href="/css/zp-ie.css" type="text/css" media="screen" rel="stylesheet" />
 	<![endif]-->
-    
-    <style type="text/css">
-		
-		/* tab pane styling */
-		div.panes > div {
-		    display:none;       
-		    padding:15px 10px;
-		    border:1px solid #999;
-		    border-top:0;
-		    font-size:14px;
-		    background-color:#fff;
-		}
-		
-		ul.tabs {
-		}
-		
-		body {
-			margin: 0;
-			padding: 0;
-			background-color: #EEEEEE;
-		}
-		
-		#wrapper{
-			width:1000px;
-		}
-
-        #banner {
-        	padding-left: 5px;
-			padding-right: 5px;
-			position: relative;
-			background-color: white;
-        }
-		
-		#main {
-			padding-left: 5px;
-			padding-right: 5px;
-			margin-right:155px;
-			background-color: white;
-		}
-		
-		#logout {
-			position: absolute;
-            right: 5px;
-			top: 0;
-        }
-
-		#controls {
-			padding-right: 5px;
-			float: right;
-			width: 150px;
-			background-color: white;
-		}
-		
-		#footer {
-			
-		}
-		
-		#grabDateForm {
-			font-size: .8em;
-		}
-		
-		#grabDateForm .label {
-            float: left;
-            width: 60px;
-			margin-right: 5px;
-            text-align: right;
-            font-weight: bold;
-            clear: left;
-        }
-		
-		#submit {
-			margin-left: 65px;
-			margin-top: 2px;
-			background-color: #CBD893;
-		}
-		
-		#startDate {
-		    background-color: #FBEF99;
-			width: 85px;
-			height: 25px;
-			margin-top: -2px;
-		}
-		
-		#startDate:focus {
-			background-color: #FDD041;
-		}
-		
-		.loading {
-			background-image: url('/css/images/ajax-loader.gif');
-			background-repeat: no-repeat;
-			background-position: center top;
-			display: none;
-			height: 75px;
-		}
-		.f {
-		  font-family: Arial, sans-serif;
-		}
-		.h {
-		  font-size: 36px;   	
-	      line-height: 36px;
-	      font-weight: normal;
-		}
-	</style>
     
 	
 	
@@ -361,15 +259,15 @@
 	
   </head>
   <body>
-  <div id="wrapper">
+  <div id="wrapper" class="f">
   
   <!-- Get some CSS layout going here -->
   <div id="banner">
-	<span class="f h">EMA Visualizations for <c:out value="${sessionScope.user.userName}"></c:out>.</span>
+	<span class="h">EMA Visualizations for <c:out value="${sessionScope.user.userName}"></c:out>.</span>
 	<div id="logout"><a href="/app/logout">Logout</a></div>
   </div>
   
-    <div id="controls" class="f">
+    <div id="controls">
     	Choose a time period:
 		
         <form method="post" action="/app/viz" id="grabDateForm">
@@ -387,16 +285,16 @@
          </form>
   </div>
   
-  <div id="main" class="f">
+  <div id="main">
 	  <ul class="tabs"></ul> 
 	  <div class="panes"></div>
   </dev>
   
   
- <div id="map" class="f">
+ <div id="map">
  </div>
  
- <div id="footer" class="f">
+ <div id="footer">
  	Question? Comment? Problem? Email us at andwellness-info@cens.ucla.edu.
  </div>
   
