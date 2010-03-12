@@ -41,7 +41,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 	 * Default no-arg constructor.
 	 */
 	public SensorUploadServlet() {
-		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"t","u","phv","prv","d"}));
+		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"t","u","phv","prv","d","p"}));
 	}
 		
 	/**
@@ -151,7 +151,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 		
 		// Check for missing or extra parameters
 		
-		if(parameterMap.size() != 5) {
+		if(parameterMap.size() != 6) {
 			_logger.warn("an incorrect number of parameters was found on sensor upload: " + parameterMap.size());
 			return false;
 		}
@@ -184,6 +184,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 		}
 		
 		String u = (String) request.getParameter("u");
+		String p = (String) request.getParameter("p");
 		String t = (String) request.getParameter("t");
 		String phv = (String) request.getParameter("phv");
 		String prv = (String) request.getParameter("prv");
@@ -195,6 +196,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 		   || greaterThanLength("request type", "t", t, 50)
 		   || greaterThanLength("phone version", "phv", phv, 50)
 		   || greaterThanLength("protocol version", "prv", prv, 50)
+		   || greaterThanLength("password", "p", p, 50)
 		) {
 			return false;
 		}
