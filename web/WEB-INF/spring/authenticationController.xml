@@ -23,7 +23,6 @@
       <list>
         <ref bean="formBasedLoginUserNameValidator" />
         <ref bean="formBasedLoginPasswordValidator" />
-        <ref bean="emptySubdomainValidator" />
       </list>      
     </property>
     <property name="featureName"><value>authentication</value></property>
