@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import edu.ucla.cens.awserver.domain.UserImpl;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.SensorUploadAwRequest;
-import edu.ucla.cens.awserver.util.StringUtils;
 
 /**
  * Transformer for creating an AwRequest for authentication.
@@ -31,7 +30,6 @@ public class SensorUploadAwRequestCreator implements AwRequestCreator {
 	 *  Validation of the data is performed within a controller.
 	 */
 	public AwRequest createFrom(HttpServletRequest request) {
-		String subdomain = StringUtils.retrieveSubdomainFromUrlString(request.getRequestURL().toString());
 		String sessionId = request.getSession(false).getId(); // for upload logging to connect app logs to uploads
 		
 		String userName = request.getParameter("u");
@@ -62,7 +60,6 @@ public class SensorUploadAwRequestCreator implements AwRequestCreator {
 		awRequest.setStartTime(System.currentTimeMillis());
 		awRequest.setSessionId(sessionId);
 		awRequest.setUser(user);
-		awRequest.setSubdomain(subdomain);
 		awRequest.setRequestType(requestType);
 		awRequest.setPhoneVersion(phoneVersion);
 		awRequest.setProtocolVersion(protocolVersion);

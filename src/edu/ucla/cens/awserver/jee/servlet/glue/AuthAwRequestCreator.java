@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import edu.ucla.cens.awserver.domain.UserImpl;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.ResultListAwRequest;
-import edu.ucla.cens.awserver.util.StringUtils;
 
 /**
  * Transformer for creating an AwRequest for authentication.
@@ -26,8 +25,6 @@ public class AuthAwRequestCreator implements AwRequestCreator {
 	 *  Validation of the data is performed within a controller.
 	 */
 	public AwRequest createFrom(HttpServletRequest request) {
-		String subdomain = StringUtils.retrieveSubdomainFromUrlString(request.getRequestURL().toString());
-		
 		String userName = request.getParameter("u");
 		String password = request.getParameter("p");
 		UserImpl user = new UserImpl();
@@ -36,7 +33,6 @@ public class AuthAwRequestCreator implements AwRequestCreator {
 		
 		AwRequest awRequest = new ResultListAwRequest();
 		awRequest.setUser(user);
-		awRequest.setSubdomain(subdomain);
 		
 		return awRequest;
 	}
