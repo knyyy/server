@@ -99,10 +99,11 @@ public class EmaVizServlet extends AbstractAwHttpServlet {
 			// Build the appropriate response 
 			if(! awRequest.isFailedRequest()) {
 				// Convert the results to JSON for output.
-				List<EmaQueryResult> results = (List<EmaQueryResult>) awRequest.getResultList();
+				List<?> results =  awRequest.getResultList();
 				JSONArray jsonArray = new JSONArray();
 					
-				for(EmaQueryResult result : results) {
+				for(int i = 0; i < results.size(); i++) {
+					EmaQueryResult result = (EmaQueryResult) results.get(i);
 					JSONObject entry = new JSONObject();	
 					entry.put("response", new JSONObject(result.getJsonData()).get("response"));
 					entry.put("time", result.getTimestamp());
