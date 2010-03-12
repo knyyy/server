@@ -1,5 +1,8 @@
 package edu.ucla.cens.awserver.domain;
 
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * Internal representation of an AndWellness user. 
@@ -17,13 +20,12 @@ public interface User {
 	public String getPassword();
 	public void setPassword(String string);
 	
-// future	
-//	public List<Integer> getCampaignIds();
-//	public void setCampaignIds(List<Integer> ids);
-	
-	public int getCampaignId();
-	public void setCampaignId(int id);
+	public Map<Integer, List<Integer>> getCampaignRoles();
+	public void addCampaignRole(int campaignId, int roleId);
 	
 	public boolean isLoggedIn();
 	public void setLoggedIn(boolean b);
+	
+	public void setCurrentCampaignId(int id);
+	public int getCurrentCampaignId();
 }
