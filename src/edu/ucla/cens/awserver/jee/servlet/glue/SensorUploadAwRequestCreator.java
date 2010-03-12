@@ -33,6 +33,7 @@ public class SensorUploadAwRequestCreator implements AwRequestCreator {
 		String sessionId = request.getSession(false).getId(); // for upload logging to connect app logs to uploads
 		
 		String userName = request.getParameter("u");
+		String password = request.getParameter("p");
 		String requestType = request.getParameter("t");
 		String phoneVersion = request.getParameter("phv");
 		String protocolVersion = request.getParameter("prv");
@@ -54,6 +55,7 @@ public class SensorUploadAwRequestCreator implements AwRequestCreator {
 		
 		UserImpl user = new UserImpl();
 		user.setUserName(userName);
+		user.setPassword(password);
 		
 		AwRequest awRequest = new SensorUploadAwRequest();
 
