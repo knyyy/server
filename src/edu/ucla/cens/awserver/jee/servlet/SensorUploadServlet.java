@@ -200,7 +200,9 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 		}
 		
 		// The JSON data is not checked because its length is so variable and potentially huge (some messages are 700000+ characters
-		// when URL-encoded). It will be heavily validated once inside the main application validation layer
+		// when URL-encoded). It will be heavily validated once inside the main application validation layer.
+		
+		// The default setting for Tomcat is to disallow requests that are greater than 2MB
 		
 		return true;
 	}
