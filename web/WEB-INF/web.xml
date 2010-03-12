@@ -126,7 +126,7 @@
     <url-pattern>/robots.txt</url-pattern>
   </servlet-mapping>
 
-  <!-- The default Tomcat JSP Servlet. We re-dispatch to this Servlet for rendering JSP. -->
+  <!-- The default Tomcat JSP Servlet. Requests for a JSP are dispatched here. -->
   <servlet>
     <servlet-name>jsp</servlet-name>
     <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
@@ -184,6 +184,7 @@
     <url-pattern>/app/login</url-pattern>
   </servlet-mapping>
   
+  <!--  Sensor Upload -->
   <servlet>
     <description>
       processes data uploads from a sensor (phone) 
