@@ -212,6 +212,35 @@
     <url-pattern>/app/sensor/upload</url-pattern>
   </servlet-mapping>
   
+   <!--  Sensor Authentication - Initial Phone Login -->
+  <servlet>
+    <description>
+      The first time a phone user logs in they use their default password. After this first login, they then must
+      create a new password. The new password authenticates uploads (and any other future phone-server features). 
+    </description>
+    <servlet-name>SensorAuthServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.SensorAuthServlet</servlet-class>
+    
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids. -->  
+    
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>authenticationAwRequestCreator</param-value>
+    </init-param>
+    
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>sensorAuthController</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>SensorAuthServlet</servlet-name>
+    <url-pattern>/app/sensor/login</url-pattern>
+  </servlet-mapping>
+  
   <!--  Handle EMA Visualization Queries  -->
   <servlet>
     <description>
