@@ -22,7 +22,6 @@ CREATE TABLE campaign (
   id smallint(4) unsigned NOT NULL auto_increment,
   name varchar(125) NOT NULL,
   label varchar(250) default NULL,
-  subdomain varchar(125) default NULL,
   configuration_id smallint(4) unsigned default NULL,
   PRIMARY KEY (id),
   UNIQUE KEY (subdomain),
@@ -32,12 +31,13 @@ CREATE TABLE campaign (
 
 -- -----------------------------------------------------------------------
 -- System users.
--- TODO add a password column for future release with real authentication.
 -- -----------------------------------------------------------------------
 CREATE TABLE user (
   id smallint(6) unsigned NOT NULL auto_increment,
   login_id varchar(15) NOT NULL,
+  password varchar(100) NOT NULL,
   enabled bit NOT NULL,
+  new_account bit NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (login_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
