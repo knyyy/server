@@ -3,17 +3,9 @@
 
 INSERT INTO configuration (json_data) VALUES ('{"name":"root"}');
 
-INSERT INTO campaign (name, label, subdomain, configuration_id) VALUES ('ganz', 'The Ganz pilot', 'pilot', 1);
+INSERT INTO campaign (name, label, configuration_id) VALUES ('ganz', 'Breast Cancer Survivor Study', 1);
 
 INSERT INTO user_role (label) VALUES ('admin'), ('participant'), ('health worker');
-
-INSERT INTO user (login_id, enabled) VALUES ("abbe.zoom", true); -- login ids are programmatically generated from a dictionary file
-
-INSERT INTO user_personal (email_address, json_data) VALUES ('selsky@cens.ucla.edu', '{"first_name":"Joshua","last_name":"Selsky"}');
-
-INSERT INTO user_user_personal (user_id, user_personal_id) VALUES (1, 1);
-
-INSERT INTO user_role_campaign (user_id, campaign_id, user_role_id) VALUES (1, 1, 1);
 
 INSERT INTO campaign_prompt_version (campaign_id, version_id) VALUES (1, 1);
 
