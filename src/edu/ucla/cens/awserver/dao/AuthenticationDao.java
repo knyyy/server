@@ -22,6 +22,7 @@ import edu.ucla.cens.awserver.util.StringUtils;
 public class AuthenticationDao extends AbstractDao {
 	private static Logger _logger = Logger.getLogger(AuthenticationDao.class);
 	private String _salt;
+	private boolean _performHash;
 	
 	private static final String _selectSql = "select user.id, user.enabled, user.new_account, campaign.id, " +
 			                                 "user_role_campaign.user_role_id " +
@@ -33,18 +34,23 @@ public class AuthenticationDao extends AbstractDao {
 	
 	/**
 	 * @param dataSource the data source used to connect to the MySQL db
-	 * @param salt the salt to use for password hashing with bcrypt 
+	 * @param salt the salt to use for password hashing with bcrypt
+	 * @param performHash specifies whether hashing should be performed on the inbound password. Passwords sent from the phone
+	 * are already hashed. 
 	 * 
-	 * @throws IllegalArgumentException if the provided salt is empty, null, or all whitespace
+	 * @throws IllegalArgumentException if the provided salt is empty, null, or all whitespace and performHash is true
 	 */
-	public AuthenticationDao(DataSource dataSource, String salt) {
+	public AuthenticationDao(DataSource dataSource, String salt, boolean performHash) {
 		super(dataSource);
 		
-		if(StringUtils.isEmptyOrWhitespaceOnly(salt)) {
-			throw new IllegalArgumentException("a salt value is required");
+		if(performHash) {
+			if(StringUtils.isEmptyOrWhitespaceOnly(salt)) {
+				throw new IllegalArgumentException("a salt value is required");
+			}
 		}
 		
 		_salt = salt;
+		_performHash = performHash;
 	}
 	
 	/**
@@ -55,11 +61,16 @@ public class AuthenticationDao extends AbstractDao {
 		_logger.info("attempting login for user " + awRequest.getUser().getUserName());
 		
 		try {
-			awRequest.setResultList(getJdbcTemplate().query(_selectSql, 
-					             new String[]{awRequest.getUser().getUserName(), 
-					                          BCrypt.hashpw(awRequest.getUser().getPassword(), _salt), 
-					             }, 
-					             new AuthenticationResultRowMapper()));
+			awRequest.setResultList(
+				getJdbcTemplate().query(
+					_selectSql, 
+					new String[] {
+					    awRequest.getUser().getUserName(), 
+					    _performHash ? BCrypt.hashpw(awRequest.getUser().getPassword(), _salt) : awRequest.getUser().getPassword(), 
+					}, 
+					new AuthenticationResultRowMapper()
+				)
+			);
 			
 		} catch (org.springframework.dao.DataAccessException dae) {
 			
