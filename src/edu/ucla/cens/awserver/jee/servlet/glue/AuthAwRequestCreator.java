@@ -1,5 +1,8 @@
 package edu.ucla.cens.awserver.jee.servlet.glue;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 
 import edu.ucla.cens.awserver.domain.UserImpl;
@@ -26,7 +29,19 @@ public class AuthAwRequestCreator implements AwRequestCreator {
 	 */
 	public AwRequest createFrom(HttpServletRequest request) {
 		String userName = request.getParameter("u");
-		String password = request.getParameter("p");
+		String password = null; 
+			
+		if(null != request.getParameter("p")) {
+			try {
+				
+				password = URLDecoder.decode(request.getParameter("p"), "UTF-8");
+			
+			} catch(UnsupportedEncodingException uee) { // if UTF-8 is not recognized we have big problems
+			
+				throw new IllegalStateException(uee);
+			}
+		}
+		
 		UserImpl user = new UserImpl();
 		user.setUserName(userName);
 		user.setPassword(password);
