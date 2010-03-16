@@ -196,7 +196,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 		   || greaterThanLength("request type", "t", t, 50)
 		   || greaterThanLength("phone version", "phv", phv, 50)
 		   || greaterThanLength("protocol version", "prv", prv, 50)
-		   || greaterThanLength("password", "p", p, 50)
+		   || greaterThanLength("password", "p", p, 180) // handle up to 60 URL encoded characters
 		) {
 			return false;
 		}
