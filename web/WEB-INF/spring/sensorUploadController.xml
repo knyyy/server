@@ -39,7 +39,7 @@
   
   <bean id="sensorUploadAuthenticationService" class="edu.ucla.cens.awserver.service.AuthenticationService">
     <constructor-arg index="0">
-      <ref bean="authenticationDao" />
+      <ref bean="sensorUploadAuthenticationDao" />
     </constructor-arg>
     <constructor-arg index="1">
       <ref bean="sensorUploadFailedJsonRequestAnnotator" />
@@ -434,6 +434,13 @@
         </entry>
       </map>
     </constructor-arg>
+  </bean>
+  
+   <!-- Interact with database -->
+  <bean id="sensorUploadAuthenticationDao" class="edu.ucla.cens.awserver.dao.AuthenticationDao">
+    <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
+    <constructor-arg index="1"><null /></constructor-arg>
+    <constructor-arg index="2"><value>false</value></constructor-arg>
   </bean>
   
 </beans>
