@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.request.AwRequest;
+import edu.ucla.cens.awserver.request.SensorUploadAwRequest;
 import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
 
 /**
@@ -27,8 +28,11 @@ public class FailedJsonSuppliedMessageRequestAnnotator implements AwRequestAnnot
 			
 			jsonObject = new JSONObject(message);
 			// now add the original request URL and the original JSON input message to the error output
-			jsonObject.put("request_url", awRequest.getRequestUrl());
-			jsonObject.put("request_json", awRequest.getJsonDataAsString());
+			
+			if(awRequest instanceof SensorUploadAwRequest) { // TODO - this is a bit of a hack and needs to be fixed
+				jsonObject.put("request_url", awRequest.getRequestUrl());
+				jsonObject.put("request_json", awRequest.getJsonDataAsString());
+			}
 		
 		} catch(JSONException jsone) {  
 		
