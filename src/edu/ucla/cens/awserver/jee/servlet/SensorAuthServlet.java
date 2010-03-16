@@ -189,7 +189,7 @@ public class SensorAuthServlet extends AbstractAwHttpServlet {
 		// Check for abnormal lengths (buffer overflow attack)
 		// 50 is an arbitrary number, but for these parameters it would be very strange
 		
-		if(greaterThanLength("user", "u", u, 50) || greaterThanLength("password", "p", p, 50)) {
+		if(greaterThanLength("user", "u", u, 50) || greaterThanLength("password", "p", p, 180)) {
 			return false;
 		}
 		
