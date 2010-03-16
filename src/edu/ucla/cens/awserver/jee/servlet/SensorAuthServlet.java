@@ -187,9 +187,10 @@ public class SensorAuthServlet extends AbstractAwHttpServlet {
 		String p = (String) request.getParameter("p");
 		
 		// Check for abnormal lengths (buffer overflow attack)
-		// 50 is an arbitrary number, but for these parameters it would be very strange
+		// 50 is an arbitrary number for user-length, but it would be very strange
+		// 180 characters for the password would represent a 60 character password with every character URL encoded
 		
-		if(greaterThanLength("user", "u", u, 50) || greaterThanLength("password", "p", p, 180)) {
+		if(greaterThanLength("user", "u", u, 50) || greaterThanLength("password", "p", p, 180)) { 
 			return false;
 		}
 		
