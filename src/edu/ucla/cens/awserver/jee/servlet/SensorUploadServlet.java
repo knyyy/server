@@ -41,7 +41,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 	 * Default no-arg constructor.
 	 */
 	public SensorUploadServlet() {
-		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"t","u","phv","prv","d","p"}));
+		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"t","u","phv","prv","d","p","c"}));
 	}
 		
 	/**
@@ -151,7 +151,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 		
 		// Check for missing or extra parameters
 		
-		if(parameterMap.size() != 6) {
+		if(parameterMap.size() != 7) {
 			_logger.warn("an incorrect number of parameters was found on sensor upload: " + parameterMap.size());
 			return false;
 		}
@@ -184,6 +184,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 		}
 		
 		String u = (String) request.getParameter("u");
+		String c = (String) request.getParameter("c");
 		String p = (String) request.getParameter("p");
 		String t = (String) request.getParameter("t");
 		String phv = (String) request.getParameter("phv");
@@ -193,6 +194,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 		// 50 is an arbitrary number, but for these parameters it would be very strange
 		
 		if(greaterThanLength("user", "u", u, 50)
+		   || greaterThanLength("campaign", "c", c, 50)
 		   || greaterThanLength("request type", "t", t, 50)
 		   || greaterThanLength("phone version", "phv", phv, 50)
 		   || greaterThanLength("protocol version", "prv", prv, 50)
@@ -207,16 +209,5 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 		// The default setting for Tomcat is to disallow requests that are greater than 2MB
 		
 		return true;
-	}
-	
-	private boolean greaterThanLength(String longName, String name, String value, int length) {
-		
-		if(null != value && value.length() > length) {
-			
-			_logger.warn("a " + longName + "(request parameter " + name + ") of " + value.length() + " characters was found");
-			return true;
-		}
-		
-		return false;
 	}
 }
