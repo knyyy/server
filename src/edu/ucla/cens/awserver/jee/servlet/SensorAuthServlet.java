@@ -196,15 +196,4 @@ public class SensorAuthServlet extends AbstractAwHttpServlet {
 		
 		return true;
 	}
-	
-	private boolean greaterThanLength(String longName, String name, String value, int length) {
-		
-		if(null != value && value.length() > length) {
-			
-			_logger.warn("a " + longName + "(request parameter " + name + ") of " + value.length() + " characters was found");
-			return true;
-		}
-		
-		return false;
-	}
 }
