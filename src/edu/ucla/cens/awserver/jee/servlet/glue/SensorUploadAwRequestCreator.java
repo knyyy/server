@@ -10,7 +10,7 @@ import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.SensorUploadAwRequest;
 
 /**
- * Transformer for creating an AwRequest for authentication.
+ * Transformer for creating an AwRequest for the upload feature.
  * 
  * @author selsky
  */
@@ -33,6 +33,7 @@ public class SensorUploadAwRequestCreator implements AwRequestCreator {
 		String sessionId = request.getSession(false).getId(); // for upload logging to connect app logs to uploads
 		
 		String userName = request.getParameter("u");
+		String campaignId = request.getParameter("c");
 		String password = request.getParameter("p");
 		String requestType = request.getParameter("t");
 		String phoneVersion = request.getParameter("phv");
@@ -51,11 +52,13 @@ public class SensorUploadAwRequestCreator implements AwRequestCreator {
 			throw new IllegalStateException(uee);
 		}
 		
-		// _logger.info(jsonData);
-		
 		UserImpl user = new UserImpl();
 		user.setUserName(userName);
 		user.setPassword(password);
+		
+		if(null != campaignId) {
+			user.setCurrentCampaignId(Integer.parseInt(campaignId));
+		}
 		
 		AwRequest awRequest = new SensorUploadAwRequest();
 
@@ -66,8 +69,7 @@ public class SensorUploadAwRequestCreator implements AwRequestCreator {
 		awRequest.setPhoneVersion(phoneVersion);
 		awRequest.setProtocolVersion(protocolVersion);
 		awRequest.setJsonDataAsString(jsonData);
-		
-		
+				
 		String requestUrl = request.getRequestURL().toString();
 		if(null != request.getQueryString()) {
 			requestUrl += "?" + request.getQueryString(); 
