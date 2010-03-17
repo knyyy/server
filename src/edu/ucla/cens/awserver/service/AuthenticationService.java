@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 
 import edu.ucla.cens.awserver.dao.Dao;
 import edu.ucla.cens.awserver.dao.DataAccessException;
-import edu.ucla.cens.awserver.dao.AuthenticationDao.LoginResult;
+import edu.ucla.cens.awserver.dao.LoginResult;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.util.StringUtils;
 import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
