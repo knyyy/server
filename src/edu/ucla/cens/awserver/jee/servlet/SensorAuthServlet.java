@@ -107,9 +107,11 @@ public class SensorAuthServlet extends AbstractAwHttpServlet {
 			// if the request is successful, just let Tomcat return a 200
 		}
 		
-		catch(Throwable t) { 
+		catch(Exception e) { 
 			
-			_logger.error("an error occurred on sensor data upload", t);
+			_logger.error("an error occurred on sensor data upload", e);
+			// the exception is not wrapped inside a ServletException in order to avoid sending the Tomcat HTTP 500 error page 
+			// back to the client
 		}
 		
 		finally {

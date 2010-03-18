@@ -126,10 +126,10 @@ public class EmaVizServlet extends AbstractAwHttpServlet {
 			writer.write(responseText);
 		}
 		
-		catch(Throwable t) { 
+		catch(Exception e) { 
 			
-			_logger.error("an error occurred running an EMA query", t);
-			writer.write("{\"error_code\":\"0103\",\"error_text\":\"" + t.getMessage() + "\"}");
+			_logger.error("an unrecoverable exception occurred while running an EMA query", e);
+			writer.write("{\"error_code\":\"0103\",\"error_text\":\"" + e.getMessage() + "\"}");
 			
 		} finally {
 			

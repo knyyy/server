@@ -150,10 +150,10 @@ public class AwJspServlet extends AbstractAwHttpServlet {
 			}
 		}
 		
-		catch(Throwable t) { 
+		catch(Exception e) { 
 			
-			_logger.error("an unrecoverable error occurred", t); // make sure the stack trace gets into our app log
-			throw new ServletException(t); // Re-throw and allow Tomcat to redirect to the configured error page. 
+			_logger.error("an unrecoverable exception occurred", e); // make sure the stack trace gets into our app log
+			throw new ServletException(e); // Re-throw and allow Tomcat to redirect to the configured error page. 
 			                               // The stack trace will also end up in catalina.out
 			
 		}
