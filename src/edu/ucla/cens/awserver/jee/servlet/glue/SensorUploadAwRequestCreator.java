@@ -55,10 +55,7 @@ public class SensorUploadAwRequestCreator implements AwRequestCreator {
 		UserImpl user = new UserImpl();
 		user.setUserName(userName);
 		user.setPassword(password);
-		
-		if(null != campaignId) {
-			user.setCurrentCampaignId(Integer.parseInt(campaignId));
-		}
+		user.setCurrentCampaignId(campaignId);
 		
 		AwRequest awRequest = new SensorUploadAwRequest();
 
