@@ -20,7 +20,8 @@ public class UserImpl implements User {
 	private int _currentCampaignId;
 	
 	public UserImpl() {
-		
+		_id = -1;
+		_currentCampaignId = -1;
 	}
 	
 	/**
@@ -35,6 +36,7 @@ public class UserImpl implements User {
 		_campaignRoles = new HashMap<Integer, List<Integer>>();
 		_campaignRoles.putAll(user.getCampaignRoles()); // shallow copy ok because once a user is created it is read-only in practice 
 		_loggedIn = user.isLoggedIn();
+		_currentCampaignId = user.getCurrentCampaignId();
 	}
 	
     public int getId() {
