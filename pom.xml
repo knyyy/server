@@ -20,5 +20,6 @@
   </build>
   <properties>
     <sonar.dynamicAnalysis>false</sonar.dynamicAnalysis>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 </project>
