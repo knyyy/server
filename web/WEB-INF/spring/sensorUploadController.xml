@@ -29,6 +29,7 @@
         <ref bean="sensorUploadPhoneVersionValidator" />
         <ref bean="sensorUploadProtocolVersionValidator" />
         <ref bean="sensorUploadJsonDataExistsValidator" />
+        <ref bean="sensorUploadCampaignIdValidator" />
       </list>
     </property>
     <property name="postProcessingService">
