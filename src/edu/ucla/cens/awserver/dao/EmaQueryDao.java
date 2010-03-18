@@ -53,7 +53,7 @@ public class EmaQueryDao extends AbstractDao {
 			s = awRequest.getStartDate();
 			e = awRequest.getEndDate();
 			u = awRequest.getUser().getId();
-			c = awRequest.getUser().getCurrentCampaignId();
+			c = Integer.parseInt(awRequest.getUser().getCurrentCampaignId());
 			
 			List<?> l = getJdbcTemplate().query(_selectSql, new Object[]{s, e, u, c}, new EmaQueryRowMapper());
 			
