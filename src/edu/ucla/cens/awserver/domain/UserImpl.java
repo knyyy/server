@@ -17,11 +17,10 @@ public class UserImpl implements User {
     private Map<Integer, List<Integer>> _campaignRoles;
 	private boolean _loggedIn;
 	private String _password;
-	private int _currentCampaignId;
+	private String _currentCampaignId;
 	
 	public UserImpl() {
 		_id = -1;
-		_currentCampaignId = -1;
 	}
 	
 	/**
@@ -51,7 +50,7 @@ public class UserImpl implements User {
 		return _campaignRoles;
 	}
 	
-	public void addCampaignRole(int campaignId, int roleId) {
+	public void addCampaignRole(Integer campaignId, Integer roleId) {
 		if(null == _campaignRoles) {
 			_campaignRoles = new HashMap<Integer, List<Integer>>();
 		}
@@ -89,11 +88,11 @@ public class UserImpl implements User {
 		return _password;
 	}
 	
-	public void setCurrentCampaignId(int id) {
+	public void setCurrentCampaignId(String id) {
 		_currentCampaignId = id;
 	}
 	
-	public int getCurrentCampaignId() {
+	public String getCurrentCampaignId() {
 		return _currentCampaignId;
 	}
 
