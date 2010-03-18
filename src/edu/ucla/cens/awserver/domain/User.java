@@ -21,11 +21,11 @@ public interface User {
 	public void setPassword(String string);
 	
 	public Map<Integer, List<Integer>> getCampaignRoles();
-	public void addCampaignRole(int campaignId, int roleId);
+	public void addCampaignRole(Integer campaignId, Integer roleId);
 	
 	public boolean isLoggedIn();
 	public void setLoggedIn(boolean b);
 	
-	public void setCurrentCampaignId(int id);
-	public int getCurrentCampaignId();
+	public void setCurrentCampaignId(String id);
+	public String getCurrentCampaignId();
 }
