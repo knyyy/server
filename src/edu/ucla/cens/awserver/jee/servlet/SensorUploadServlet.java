@@ -104,6 +104,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 				response.setContentType("application/json");
 				writer.write(awRequest.getFailedRequestErrorMessage());
 			} 
+
 			// if the request is successful, just let Tomcat return a 200
 		}
 		
@@ -112,6 +113,10 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 			_logger.error("an error occurred on sensor data upload", e);
 			// the exception is not wrapped inside a ServletException in order to avoid sending the Tomcat HTTP 500 error page 
 			// back to the client
+			
+			// instead of the exception being wrapped and re-thrown, send the error code for severe errors
+			writer.write("{\"errors\":[{\"error_code\":\"0103\",\"error_text\":\"server error\"}]}");
+			
 		}
 		
 		finally {
@@ -193,7 +198,7 @@ public class SensorUploadServlet extends AbstractAwHttpServlet {
 		String prv = (String) request.getParameter("prv");
 		
 		// Check for abnormal lengths (buffer overflow attack)
-		// 50 is an arbitrary number, but for these parameters it would be very strange
+		// 50 is an arbitrary number for length, but for these parameters it would be very strange
 		
 		if(greaterThanLength("user", "u", u, 50)
 		   || greaterThanLength("campaign", "c", c, 50)
