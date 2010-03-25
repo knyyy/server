@@ -61,7 +61,7 @@
 	
 	// Extend jQuery with a simple plugin called context to allow 
 	// storage of context when making asynchronous calls from 
-	// within an object.
+	// within an object.  Put this in a misc library.
     jQuery.extend({
       context: function(context) {
         var co = {
@@ -226,6 +226,8 @@
 			if (log.isWarnEnabled()) {
                 log.warn("No data found from server!");
             }
+
+            // Do something to indicate no data
 		}
 		
 		

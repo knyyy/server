@@ -59,7 +59,8 @@ DashBoard.prototype.configure_html = function(json_config) {
         $('#' + div_id)
             .data('graph', new_graph)
             .data('prompt_id', config.prompt_id)
-            .data('group_id', cur_group);
+            .data('group_id', cur_group)
+            .data('hidden', false);
     });
     
     // setup ul.tabs to work as tabs for each div directly under div.panes 
@@ -77,12 +78,14 @@ DashBoard.prototype.load_data = function(json_data) {
     var data = json_data;
     
     // iterate over every ProtoGraph class
+    var that = this;
     $('div.ProtoGraph > div').each(function(index) {
         // Grab the graph object attached to this div
         var graph = $(this).data('graph');
         var prompt_id = $(this).data('prompt_id');
         var group_id = $(this).data('group_id');
         
+        // Time the rendering of the graph
         if (log.isDebugEnabled()) {
             log.debug("Rendering graph with prompt_id " + prompt_id + " group_id " + group_id);
             var start_render_time = new Date().getTime();
@@ -100,15 +103,33 @@ DashBoard.prototype.load_data = function(json_data) {
             if (log.isInfoEnabled()) {
                 log.info("No data found for group_id " + group_id + " prompt_id " + prompt_id);
             }
+            
+            // Replace graph with no data found warning
+            if ($(this).data('hidden') == false) {
+                that.replace_with_no_data($(this));
+                $(this).data('hidden', true);
+            }
         }
-        
-        // Apply data to the graph
-        graph.apply_data(new_data, 
-                         startDate, 
-                         numDays);
-                         
-        // Re-render graph with the new data
-        graph.render();
+        // Apply data if data was found
+        else {
+            if (DashBoard._logger.isDebugEnabled()) {
+                DashBoard._logger.debug("Found " + new_data.length + " data points");
+            }
+            
+            // If the graph was hidden due to no data found, unhide
+            if ($(this).data('hidden') == true) {
+                that.replace_with_graph($(this));
+                $(this).data('hidden', false);
+            }
+            
+            // Apply data to the graph
+            graph.apply_data(new_data, 
+                             startDate, 
+                             numDays);
+            
+            // Re-render graph with the new data
+            graph.render();
+        }
         
         if (log.isDebugEnabled()) {
             var time_to_render = new Date().getTime() - start_render_time;
@@ -116,6 +137,18 @@ DashBoard.prototype.load_data = function(json_data) {
             log.debug("Time to render graph: " + time_to_render + " ms");
         }               
     });
+}
+
+// Hide the passed div and add a no data found
+DashBoard.prototype.replace_with_no_data = function(div_to_replace) {
+    div_to_replace.after("<span>No data found</span>");
+    div_to_replace.hide();
+}
+
+// Show the passed div and remove the next sibling
+DashBoard.prototype.replace_with_graph = function(div_to_show) {
+    div_to_show.next().remove();
+    div_to_show.show();
 }
 
 // Enable/disable the loading graphic
