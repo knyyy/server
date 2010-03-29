@@ -360,7 +360,17 @@ String.leftPad = function (val, size, ch) {
 }
 
 Date.prototype.incrementDay = function(numDays) {
-    return new Date(this.getTime() + Date.one_day * numDays);
+    var next_day = new Date(this.getTime() + Date.one_day * numDays);
+    
+    // Check to see if there is a daylight savings shift between the two days
+    var original_time_offset = this.getTimezoneOffset();
+    var new_time_offset = next_day.getTimezoneOffset();
+    if (original_time_offset != new_time_offset) {
+        // Recreate the new day and fix the timezone offset
+        next_day = new Date(this.getTime() + Date.one_day * numDays + (new_time_offset - original_time_offset) * 60 * 1000);
+    }
+    
+    return next_day;
 };
 
 // Find the difference in days between this date and the

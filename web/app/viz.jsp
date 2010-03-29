@@ -36,7 +36,7 @@
 	<!-- Support logging -->
 	<script type="text/javascript" src="/js/lib/misc/log4javascript.js"></script>
     <!-- Protovis graphing library with hacked in IE support -->
-	<script type="text/javascript" src="/js/lib/Protovis/protovis-d3.1-ie.js"></script>
+	<script type="text/javascript" src="/js/lib/Protovis/protovis-d3.2.js"></script>
 	<!-- Useful additions to Javascript objects -->
 	<script type="text/javascript" src="/js/lib/misc/array_lib.js"></script>
 	<script type="text/javascript" src="/js/lib/misc/date-functions.js"></script>

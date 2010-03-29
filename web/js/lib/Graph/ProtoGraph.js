@@ -30,7 +30,7 @@ function ProtoGraph(div_id, title, graph_width) {
 	this.has_day_demarcations = false;
 	this.width = graph_width - ProtoGraph.LEFT_MARGIN - ProtoGraph.RIGHT_MARGIN;
 	
-	ProtoGraph._logger.debug("Setting garph width to: " + this.width);
+	ProtoGraph._logger.debug("Setting graph width to: " + this.width);
 	
 	/*
 	 * Do basic graph panel setup, common to any type of graph
@@ -357,7 +357,8 @@ ProtoGraphIntegerType.prototype.apply_data = function(data, start_date, num_days
 	// Split the data into categories using Scale.ordinal
 	var dayArray = [];
 	for (var i = 0; i < this.num_days; i += 1) {
-		dayArray.push(start_date.incrementDay(i));
+	    var next_day = start_date.incrementDay(i);
+        dayArray.push(next_day);
 	}
 	
 	// Setup the X scale now
@@ -464,7 +465,8 @@ ProtoGraphSingleTimeType.prototype.apply_data = function(data, start_date, num_d
 	// Split the data into categories using Scale.ordinal
 	dayArray = [];
 	for (var i = 0; i < this.num_days; i += 1) {
-		dayArray.push(start_date.incrementDay(i));
+	    var next_day = start_date.incrementDay(i);
+		dayArray.push(next_day);
 	}
 	
 	// Setup the X scale now
@@ -482,6 +484,8 @@ ProtoGraphSingleTimeType.prototype.apply_data = function(data, start_date, num_d
 		  })
 		  .left(function(d) {
 		    // Shift the dot right by half a band to center it in the day
+		    var date_position = that.x_scale(d.date);
+		      
             var position = that.x_scale(d.date) + that.x_scale.range().band / 2;
             return position;
 		  })
@@ -567,7 +571,8 @@ ProtoGraphTrueFalseArrayType.prototype.apply_data = function(data, start_date, n
 	// Split the data into categories using Scale.ordinal
 	var dayArray = [];
 	for (var i = 0; i < this.num_days; i += 1) {
-		dayArray.push(start_date.incrementDay(i));
+	    var next_day = start_date.incrementDay(i);
+        dayArray.push(next_day);
 	}
 	this.dayArray = dayArray;
 	this.x_scale = pv.Scale.ordinal(dayArray).splitBanded(0, this.width, ProtoGraph.BAR_WIDTH);
@@ -730,7 +735,8 @@ ProtoGraphYesNoType.prototype.apply_data = function(data, start_date, num_days) 
 	// Split the data into categories using Scale.ordinal
 	var dayArray = [];
 	for (var i = 0; i < this.num_days; i += 1) {
-		dayArray.push(start_date.incrementDay(i));
+	    var next_day = start_date.incrementDay(i);
+        dayArray.push(next_day);
 	}
 	this.x_scale = pv.Scale.ordinal(dayArray).splitBanded(0, this.width, ProtoGraph.BAR_WIDTH);
 	
@@ -844,7 +850,8 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
     // Split the data into categories using Scale.ordinal
     var dayArray = [];
     for (var i = 0; i < this.num_days; i += 1) {
-        dayArray.push(start_date.incrementDay(i));
+        var next_day = start_date.incrementDay(i);
+        dayArray.push(next_day);
     }
     
     // Setup the X scale now
