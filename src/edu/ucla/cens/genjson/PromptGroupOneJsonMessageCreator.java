@@ -81,7 +81,7 @@ public class PromptGroupOneJsonMessageCreator implements JsonMessageCreator {
 			
 			Map<String, Object> p1 = new HashMap<String, Object>();
 			p1.put("prompt_id", 1);
-			p1.put("response", ValueCreator.randomPositiveIntModulus(6));
+			p1.put("response", ValueCreator.randomPositiveIntModulus(4));
 			responses.add(p1);
 			
 			Map<String, Object> p2 = new HashMap<String, Object>();
@@ -91,12 +91,12 @@ public class PromptGroupOneJsonMessageCreator implements JsonMessageCreator {
 			
 			Map<String, Object> p3 = new HashMap<String, Object>();
 			p3.put("prompt_id", 3);
-			p3.put("response", ValueCreator.randomPositiveIntModulus(6));
+			p3.put("response", ValueCreator.randomPositiveIntModulus(12));
 			responses.add(p3);
 			
 			Map<String, Object> p4 = new HashMap<String, Object>();
 			p4.put("prompt_id", 4);
-			p4.put("response", ValueCreator.randomPositiveIntModulus(4));
+			p4.put("response", ValueCreator.randomPositiveIntModulus(3));
 			responses.add(p4);
 			
 			map.put("responses", responses);
