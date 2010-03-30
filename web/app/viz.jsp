@@ -59,35 +59,15 @@
 	
 	<script type="text/javascript">
 	
-	// Extend jQuery with a simple plugin called context to allow 
-	// storage of context when making asynchronous calls from 
-	// within an object.  Put this in a misc library.
-    jQuery.extend({
-      context: function(context) {
-        var co = {
-          callback: function(method) {
-            if (typeof method == 'string') method = context[method];
-            var cb = function() { 
-			    method.apply(context, arguments); 
-			};
-            return cb;
-          }
-        };
-        return co;
-      }
-    }); 
-	
-	
 	// Holds the currently requested start date and number of days
 	var startDate = new Date();
 	var numDays = 0;
 
     // Holds the current page's DashBoard setup
-	// Need to make a singleton
     var dashBoard = null;
 	
 	// Handles retrieval and filtering of data
-	//var dataSource = new DataSourceJson('/app/viz');
+	var dataSource = new DataSourceJson('/app/viz');
 		
 	// Main logger
 	var log = log4javascript.getLogger();
@@ -113,9 +93,9 @@
 		// Set initial start date to 2 weeks ago
 		var today = new Date().incrementDay(-13).dateFormat('Y-m-d');
 		$("#startDate").val(today);
-		
-		// Setup the dashboard
-		dashBoard = new DashBoard(response_list);
+
+		// Setup the dash board with the campaign configuration JSON
+        dashBoard = new DashBoard(response_list);
 		
 		// Run the default query
 		send_json_request(null);
@@ -171,97 +151,44 @@
 		    log.info("Grabbing data from " + start_date + " to " + end_date);
 		}
 
-		// Form the URL and send out
-		url += "?s=" + start_date + "&e=" + end_date;     
-        $.get(url, populate_graphs_with_json);
-
-        if (log.isDebugEnabled()) {
-            log.debug("Grabbing data from URL: " + url);
-        }
+        // Tell the dataSource to grab data from the server
+        dataSource.populate_data(start_date, end_date, send_json_request_callback);
         
 		// Return false to cancel the usual submit functionality
 		return false;
 	}
 
-	/*
-	 * Iterate through each graph type, and add any data returned from the server
-	 * to the graph.  Validate incoming JSON and make sure there were no server errors.
-	 */
-	function populate_graphs_with_json(json_data, text_status, http_request) {
-        if (log.isInfoEnabled()) {
-            log.info("Received JSON data from server with status: " + text_status);
-        }		
-		
-	    // Did the request succeed?
-	    if (text_status != "success") {
-			if (log.isErrorEnabled()) {
-			     log.error("Bad status from server: " + text_status);
-		    }
-			return;
-	    }
-		
-		// Make sure we found JSON
-		if (json_data == null || json_data.length == 0) {
-			if (log.isWarnEnabled()) {
-				log.warn("Bad response from server!");
-			}
-			
-			// Turn off the loading graphic
-			$(".loading").hide();
-			return;
+    /*
+     * Handle any possible errors from the server.
+     * Pass the data to the dashboard and do any cleanup.
+     */
+    function send_json_request_callback(error) {
+ 		if (log.isInfoEnabled()) {
+		    log.info("JSON callback called with error: " + error);
 		}
-		
-	    // Run through possible error codes from server
-		
-		// 0104 is session expired, redirect to the passed URL
-		if (json_data.error_code != null && json_data.error_code == "0104") {
-			log.info("Session expired, redirecting to: " + json_data.error_text);
-			
-			window.location = json_data.error_text;
-			return false;
-		}
-		
-		// Make sure we have an array of data points
-		if (!json_data instanceof Array) {
-			if (log.isWarnEnabled()) {
-                log.warn("No data found from server!");
-            }
-
-            // Do something to indicate no data
-		}
-		
-		
-		// DATA PREPROCESSING, MOVE TO SERVER OR IN TO A JS CLASS
-		
-		// Pull out the day into a Date for each data point
-	    json_data.forEach(function(d) {
-			var period = d.time.lastIndexOf('.');
-	        d.date = Date.parseDate(d.time.substring(0, period), "Y-m-d g:i:s").grabDate();
-			
-			// Check if the date was parsed correctly
-			if (d.date == null) {
-				if (log.isErrorEnabled()) {
-					log.error("Date parsed incorrectly from: " + d.time);
-				}
-			}
-		});		
-		
-		// Load the data into the dashboard
-		dashBoard.load_data(json_data);
-		
-		// Switch off the loading graphic
-        dashBoard.loading(false);
-	}
-	
-
+         
+        // Check for error status
+        //DataSourceJson.SUCCESS = 0;
+        //DataSourceJson.BAD_STATUS = 1;
+        //DataSourceJson.NO_DATA = 2;
+        //DataSourceJson.MALFORMED_DATA = 3;
+        //DataSourceJson.SESSION_EXPIRED = 4;
+         
+        // Load the data into the dashboard
+        dashBoard.load_data(dataSource);
+ 		
+        // Switch off the loading graphic
+        dashBoard.loading(false);       
+    }
 	
     </script>
 	
   </head>
   <body>
+  <!-- Wrap the entire page in a custom div, maybe can use body instead -->
   <div id="wrapper" class="f">
   
-  <!-- Get some CSS layout going here -->
+  <!-- Dashboard banner -->
   <div id="banner">
 	<span class="h">EMA Visualizations for <c:out value="${sessionScope.user.userName}"></c:out>.</span>
 	<div id="logout"><a href="/app/logout">Logout</a></div>
@@ -285,12 +212,13 @@
          </form>
   </div>
   
+  <!-- Main body of the dashboard -->
   <div id="main">
 	  <ul class="tabs"></ul> 
 	  <div class="panes"></div>
   </div>
   
- 
+ <!-- Dashboard footer -->
  <div id="footer">
  	Question? Comment? Problem? Email us at andwellness-info@cens.ucla.edu.
  </div>

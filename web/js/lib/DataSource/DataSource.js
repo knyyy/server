@@ -11,27 +11,168 @@
 // DataSource constuctor
 function DataSourceJson(url) {
 	this.url = url;
-	current_data = [];
+	this.current_data = [];
+	this.callback = null;
+	this.error_status = 0;
 }
 
-DataSourceJson.prototype.populate_data = function(start_date, end_date, url, callback) {
-	this.callback = callback;
-	
-    url += "?s=" + start_date + "&e=" + end_date;		
-		
-    $.getJSON(url, this.handle_json_data);
-}
+// Constants
+DataSourceJson._logger = log4javascript.getLogger();
 
-DataSourceJson.prototype.handle_json_data = function(json_data, text_status) {
-	// Do basic data filtering
-	
-	// Pull out the day into a Date for each data point
-    json_data.forEach(function(d) {
-        d.date = new Date(d.time).grabDate();
+// Possible error codes from server
+DataSourceJson.SUCCESS = 0;
+DataSourceJson.BAD_STATUS = 1;
+DataSourceJson.NO_DATA = 2;
+DataSourceJson.MALFORMED_DATA = 3;
+DataSourceJson.SESSION_EXPIRED = 4;
+
+// Possible error type for synchronous calls
+DataSourceJson.NoDataError = function(message) {
+    this.name = "NoDataError";
+    this.message = message;
+}
+DataSourceJson.NoDataError.prototype = new Error();
+
+/*
+ * Return data with the passed prompt_id and group_id
+ */
+DataSourceJson.prototype.retrieve_data = function(prompt_id, group_id) {
+    // Filter out the needed data and remove RESPONSE_SKIPPED for now
+    var filtered_data = this.current_data.filter(function(data_point) {
+        return ((prompt_id == data_point.prompt_id) && 
+                (group_id == data_point.prompt_group_id) &&
+                (data_point.response != "RESPONSE_SKIPPED"));
     });
+    
+    // Do some sanity checking on the filtered data
+    // If no data found
+    if (filtered_data.length == 0) {
+        throw new DataSourceJson.NoDataError("retrive_data(): Found no data for prompt_id " + prompt_id + " and group_id " + group_id);
+    }
+    
+    return filtered_data;
+}
+
+
+/*
+ * Call to populate the data store with new data from start_date to end_date.
+ * Pass in a call back function to handle any possible errors.
+ */
+DataSourceJson.prototype.populate_data = function(start_date, end_date, callback) {
+    // Make sure the data types are correct
+    if (!(typeof start_date == "string") || 
+        !(typeof end_date == "string") || 
+        callback == null) {
+        throw TypeError("populate_data(): Incorrect argument type passed.");
+    }
+    
+    // Save the callback to call when data is retrieved from the server
+    this.callback = callback;
+    
+    // Send out the JSON request
+    var _url = this.url + "?s=" + start_date + "&e=" + end_date;
+    if (DataSourceJson._logger.isDebugEnabled()) {
+        DataSourceJson._logger.debug("Grabbing data from URL: " + _url);
+    }
+    try {
+        // Use jQuery proxy to enforce context when the asynchronous callback
+        // comes back from the server (or else we would lose the this variable)
+        $.getJSON(_url, jQuery.proxy( this.populate_data_callback, this ));
+    }
+    catch (error) {
+        throw new Error("populate_data(): Problem retrieving JSON from the server.");
+    }
+}
+
+/*
+ * The callback to handle incoming JSON data from the server.
+ * Send any errors to the callback function.
+ */
+DataSourceJson.prototype.populate_data_callback = function(json_data, text_status) {
+    var error = 0;
+    
+    if (DataSourceJson._logger.isInfoEnabled()) {
+        DataSourceJson._logger.info("Received JSON data from server with status: " + text_status);
+    }    
+    
+    // Did the request succeed?
+    if (text_status != "success") {
+        if (DataSourceJson._logger.isErrorEnabled()) {
+            DataSourceJson._logger.error("Bad status from server: " + text_status);
+        }
+        return DataSourceJson.BAD_STATUS;
+    }
+    
+    // Make sure the data makes sense
+    error = this.validate_data(json_data);
+    if (error > 0) {
+        this.callback(error);
+    }
+    
+    // Do basic data filtering
+	this.preprocess_data(json_data);
 	
+	// Save the data for later retrieval
 	this.current_data = json_data;
 	
-	this.callback();
+	this.callback(error);
+}
+
+/*
+ * Make sure the data makes sense and is not an error
+ */
+DataSourceJson.prototype.validate_data = function(json_data) {   
+    // Make sure we found JSON
+    if (json_data == null) {
+        if (DataSourceJson._logger.isWarnEnabled()) {
+            DataSourceJson._logger.warn("Bad response from server!");
+        }
+        
+        return DataSourceJson.MALFORMED_DATA;
+    }
+    
+    // Run through possible error codes from server
+    
+    // 0104 is session expired, redirect to the passed URL
+    if (json_data.error_code != null && json_data.error_code == "0104") {
+        if (DataSourceJson._logger.isInfoEnabled()) {
+            DataSourceJson._logger.info("Session expired, redirecting to: " + json_data.error_text);
+        }
+        
+        // Should handle this at a higher layer, not here
+        window.location = json_data.error_text;
+        
+        return DataSourceJson.SESSION_EXPIRED;
+    }
+    
+    // Make sure we have an array of data points
+    if (!json_data instanceof Array || json_data.length == 0) {
+        if (DataSourceJson._logger.isWarnEnabled()) {
+            DataSourceJson._logger.warn("No data found from server!");
+        }
+
+        return DataSourceJson.NO_DATA;
+    }
+    
+    // If we made it through all the checks, success
+    return DataSourceJson.SUCCESS;
+}
+
+/*
+ * Any pre-processing of the data will get done here.
+ */
+DataSourceJson.prototype.preprocess_data = function(json_data) {
+    // Pull out the day into a Date for each data point
+    json_data.forEach(function(d) {
+        var period = d.time.lastIndexOf('.');
+        d.date = Date.parseDate(d.time.substring(0, period), "Y-m-d g:i:s").grabDate();
+        
+        // Check if the date was parsed correctly
+        if (d.date == null) {
+            if (DataSourceJson._logger.isErrorEnabled()) {
+                DataSourceJson._logger.error("Date parsed incorrectly from: " + d.time);
+            }
+        }
+    });
 }
 

@@ -366,7 +366,7 @@ Date.prototype.incrementDay = function(numDays) {
     var original_time_offset = this.getTimezoneOffset();
     var new_time_offset = next_day.getTimezoneOffset();
     if (original_time_offset != new_time_offset) {
-        // Recreate the new day and fix the timezone offset
+        // Recreate the new day and fix the daylight savings shift
         next_day = new Date(this.getTime() + Date.one_day * numDays + (new_time_offset - original_time_offset) * 60 * 1000);
     }
     

@@ -30,11 +30,6 @@ function ProtoGraph(div_id, title, graph_width) {
 	this.has_day_demarcations = false;
 	this.width = graph_width - ProtoGraph.LEFT_MARGIN - ProtoGraph.RIGHT_MARGIN;
 	
-	ProtoGraph._logger.debug("Setting graph width to: " + this.width);
-	
-	/*
-	 * Do basic graph panel setup, common to any type of graph
-	 */
 	
 	// Build the div structure for the graph at the passed div_id
     //this.build_div_structure();

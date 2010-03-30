@@ -8,8 +8,6 @@
 // is simply a list of question types.  The graph_width is the total
 // width in pixels the graphs will take.
 function DashBoard(json_config) {
-    // 
-    
     // Configure the HTML and CSS for the graphs/tabs
     this.configure_html(json_config);
 }
@@ -74,10 +72,8 @@ DashBoard.prototype.configure_html = function(json_config) {
 }
 
 // Load new data into the graphs and rerender
-DashBoard.prototype.load_data = function(json_data) {
-    var data = json_data;
-    
-    // iterate over every ProtoGraph class
+DashBoard.prototype.load_data = function(data_source) {
+    // Iterate over every ProtoGraph class
     var that = this;
     $('div.ProtoGraph > div').each(function(index) {
         // Grab the graph object attached to this div
@@ -86,55 +82,53 @@ DashBoard.prototype.load_data = function(json_data) {
         var group_id = $(this).data('group_id');
         
         // Time the rendering of the graph
-        if (log.isDebugEnabled()) {
-            log.debug("Rendering graph with prompt_id " + prompt_id + " group_id " + group_id);
+        if (DashBoard._logger.isDebugEnabled()) {
+            DashBoard._logger.debug("Rendering graph with prompt_id " + prompt_id + " group_id " + group_id);
             var start_render_time = new Date().getTime();
         }
         
-        // Also filter out SKIPPED points for now
-        var new_data = data.filter(function(data_point) {
-            return ((prompt_id == data_point.prompt_id) && 
-                    (group_id == data_point.prompt_group_id) &&
-                    (data_point.response != "RESPONSE_SKIPPED"));
-        });
-        
-        // Check if any data was found
-        if (new_data.length == 0) {
-            if (log.isInfoEnabled()) {
-                log.info("No data found for group_id " + group_id + " prompt_id " + prompt_id);
-            }
-            
-            // Replace graph with no data found warning
-            if ($(this).data('hidden') == false) {
-                that.replace_with_no_data($(this));
-                $(this).data('hidden', true);
-            }
+        // Grab data for the specified prompt/group
+        try {
+            var new_data = data_source.retrieve_data(prompt_id, group_id);
         }
-        // Apply data if data was found
-        else {
-            if (DashBoard._logger.isDebugEnabled()) {
-                DashBoard._logger.debug("Found " + new_data.length + " data points");
+        catch (error) {
+            if (error instanceof DataSourceJson.NoDataError) {
+                if (DashBoard._logger.isInfoEnabled()) {
+                    DashBoard._logger.info(error.message);
+                }
+                
+                // Replace graph with no data found warning
+                if ($(this).data('hidden') == false) {
+                    that.replace_with_no_data($(this));
+                    $(this).data('hidden', true);
+                }
             }
             
-            // If the graph was hidden due to no data found, unhide
-            if ($(this).data('hidden') == true) {
-                that.replace_with_graph($(this));
-                $(this).data('hidden', false);
-            }
-            
-            // Apply data to the graph
-            graph.apply_data(new_data, 
-                             startDate, 
-                             numDays);
-            
-            // Re-render graph with the new data
-            graph.render();
+            return;
         }
         
-        if (log.isDebugEnabled()) {
-            var time_to_render = new Date().getTime() - start_render_time;
-            
-            log.debug("Time to render graph: " + time_to_render + " ms");
+        if (DashBoard._logger.isDebugEnabled()) {
+            DashBoard._logger.debug("Found " + new_data.length + " data points");
+        }
+        
+        // If the graph was hidden due to no data found, unhide
+        if ($(this).data('hidden') == true) {
+            that.replace_with_graph($(this));
+            $(this).data('hidden', false);
+        }
+        
+        // Apply data to the graph
+        graph.apply_data(new_data, 
+                         startDate, 
+                         numDays);
+        
+        // Re-render graph with the new data
+        graph.render();
+        
+        
+        if (DashBoard._logger.isDebugEnabled()) {
+            var time_to_render = new Date().getTime() - start_render_time;           
+            DashBoard._logger.debug("Time to render graph: " + time_to_render + " ms");
         }               
     });
 }
