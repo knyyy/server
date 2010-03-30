@@ -89,7 +89,16 @@ DashBoard.prototype.load_data = function(data_source) {
         
         // Grab data for the specified prompt/group
         try {
-            var new_data = data_source.retrieve_data(prompt_id, group_id);
+            // Hack in custom graphs here
+            if (graph instanceof ProtoGraphCustomSleepType) {
+                var new_data = data_source.retrieve_data_sleep_time();
+            }
+            // No custom data processing
+            else {
+                var new_data = data_source.retrieve_data(prompt_id, group_id);
+            }
+            
+            
         }
         catch (error) {
             if (error instanceof DataSourceJson.NoDataError) {

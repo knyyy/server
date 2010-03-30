@@ -5,11 +5,7 @@
 
  var response_list = [
  	{group_id:0, prompt_id:0, text:'Take a saliva sample now and enter time.', type:4},
-	{group_id:1, prompt_id:0, text:'What time did you go to bed last night?', type:0},
-	{group_id:1, prompt_id:1, text:'How long did it take you to fall asleep last night?', type:2, y_labels:['<10','10-20','20-30','30-40','50+']},
-	{group_id:1, prompt_id:2, text:'What time did you wake up this morning?', type:0},
-	{group_id:1, prompt_id:3, text:'How many hours of actual sleep did you get?', type:2, y_labels:['0','1','2','3','4','5','6','7','8','9','10','11','12']},
-	{group_id:1, prompt_id:4, text:'How would you rate your sleep quality?', type:2, y_labels:['Very Bad','Bad','Good','Very Good']},
+	{group_id:1, prompt_id:0, text:'Sleep', type:5},
 	{group_id:2, prompt_id:1, text:'Sad', type:2, y_labels:['(Not at all) 0','1','(Slightly) 2','3','(Moderately) 4','5','(Extremely) 6']},
 	{group_id:2, prompt_id:2, text:'Relaxed', type:2, y_labels:['(Not at all) 0','1','(Slightly) 2','3','(Moderately) 4','5','(Extremely) 6']},
 	{group_id:2, prompt_id:3, text:'Anxious', type:2, y_labels:['(Not at all) 0','1','(Slightly) 2','3','(Moderately) 4','5','(Extremely) 6']},

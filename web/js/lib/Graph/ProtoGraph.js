@@ -128,25 +128,23 @@ ProtoGraph.factory = function(graph_description, div_id, graph_width) {
 	// method to do this but here goes anyway
 	
 	if (graph_description.type == 0) {
-		// Pass in the div_id and the title
 		var new_graph = new ProtoGraphSingleTimeType(div_id, graph_description.text, graph_width);
 	}
 	if (graph_description.type == 1) {
-        // Pass in the div_id and the title
         var new_graph = new ProtoGraphTrueFalseArrayType(div_id, graph_description.text, graph_width, graph_description.y_labels);
     }
 	if (graph_description.type == 2) {
-        // Pass in the div_id and the title
         var new_graph = new ProtoGraphIntegerType(div_id, graph_description.text, graph_width, graph_description.y_labels);
     }
 	if (graph_description.type == 3) {
-        // Pass in the div_id and the title
         var new_graph = new ProtoGraphYesNoType(div_id, graph_description.text, graph_width);
     }
 	if (graph_description.type == 4) {
-        // Pass in the div_id and the title
         var new_graph = new ProtoGraphMultiTimeType(div_id, graph_description.text, graph_width);
     }
+	if (graph_description.type == 5) {
+	    var new_graph = new ProtoGraphCustomSleepType(div_id, graph_description.text, graph_width);
+	}
 	
 	return new_graph;
 }
@@ -888,4 +886,60 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
     this.add_day_demarcations(num_days - 1, margin);
 }
 
+/*
+ * Custom type to combine multiple sleep responses into one graph
+ */
+function ProtoGraphCustomSleepType(div_id, title, graph_width, data, start_date, num_days) {
+    // Inherit properties
+    ProtoGraph.call(this, div_id, title, graph_width);
 
+    // Add the Y labels now
+    this.vis.add(pv.Label)
+        .bottom(0)
+        .left(0)
+        .textAlign('right')
+        .textBaseline('bottom')
+        .text('00:01')
+        .font(ProtoGraph.LABEL_STYLE)
+        
+    this.vis.add(pv.Label)
+        .top(0)
+        .left(0)
+        .textAlign('right')
+        .textBaseline('top')
+        .text('23:59')
+        .font(ProtoGraph.LABEL_STYLE)
+        
+    // Setup the Y scale
+    this.y_scale = pv.Scale.linear(new Date(0, 0, 0, 0, 0, 0), new Date(0, 0, 0, 23, 59, 59)).range(0, ProtoGraph.HEIGHT);
+}
+
+// Inherit methods from ProtoGraph
+ProtoGraphCustomSleepType.prototype = new ProtoGraph();
+
+ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_days) {
+ // Copy the new information
+ this.data = data;
+ this.num_days = num_days;
+ 
+ // Replace the x labels
+ this.replace_x_labels(start_date, num_days);
+ 
+ // Split the data into categories using Scale.ordinal
+ var dayArray = [];
+ for (var i = 0; i < this.num_days; i += 1) {
+     var next_day = start_date.incrementDay(i);
+     dayArray.push(next_day);
+ }
+ 
+ // Setup the X scale now
+ this.x_scale = pv.Scale.ordinal(dayArray).splitBanded(0, this.width, ProtoGraph.BAR_WIDTH);
+
+ 
+ // splitBanded adds a margin in to the scale.  Find the margin
+ // from the range
+ var range = this.x_scale.range();
+ var margin = range[0] / 2;
+ // Only add ticks between days, so subtract one
+ this.add_day_demarcations(num_days - 1, margin);
+}

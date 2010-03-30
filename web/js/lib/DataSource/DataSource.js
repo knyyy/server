@@ -47,10 +47,77 @@ DataSourceJson.prototype.retrieve_data = function(prompt_id, group_id) {
     // Do some sanity checking on the filtered data
     // If no data found
     if (filtered_data.length == 0) {
-        throw new DataSourceJson.NoDataError("retrive_data(): Found no data for prompt_id " + prompt_id + " and group_id " + group_id);
+        throw new DataSourceJson.NoDataError("retrieve_data(): Found no data for prompt_id " + prompt_id + " and group_id " + group_id);
     }
     
     return filtered_data;
+}
+
+/*
+ * Return data specifically for a customized sleep graph.  This is functionality
+ * that should eventually be moved to the server side, but we can do this here
+ * for now.
+ * 
+ * Tons of magic numbers and hacks for now
+ */
+DataSourceJson.prototype.retrieve_data_sleep_time = function() {
+    var time_in_bed = this.current_data.filter(function(data_point) {
+        return ((data_point.prompt_id == 0) && 
+                (data_point.prompt_group_id == 1));
+    });
+    
+    var time_to_fall_asleep = this.current_data.filter(function(data_point) {
+        return ((data_point.prompt_id == 1) && 
+                (data_point.prompt_group_id == 1));
+    });
+    
+    var time_awake = this.current_data.filter(function(data_point) {
+        return ((data_point.prompt_id == 2) && 
+                (data_point.prompt_group_id == 1));
+    });
+    
+    var reported_hours_asleep = this.current_data.filter(function(data_point) {
+        return ((data_point.prompt_id == 3) && 
+                (data_point.prompt_group_id == 1));
+    });
+    
+    var reported_sleep_quality = this.current_data.filter(function(data_point) {
+        return ((data_point.prompt_id == 4) && 
+                (data_point.prompt_group_id == 1));
+    });
+    
+    
+    
+    // Used to store all the data needed for the sleep graph
+    var data_array = [];
+    var previous_day = null;
+    
+    // Run over each data point
+    for (var i = 0; i < time_in_bed.length; i += 1) {
+        var cur_day = time_in_bed[i].date;
+        
+        // Make sure this is a new day of data
+        if (cur_day == previous_day) {
+            continue;
+        }
+        else {
+            previous_day = cur_day;
+        }
+        
+        // Create a new data point
+        var data_point = new Object();
+        data_point.date = cur_day;
+        data_point.time_in_bed = Date.parseDate(time_in_bed[i].response, "g:i").grabTime();
+        data_point.time_to_fall_asleep = parseInt(time_to_fall_asleep[i].response);
+        data_point.time_awake = Date.parseDate(time_awake[i].response, "g:i").grabTime();
+        data_point.reported_hours_asleep = parseInt(reported_hours_asleep[i].response);
+        data_point.reported_sleep_quality = parseInt(reported_sleep_quality[i].response);
+        
+        // Push data point onto the data array
+        data_array.push(data_point);
+    }
+    
+    return data_array;
 }
 
 
