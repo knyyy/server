@@ -114,7 +114,7 @@ public class SensorAuthServlet extends AbstractAwHttpServlet {
 			// back to the client
 			
 			// instead of the exception being wrapped and re-thrown, send the error code for severe errors
-			writer.write("{\"errors\":[{\"error_code\":\"0103\",\"error_text\":\"server error\"}]}");
+			writer.write("{\"errors\":[{\"code\":\"0103\",\"text\":\"server error\"}]}");
 		}
 		
 		finally {

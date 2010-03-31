@@ -108,7 +108,7 @@ public class AuthenticationFilter implements Filter {
 					response.setContentType("application/json");
 					
 					Writer writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-					writer.write("{\"error_code\":\"0104\",\"error_text\":\"" + _loginRedirectUrl + "\"}");
+					writer.write("{\"code\":\"0104\",\"text\":\"" + _loginRedirectUrl + "\"}");
 					writer.flush();
 					writer.close();
 					writer = null;

@@ -49,7 +49,7 @@
       <value>yyyy-MM-dd</value>
     </constructor-arg>
     <property name="errorMessage">
-      <value>{"error_code":"0700","error_text":"invalid start date"}</value>
+      <value>{"code":"0700","text":"invalid start date"}</value>
     </property>
   </bean>	
 
@@ -64,7 +64,7 @@
       <value>yyyy-MM-dd</value>
     </constructor-arg>
     <property name="errorMessage">
-      <value>{"error_code":"0700","error_text":"invalid end date"}</value>
+      <value>{"code":"0700","text":"invalid end date"}</value>
     </property>
   </bean>	
 	

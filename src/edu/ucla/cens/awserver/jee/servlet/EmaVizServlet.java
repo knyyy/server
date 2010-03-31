@@ -141,7 +141,7 @@ public class EmaVizServlet extends AbstractAwHttpServlet {
 		catch(Exception e) { 
 			
 			_logger.error("an unrecoverable exception occurred while running an EMA query", e);
-			writer.write("{\"error_code\":\"0103\",\"error_text\":\"" + e.getMessage() + "\"}");
+			writer.write("{\"code\":\"0103\",\"text\":\"" + e.getMessage() + "\"}");
 			
 		} finally {
 			
