@@ -6,12 +6,12 @@ DELETE FROM prompt_response;
 UPDATE prompt SET parent_config_id = null;
 DELETE from prompt;
 
-UPDATE prompt_type SET restrictiction = '{0:"<10",1:"10-20",2:"20-30",3:"30-40",4:"50+"}' WHERE id = 3;
-UPDATE prompt_type SET restrictiction = '{0:0,1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,11:11,12:12}' WHERE id = 4;
-UPDATE prompt_type SET restrictiction = '{0:"very bad",1:"bad",2:"good",3:"very good"}' WHERE id = 5;
-UPDATE prompt_type SET restrictiction = '{0:"not at all",1:"slightly",2:"moderately",3:"extremely"}' WHERE id = 6;
-UPDATE prompt_type SET restrictiction = '{0:"rarely",1:"sometimes",2:"often"}' WHERE id = 7;
-UPDATE prompt_type SET restrictiction = '{0:"No",1:"Yes"}' WHERE id = 10; -- just a JSON cleanup, not a data change
+UPDATE prompt_type SET restriction = '{0:"<10",1:"10-20",2:"20-30",3:"30-40",4:"50+"}' WHERE id = 3;
+UPDATE prompt_type SET restriction = '{0:0,1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,11:11,12:12}' WHERE id = 4;
+UPDATE prompt_type SET restriction = '{0:"very bad",1:"bad",2:"good",3:"very good"}' WHERE id = 5;
+UPDATE prompt_type SET restriction = '{0:"not at all",1:"slightly",2:"moderately",3:"extremely"}' WHERE id = 6;
+UPDATE prompt_type SET restriction = '{0:"rarely",1:"sometimes",2:"often"}' WHERE id = 7;
+UPDATE prompt_type SET restriction = '{0:"No",1:"Yes"}' WHERE id = 10; -- just a JSON cleanup, not a data change
 -- UPDATE prompt_type SET restrictiction = '' WHERE id = 13; -- TODO - confirm with Nithya
 INSERT INTO prompt_type (type, restriction) VALUES ("map", '{0:"not at all",1:"slightly",2:"moderately",3:"very"}');
 
