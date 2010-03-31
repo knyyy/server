@@ -108,8 +108,16 @@ DataSourceJson.prototype.retrieve_data_sleep_time = function() {
         var data_point = new Object();
         data_point.date = cur_day;
         data_point.time_in_bed = Date.parseDate(time_in_bed[i].response, "g:i").grabTime();
+        
+        // Check if "time_in_bed" is yesterday (before midnight) or today (after midnight)
+        if (data_point.time_in_bed < new Date(0,0,0,15,0,0)) {
+            data_point.time_in_bed = data_point.time_in_bed.incrementDay(1);
+        }
         data_point.time_to_fall_asleep = parseInt(time_to_fall_asleep[i].response);
-        data_point.time_awake = Date.parseDate(time_awake[i].response, "g:i").grabTime();
+        
+        // Increment day by 1 to move awake time to "today"
+        data_point.time_awake = Date.parseDate(time_awake[i].response, "g:i").grabTime().incrementDay(1);
+        
         data_point.reported_hours_asleep = parseInt(reported_hours_asleep[i].response);
         data_point.reported_sleep_quality = parseInt(reported_sleep_quality[i].response);
         
@@ -201,13 +209,13 @@ DataSourceJson.prototype.validate_data = function(json_data) {
     // Run through possible error codes from server
     
     // 0104 is session expired, redirect to the passed URL
-    if (json_data.error_code != null && json_data.error_code == "0104") {
+    if (json_data.code != null && json_data.code == "0104") {
         if (DataSourceJson._logger.isInfoEnabled()) {
-            DataSourceJson._logger.info("Session expired, redirecting to: " + json_data.error_text);
+            DataSourceJson._logger.info("Session expired, redirecting to: " + json_data.text);
         }
         
         // Should handle this at a higher layer, not here
-        window.location = json_data.error_text;
+        window.location = json_data.text;
         
         return DataSourceJson.SESSION_EXPIRED;
     }
