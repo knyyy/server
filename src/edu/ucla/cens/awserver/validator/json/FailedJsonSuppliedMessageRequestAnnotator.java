@@ -26,15 +26,6 @@ public class FailedJsonSuppliedMessageRequestAnnotator implements AwRequestAnnot
 		try {
 			
 			jsonObject = new JSONObject(message);
-			
-// *** removed because password can be a part of the URL string  
-//
-//			// now add the original request URL and the original JSON input message to the error output
-//			
-//			if(awRequest instanceof SensorUploadAwRequest) { // TODO - this is a bit of a hack and needs to be fixed
-//				jsonObject.put("request_url", awRequest.getRequestUrl());
-//				jsonObject.put("request_json", awRequest.getJsonDataAsString());
-//			}
 		
 		} catch(JSONException jsone) {  
 		

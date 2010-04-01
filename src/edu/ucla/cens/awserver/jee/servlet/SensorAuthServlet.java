@@ -99,12 +99,16 @@ public class SensorAuthServlet extends AbstractAwHttpServlet {
 			// Execute feature-specific logic
 			_controller.execute(awRequest);
 		    
+			response.setContentType("application/json");
+			
 			if(awRequest.isFailedRequest()) { 
 				
-				response.setContentType("application/json");
 				writer.write(awRequest.getFailedRequestErrorMessage());
-			} 
-			// if the request is successful, just let Tomcat return a 200
+				
+			} else {
+				
+				writer.write("{\"result\":\"success\"}");
+			}
 		}
 		
 		catch(Exception e) { 

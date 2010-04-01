@@ -67,44 +67,74 @@
   </bean>
   
   <bean id="sensorUploadUserNameFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-    <constructor-arg index="0"><value>{"errors":[{"code":"0200","text":"authentication failed"}]}</value></constructor-arg>
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+         <!--  <value>{"errors":[{"code":"0200","text":"authentication failed"}]}</value> -->
+        <property name="code" value="0200" />
+        <property name="text" value="authentication failed" />
+      </bean>
+    </constructor-arg>
   </bean>
   
   <bean id="sensorUploadPasswordFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-    <constructor-arg index="0"><value>{"errors":[{"code":"0200","text":"authentication failed"}]}</value></constructor-arg>
+    <constructor-arg index="0">
+      <!-- <value>{"errors":[{"code":"0200","text":"authentication failed"}]}</value> -->
+      <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+        <property name="code" value="0200" />
+        <property name="text" value="authentication failed" />
+      </bean>
+    </constructor-arg>
   </bean>
   
   
   <bean id="sensorUploadRequestTypeFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-    <constructor-arg index="0"><value>{"errors":[{"code":"0301","text":"missing or unknown request type"}]}</value></constructor-arg>
+    <constructor-arg index="0">
+      <!--   <value>{"errors":[{"code":"0301","text":"missing or unknown request type"}]}</value> -->
+      <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+        <property name="code" value="0301" />
+        <property name="text" value="missing or unknown request type" />
+      </bean>
+    </constructor-arg>
   </bean>
   
   <bean id="sensorUploadPhoneVersionFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-    <constructor-arg index="0"><value>{"errors":[{"code":"0302","text":"missing or unknown phone version"}]}</value></constructor-arg>
+    <constructor-arg index="0">
+      <!--  <value>{"errors":[{"code":"0302","text":"missing or unknown phone version"}]}</value> -->
+      <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+        <property name="code" value="0302" />
+        <property name="text" value="missing or unknown phone version" />
+      </bean>
+    </constructor-arg>
   </bean>
 
   <bean id="sensorUploadProtocolVersionFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-    <constructor-arg index="0"><value>{"errors":[{"code":"0303","text":"missing or unknown protocol version"}]}</value></constructor-arg>
+    <constructor-arg index="0">
+      <!--  <value>{"errors":[{"code":"0303","text":"missing or unknown protocol version"}]}</value> -->
+      <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+        <property name="code" value="0303" />
+        <property name="text" value="missing or unknown protocol version" />
+      </bean>
+    </constructor-arg>
   </bean>
   
   <bean id="sensorUploadJsonDataFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-    <constructor-arg index="0"><value>{"errors":[{"code":"0300","text":"missing json data"}]}</value></constructor-arg>
+    <constructor-arg index="0">
+     <!--  <value>{"errors":[{"code":"0300","text":"missing json data"}]}</value> -->
+     <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+        <property name="code" value="0300" />
+        <property name="text" value="missing json data" />
+      </bean>
+     </constructor-arg>
   </bean>
   
   <bean id="sensorUploadCampaignIdFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-    <constructor-arg index="0"><value>{"errors":[{"code":"0304","text":"invalid campaign id"}]}</value></constructor-arg>
+    <constructor-arg index="0">
+      <!--  <value>{"errors":[{"code":"0304","text":"invalid campaign id"}]}</value> -->
+      <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+        <property name="code" value="0304" />
+        <property name="text" value="invalid campaign id" />
+      </bean>
+    </constructor-arg>
   </bean>
   
 </beans>
-
-
-
-
-
-
-
-
-
-
-
-

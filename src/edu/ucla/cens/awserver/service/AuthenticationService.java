@@ -8,7 +8,6 @@ import edu.ucla.cens.awserver.dao.Dao;
 import edu.ucla.cens.awserver.dao.DataAccessException;
 import edu.ucla.cens.awserver.dao.LoginResult;
 import edu.ucla.cens.awserver.request.AwRequest;
-import edu.ucla.cens.awserver.util.StringUtils;
 import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
 
 /**
@@ -16,11 +15,11 @@ import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
  * 
  * @author selsky
  */
-public class AuthenticationService extends AbstractAnnotatingDaoService {
+public class AuthenticationService extends AbstractDaoService {
 	private static Logger _logger = Logger.getLogger(AuthenticationService.class);
-	private String _errorMessage;
-	private String _disabledMessage;
-	private String _newAccountMessage;
+	private AwRequestAnnotator _errorAwRequestAnnotator;
+	private AwRequestAnnotator _disabledAccountAwRequestAnnotator;
+	private AwRequestAnnotator _newAccountAwRequestAnnotator;
 	private boolean _newAccountsAllowed;
 	
 	/**
@@ -30,26 +29,28 @@ public class AuthenticationService extends AbstractAnnotatingDaoService {
 	 * service will treat new accounts as successful logins. New accounts are allowed access for the intial login via a phone and
 	 * blocked in every other case.
 	 * 
-	 * @throws IllegalArgumentException if errorMessage is null, empty, or all whitespace 
-	 * @throws IllegalArgumentException if disabledMessage is null, empty, or all whitespace
+	 * @throws IllegalArgumentException if errorAwRequestAnnotator is null 
+	 * @throws IllegalArgumentException if disabledAccountAwRequestAnnotator is null
 	 */
-	public AuthenticationService(Dao dao, AwRequestAnnotator awRequestAnnotator, String errorMessage, String disabledMessage, 
-		String newAccountMessage, boolean newAccountsAllowed) {
+	public AuthenticationService(Dao dao, AwRequestAnnotator errorAwRequestAnnotator, 
+			AwRequestAnnotator disabledAccountAwRequestAnnotator, AwRequestAnnotator newAccountAwRequestAnnotator, 
+			boolean newAccountsAllowed) {
 		
-		super(dao, awRequestAnnotator);
-		if(StringUtils.isEmptyOrWhitespaceOnly(errorMessage)) {
-			throw new IllegalArgumentException("an error message is required");
+		super(dao);
+		
+		if(null == errorAwRequestAnnotator) {
+			throw new IllegalArgumentException("an error AwRequestAnnotator is required");
 		}
-		if(StringUtils.isEmptyOrWhitespaceOnly(disabledMessage)) {
-			throw new IllegalArgumentException("a disabled message is required");
+		if(null == disabledAccountAwRequestAnnotator) {
+			throw new IllegalArgumentException("a disabled account AwRequestAnnotator is required");
 		}
-		if(StringUtils.isEmptyOrWhitespaceOnly(newAccountMessage)) {
+		if(null == newAccountAwRequestAnnotator) {
 			_logger.info("configured without a new account message");
 		}
 		
-		_errorMessage = errorMessage;
-		_disabledMessage = disabledMessage;
-		_newAccountMessage = newAccountMessage;
+		_errorAwRequestAnnotator = errorAwRequestAnnotator;
+		_disabledAccountAwRequestAnnotator = disabledAccountAwRequestAnnotator;
+		_newAccountAwRequestAnnotator = newAccountAwRequestAnnotator;
 		_newAccountsAllowed = newAccountsAllowed;
 	}
 	
@@ -75,7 +76,8 @@ public class AuthenticationService extends AbstractAnnotatingDaoService {
 					
 					if(! _newAccountsAllowed && loginResult.isNew()) {
 						
-						getAnnotator().annotate(awRequest, _newAccountMessage);
+						_newAccountAwRequestAnnotator.annotate(awRequest, "new account disallowed access");
+						
 						_logger.info("user " + awRequest.getUser().getUserName() + " is new and must change their password via " +
 							"phone before being granted access");
 						
@@ -84,7 +86,9 @@ public class AuthenticationService extends AbstractAnnotatingDaoService {
 					
 					if(! loginResult.isEnabled()) {
 						
-						getAnnotator().annotate(awRequest, _disabledMessage);
+						// getAnnotator().annotate(awRequest, _disabledMessage);
+						_disabledAccountAwRequestAnnotator.annotate(awRequest, "disabled user");
+						
 						_logger.info("user " + awRequest.getUser().getUserName() + " is not enabled for access");
 						
 						return;
@@ -113,7 +117,9 @@ public class AuthenticationService extends AbstractAnnotatingDaoService {
 				
 			} else { // no user found or invalid password
 				
-				getAnnotator().annotate(awRequest, _errorMessage);
+				// getAnnotator().annotate(awRequest, _errorMessage);
+				_errorAwRequestAnnotator.annotate(awRequest, "user not found");
+				
 				_logger.info("user " + awRequest.getUser().getUserName() + " not found or invalid password was supplied");
 			}
 			
