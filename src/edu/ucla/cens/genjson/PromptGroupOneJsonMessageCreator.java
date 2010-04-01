@@ -55,8 +55,8 @@ public class PromptGroupOneJsonMessageCreator implements JsonMessageCreator {
 	
 		for(int i = 0; i < numberOfEntries; i++) {
 			try { Thread.sleep(100); } catch (InterruptedException ie) { } // ensure variable dates
-			String date = ValueCreator.date(i);
-			long epoch = ValueCreator.epoch(i);
+			String date = ValueCreator.date(i,1);
+			long epoch = ValueCreator.epoch(i,1);
 			double latitude = ValueCreator.latitude();
 			double longitude = ValueCreator.longitude();
 			
@@ -76,7 +76,7 @@ public class PromptGroupOneJsonMessageCreator implements JsonMessageCreator {
 			List<Map<String, Object>> responses = new ArrayList<Map<String, Object>>();
 			Map<String, Object> p0 = new HashMap<String, Object>();
 			p0.put("prompt_id", 0);
-			p0.put("response", ValueCreator.randomTime());
+			p0.put("response", ValueCreator.randomTime(23, 4));
 			responses.add(p0);
 			
 			Map<String, Object> p1 = new HashMap<String, Object>();
@@ -86,7 +86,7 @@ public class PromptGroupOneJsonMessageCreator implements JsonMessageCreator {
 			
 			Map<String, Object> p2 = new HashMap<String, Object>();
 			p2.put("prompt_id", 2);
-			p2.put("response", ValueCreator.randomTime());
+			p2.put("response", ValueCreator.randomTime(7, 4));
 			responses.add(p2);
 			
 			Map<String, Object> p3 = new HashMap<String, Object>();
