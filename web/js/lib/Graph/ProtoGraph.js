@@ -899,7 +899,7 @@ function ProtoGraphCustomSleepType(div_id, title, graph_width, data, start_date,
         .left(0)
         .textAlign('right')
         .textBaseline('bottom')
-        .text('00:01')
+        .text('noon (prev day)')
         .font(ProtoGraph.LABEL_STYLE)
         
     this.vis.add(pv.Label)
@@ -907,11 +907,11 @@ function ProtoGraphCustomSleepType(div_id, title, graph_width, data, start_date,
         .left(0)
         .textAlign('right')
         .textBaseline('top')
-        .text('23:59')
+        .text('noon (cur day)')
         .font(ProtoGraph.LABEL_STYLE)
         
     // Setup the Y scale
-    this.y_scale = pv.Scale.linear(new Date(0, 0, 0, 0, 0, 0), new Date(0, 0, 0, 23, 59, 59)).range(0, ProtoGraph.HEIGHT);
+    this.y_scale = pv.Scale.linear(new Date(0, 0, 0, 12, 0, 0), new Date(0, 0, 1, 12, 0, 0)).range(0, ProtoGraph.HEIGHT);
 }
 
 // Inherit methods from ProtoGraph
@@ -935,6 +935,51 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
  // Setup the X scale now
  this.x_scale = pv.Scale.ordinal(dayArray).splitBanded(0, this.width, ProtoGraph.BAR_WIDTH);
 
+ // Setup the plots if there is no data yet
+ if (this.has_data == false) {
+     // Need "that" to access "this" inside the closures
+     var that = this;
+     
+     // Plot time in bed
+     this.vis.add(pv.Line)
+       .data(function() {
+         return that.data;
+       })
+       .left(function(d) {
+         // Shift the dot right by half a band to center it in the day
+         var date_position = that.x_scale(d.date);
+           
+         var position = that.x_scale(d.date) + that.x_scale.range().band / 2;
+         return position;
+       })
+       .bottom(function(d) {
+          return that.y_scale(d.time_in_bed);
+       })    
+       // Add dots on the line
+     .add(pv.Dot).fillStyle(that.defaultColor).size(3);
+     
+     // Plot time awake
+     this.vis.add(pv.Line)
+     .data(function() {
+       return that.data;
+     })
+     .left(function(d) {
+       // Shift the dot right by half a band to center it in the day
+       var date_position = that.x_scale(d.date);
+         
+       var position = that.x_scale(d.date) + that.x_scale.range().band / 2;
+       return position;
+     })
+     .bottom(function(d) {
+        return that.y_scale(d.time_awake);
+     })
+     .strokeStyle("red")
+     // Add dots on the line
+     .add(pv.Dot).fillStyle("red").strokeStyle("red").size(3);
+     
+     
+     this.has_data = true;
+ }
  
  // splitBanded adds a margin in to the scale.  Find the margin
  // from the range
