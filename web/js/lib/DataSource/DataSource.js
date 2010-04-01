@@ -182,6 +182,7 @@ DataSourceJson.prototype.populate_data_callback = function(json_data, text_statu
     error = this.validate_data(json_data);
     if (error > 0) {
         this.callback(error);
+        return;
     }
     
     // Do basic data filtering

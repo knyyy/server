@@ -21,6 +21,8 @@ function ProtoGraph(div_id, title, graph_width) {
 	// Default values before data exists
 	this.left_x_label = "Undef";
 	this.right_x_label = "Undef";
+	this.top_y_label = "Undef";
+    this.bottom_y_label = "Undef";
 	this.num_days = 0;
 	this.data = [];
 	this.has_data = false;
@@ -29,10 +31,6 @@ function ProtoGraph(div_id, title, graph_width) {
 	this.has_average_line = false;
 	this.has_day_demarcations = false;
 	this.width = graph_width - ProtoGraph.LEFT_MARGIN - ProtoGraph.RIGHT_MARGIN;
-	
-	
-	// Build the div structure for the graph at the passed div_id
-    //this.build_div_structure();
 	
 	// Create a protovis Panel and attach to the div ID
 	this.vis = new pv.Panel()
@@ -53,7 +51,7 @@ function ProtoGraph(div_id, title, graph_width) {
 		
 	// Add X labels to the graph, use closures to refer to
 	// this.left_x_label and this.right_x_label so that later
-	// we can simply change those values and rerender the graph
+	// we can simply change those values and re-render the graph
 	// to change the X labels, instead of deleting and adding new
 	// pv.Labels
 	var that = this;
@@ -164,6 +162,12 @@ ProtoGraph.prototype.get_div_id = function() {
 ProtoGraph.prototype.replace_x_labels = function(start_date, num_days) {
     this.left_x_label = start_date.toStringMonthAndDay();
     this.right_x_label = start_date.incrementDay(num_days - 1).toStringMonthAndDay();	
+}
+
+// Helper function to replace Y labels with day values
+ProtoGraph.prototype.replace_y_labels = function(bottom_y_label, top_y_label) {
+    this.bottom_y_label = bottom_y_label;
+    this.top_y_label = top_y_label;
 }
 
 // Add an average line to the graph
@@ -889,29 +893,31 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
 /*
  * Custom type to combine multiple sleep responses into one graph
  */
-function ProtoGraphCustomSleepType(div_id, title, graph_width, data, start_date, num_days) {
+function ProtoGraphCustomSleepType(div_id, title, graph_width) {
     // Inherit properties
     ProtoGraph.call(this, div_id, title, graph_width);
 
-    // Add the Y labels now
+    // Add customizable Y labels now
+    var that = this;
     this.vis.add(pv.Label)
         .bottom(0)
         .left(0)
         .textAlign('right')
         .textBaseline('bottom')
-        .text('noon (prev day)')
-        .font(ProtoGraph.LABEL_STYLE)
+        .text(function() {
+            return that.bottom_y_label;
+        })
+        .font(ProtoGraph.LABEL_STYLE);
         
     this.vis.add(pv.Label)
         .top(0)
         .left(0)
         .textAlign('right')
         .textBaseline('top')
-        .text('noon (cur day)')
-        .font(ProtoGraph.LABEL_STYLE)
-        
-    // Setup the Y scale
-    this.y_scale = pv.Scale.linear(new Date(0, 0, 0, 12, 0, 0), new Date(0, 0, 1, 12, 0, 0)).range(0, ProtoGraph.HEIGHT);
+        .text(function() {
+            return that.top_y_label;
+        })
+        .font(ProtoGraph.LABEL_STYLE);
 }
 
 // Inherit methods from ProtoGraph
@@ -935,6 +941,29 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
  // Setup the X scale now
  this.x_scale = pv.Scale.ordinal(dayArray).splitBanded(0, this.width, ProtoGraph.BAR_WIDTH);
 
+ // Find the earliest in bed and latest awake point for the Y scale and labels
+ var earliest_time_in_bed = new Date(0,0,2,0,0,0);
+ var latest_time_awake = new Date(0,0,0,0,0,0);
+ 
+ this.data.forEach(function(data_point) {
+     if (data_point.time_in_bed < earliest_time_in_bed) {
+         earliest_time_in_bed = data_point.time_in_bed;
+     }
+     
+     if (data_point.time_awake > latest_time_awake) {
+         latest_time_awake = data_point.time_awake;
+     }
+ });
+
+ // Give an hour margin on top and bottom to make graph look nicer
+ earliest_time_in_bed = earliest_time_in_bed.incrementHour(-1);
+ latest_time_awake = latest_time_awake.incrementHour(1);
+ 
+ // Setup the Y labels and Y scale
+ this.replace_y_labels(latest_time_awake.toStringHourAndMinute(), earliest_time_in_bed.toStringHourAndMinute());
+ // We don't want the points right against the edge
+ this.y_scale = pv.Scale.linear(earliest_time_in_bed, latest_time_awake).range(ProtoGraph.HEIGHT, 0);
+ 
  // Setup the plots if there is no data yet
  if (this.has_data == false) {
      // Need "that" to access "this" inside the closures
@@ -955,8 +984,12 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
        .bottom(function(d) {
           return that.y_scale(d.time_in_bed);
        })    
+       .strokeStyle(ProtoGraph.DEFAULT_COLOR)
        // Add dots on the line
-     .add(pv.Dot).fillStyle(that.defaultColor).size(3);
+     .add(pv.Dot)
+     .fillStyle(ProtoGraph.DEFAULT_COLOR)
+     .strokeStyle(ProtoGraph.DEFAULT_COLOR)
+     .size(3);
      
      // Plot time awake
      this.vis.add(pv.Line)
@@ -973,9 +1006,12 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
      .bottom(function(d) {
         return that.y_scale(d.time_awake);
      })
-     .strokeStyle("red")
+     .strokeStyle(ProtoGraph.DEFAULT_COLOR)
      // Add dots on the line
-     .add(pv.Dot).fillStyle("red").strokeStyle("red").size(3);
+     .add(pv.Dot)
+     .fillStyle(ProtoGraph.DEFAULT_COLOR)
+     .strokeStyle(ProtoGraph.DEFAULT_COLOR)
+     .size(3);
      
      
      this.has_data = true;

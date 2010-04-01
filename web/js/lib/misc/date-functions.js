@@ -373,6 +373,11 @@ Date.prototype.incrementDay = function(numDays) {
     return next_day;
 };
 
+Date.prototype.incrementHour = function(numHours) {
+    var next_hour = new Date(this.getTime() + Date.one_hour * numHours);
+    return next_hour;
+}
+
 // Find the difference in days between this date and the
 // passed in date
 Date.prototype.difference_in_days = function(second_day) {
@@ -414,6 +419,8 @@ Date.prototype.equals = function(_date) {
 
 // Set one day in milliseconds
 Date.one_day = 1000*60*60*24;
+// One hour in milliseconds
+Date.one_hour = 1000*60*60;
 
 Date.daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
 Date.monthNames =
