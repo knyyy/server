@@ -36,7 +36,7 @@ public class AwRequestUserNameValidator extends AbstractAnnotatingRegexpValidato
 		
 		if(! _regexpPattern.matcher(userName).matches()) {
 		
-			getAnnotator().annotate(awRequest, "incorrect character found in user name: " + userName);
+			getAnnotator().annotate(awRequest, "incorrect user name: " + userName);
 			return false;
 		}
 		
