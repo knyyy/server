@@ -13,8 +13,6 @@
     <constructor-arg index="1"><ref bean="failedRequestAnnotator" /></constructor-arg>
   </bean>
   
-  <bean id="failedRequestAnnotator" class="edu.ucla.cens.awserver.validator.FailedRequestAnnotator" /> 
-  
   <bean id="sensorUploadUserNameValidator" class="edu.ucla.cens.awserver.validator.AwRequestUserNameValidator">
     <constructor-arg index="0"><value>[a-z\.]{9,15}</value></constructor-arg>
     <constructor-arg index="1"><ref bean="sensorUploadUserNameFailedJsonRequestAnnotator" /></constructor-arg>
@@ -69,7 +67,6 @@
   <bean id="sensorUploadUserNameFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-         <!--  <value>{"errors":[{"code":"0200","text":"authentication failed"}]}</value> -->
         <property name="code" value="0200" />
         <property name="text" value="authentication failed" />
       </bean>
@@ -78,7 +75,6 @@
   
   <bean id="sensorUploadPasswordFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
-      <!-- <value>{"errors":[{"code":"0200","text":"authentication failed"}]}</value> -->
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
         <property name="code" value="0200" />
         <property name="text" value="authentication failed" />
@@ -89,7 +85,6 @@
   
   <bean id="sensorUploadRequestTypeFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
-      <!--   <value>{"errors":[{"code":"0301","text":"missing or unknown request type"}]}</value> -->
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
         <property name="code" value="0301" />
         <property name="text" value="missing or unknown request type" />
@@ -99,7 +94,6 @@
   
   <bean id="sensorUploadPhoneVersionFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
-      <!--  <value>{"errors":[{"code":"0302","text":"missing or unknown phone version"}]}</value> -->
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
         <property name="code" value="0302" />
         <property name="text" value="missing or unknown phone version" />
@@ -109,7 +103,6 @@
 
   <bean id="sensorUploadProtocolVersionFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
-      <!--  <value>{"errors":[{"code":"0303","text":"missing or unknown protocol version"}]}</value> -->
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
         <property name="code" value="0303" />
         <property name="text" value="missing or unknown protocol version" />
@@ -119,7 +112,6 @@
   
   <bean id="sensorUploadJsonDataFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
-     <!--  <value>{"errors":[{"code":"0300","text":"missing json data"}]}</value> -->
      <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
         <property name="code" value="0300" />
         <property name="text" value="missing json data" />
@@ -129,12 +121,16 @@
   
   <bean id="sensorUploadCampaignIdFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
-      <!--  <value>{"errors":[{"code":"0304","text":"invalid campaign id"}]}</value> -->
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
         <property name="code" value="0304" />
         <property name="text" value="invalid campaign id" />
       </bean>
     </constructor-arg>
   </bean>
+  
+  <!-- The one and only FailedRequestAnnotator. Used for annotating AwRequests in the context of web-browser to server 
+       communication. 
+  -->
+  <bean id="failedRequestAnnotator" class="edu.ucla.cens.awserver.validator.FailedRequestAnnotator" />
   
 </beans>
