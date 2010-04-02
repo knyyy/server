@@ -34,15 +34,15 @@
       <ref bean="authenticationDao" />
     </constructor-arg>
     <constructor-arg index="1">
-      <bean class="edu.ucla.cens.awserver.validator.FailedRequestAnnotator" />
+      <ref bean="failedRequestAnnotator" />
     </constructor-arg>
     <constructor-arg index="2">
-      <bean class="edu.ucla.cens.awserver.validator.FailedRequestAnnotator" />
+      <ref bean="failedRequestAnnotator" />
     </constructor-arg>
     <constructor-arg index="3">
-      <bean class="edu.ucla.cens.awserver.validator.FailedRequestAnnotator" />
+      <ref bean="failedRequestAnnotator" />
     </constructor-arg>
-    <constructor-arg index="4"><value>false</value></constructor-arg> <!--  whether new accounts are allowed access -->
+    <constructor-arg index="4"><value>false</value></constructor-arg> <!--  toggle whether new accounts are allowed access -->
   </bean>
 
   <!-- Interact with database -->
