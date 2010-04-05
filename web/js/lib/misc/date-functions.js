@@ -359,24 +359,39 @@ String.leftPad = function (val, size, ch) {
     return result;
 }
 
-Date.prototype.incrementDay = function(numDays) {
-    var next_day = new Date(this.getTime() + Date.one_day * numDays);
+/*
+ * Add the specified number of milliseconds to the Date.  Return a copy of the
+ * original date.  Account for daylight savings by adding or subtracting an hour
+ * as necessary.
+ */
+Date.prototype.addTime = function(num_milliseconds) {
+    var next_time = new Date(this.getTime() + num_milliseconds);
     
     // Check to see if there is a daylight savings shift between the two days
     var original_time_offset = this.getTimezoneOffset();
-    var new_time_offset = next_day.getTimezoneOffset();
+    var new_time_offset = next_time.getTimezoneOffset();
     if (original_time_offset != new_time_offset) {
         // Recreate the new day and fix the daylight savings shift
-        next_day = new Date(this.getTime() + Date.one_day * numDays + (new_time_offset - original_time_offset) * 60 * 1000);
+        next_time = new Date(this.getTime() + 
+                            num_milliseconds +
+                            // getTimezoneOffset returns units in minutes
+                            (new_time_offset - original_time_offset) * Date.one_minute);
     }
     
-    return next_day;
-};
-
-Date.prototype.incrementHour = function(numHours) {
-    var next_hour = new Date(this.getTime() + Date.one_hour * numHours);
-    return next_hour;
+    return next_time;
 }
+
+Date.prototype.incrementMinute = function(num_minutes) {
+    return this.addTime(num_minutes * Date.one_minute);
+}
+
+Date.prototype.incrementHour = function(num_hours) {
+    return this.addTime(num_hours * Date.one_hour);
+}
+
+Date.prototype.incrementDay = function(num_days) {
+    return this.addTime(num_days * Date.one_day);
+};
 
 // Find the difference in days between this date and the
 // passed in date
@@ -417,11 +432,12 @@ Date.prototype.equals = function(_date) {
     return this.getTime() == _date.getTime();
 }
 
-// Set one day in milliseconds
-Date.one_day = 1000*60*60*24;
-// One hour in milliseconds
+// Constants to translate common time increments to milliseconds
+Date.one_minute = 1000*60;
 Date.one_hour = 1000*60*60;
+Date.one_day = 1000*60*60*24;
 
+// Keep track of number of days in each of the months
 Date.daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
 Date.monthNames =
    ["January",
