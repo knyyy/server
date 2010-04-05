@@ -99,7 +99,7 @@ public class PromptGroupTwoJsonMessageCreator implements JsonMessageCreator {
 			for(int j = 1; j < 10; j++) {
 				Map<String, Object> p = new HashMap<String, Object>();
 				p.put("prompt_id", j);
-				p.put("response", ValueCreator.randomPositiveIntModulus(3));
+				p.put("response", ValueCreator.randomPositiveIntModulus(4));
 				responses.add(p);
 			}
 			
