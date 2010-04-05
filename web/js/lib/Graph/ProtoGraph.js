@@ -930,6 +930,7 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
  // Copy the new information
  this.data = data;
  this.num_days = num_days;
+ this.start_date = start_date;
  
  // Replace the x labels
  this.replace_x_labels(start_date, num_days);
@@ -1131,10 +1132,24 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
              var mouse_pos = panel.mouse().x;
              // Find the day index under the mouse pointer
              var day_index = Math.floor(that.y_scale_linear.invert(mouse_pos));
+             
+             // Make sure this index lies in the data (there could
+             // be data for only part of the graph)
+             var first_date = that.data[0].date;
+             var difference_between_first_and_start = that.start_date.getTime() -
+                                                      first_date.getTime();
+             var difference_in_days = Math.floor(difference_between_first_and_start / Date.one_day);
+             
+             // Shift index by this difference
+             day_index += difference_in_days;
+             
+             if (day_index >= that.data.length) {
+                 return panel.i(-1);
+             }
+             
              // If the index has changed, update the graph
              if (panel.i() != day_index) {
-                 panel.i(day_index);
-                 return panel;
+                 return panel.i(day_index);
              }
          });
      

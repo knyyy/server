@@ -61,6 +61,11 @@ DataSourceJson.prototype.retrieve_data = function(prompt_id, group_id) {
  * Tons of magic numbers and hacks for now
  */
 DataSourceJson.prototype.retrieve_data_sleep_time = function() {
+    // be sure we have some data
+    if (this.current_data == null || this.current_data.length == 0) {
+        throw new DataSourceJson.NoDataError("retrieve_data_sleep_time(): Found no data.");   
+    }
+    
     var time_in_bed = this.current_data.filter(function(data_point) {
         return ((data_point.prompt_id == 0) && 
                 (data_point.prompt_group_id == 1));
@@ -85,7 +90,6 @@ DataSourceJson.prototype.retrieve_data_sleep_time = function() {
         return ((data_point.prompt_id == 4) && 
                 (data_point.prompt_group_id == 1));
     });
-    
     
     
     // Used to store all the data needed for the sleep graph
@@ -164,6 +168,9 @@ DataSourceJson.prototype.populate_data = function(start_date, end_date, callback
  * Send any errors to the callback function.
  */
 DataSourceJson.prototype.populate_data_callback = function(json_data, text_status) {
+    // Clear the old data
+    this.current_data = [];
+                         
     var error = 0;
     
     if (DataSourceJson._logger.isInfoEnabled()) {
