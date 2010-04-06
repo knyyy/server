@@ -4,65 +4,61 @@
  * the DOM ID or the object to graphize, the data to graph, and a few
  * various tweaks.
  */ 
- 
-// Libraries that add functionality to the Array type
-//LoadScript('lib/misc/array_lib.js');
-// Added Date functionality
-//LoadScriptJQuery('lib/misc/date_lib.js');
+
  
 // ProtoGraph constructor:
 //   div_id: The ID of the html element to graphize
 //   title: The title to display for the graph
 //   graph_width: Total width of the graph in pixels
 function ProtoGraph(div_id, title, graph_width) {
-	this.div_id = div_id;
-	this.title = title;
+    this.div_id = div_id;
+    this.title = title;
 	
-	// Default values before data exists
-	this.left_x_label = "Undef";
-	this.right_x_label = "Undef";
-	this.top_y_label = "Undef";
+    // Default values before data exists
+    this.left_x_label = "Undef";
+    this.right_x_label = "Undef";
+    this.top_y_label = "Undef";
     this.bottom_y_label = "Undef";
-	this.num_days = 0;
-	this.data = [];
-	this.has_data = false;
-	this.x_scale = null;
-	this.y_scale = null;
-	this.has_average_line = false;
-	this.has_day_demarcations = false;
-	this.width = graph_width - ProtoGraph.LEFT_MARGIN - ProtoGraph.RIGHT_MARGIN;
+    this.num_days = 0;
+    this.data = [];
+    this.has_data = false;
+    this.x_scale = null;
+    this.y_scale = null;
+    this.has_average_line = false;
+    this.has_day_demarcations = false;
+    this.width = graph_width - ProtoGraph.LEFT_MARGIN - ProtoGraph.RIGHT_MARGIN;
 	
-	// Create a protovis Panel and attach to the div ID
-	this.vis = new pv.Panel()
-		.width(this.width)
-		.height(ProtoGraph.HEIGHT)
-		.left(ProtoGraph.LEFT_MARGIN)
-		.bottom(ProtoGraph.BOTTOM_MARGIN)
-		.top(ProtoGraph.TOP_MARGIN)
-		.right(ProtoGraph.RIGHT_MARGIN)
-		.canvas(this.div_id);
+    // Create a protovis Panel and attach to the div ID
+    this.vis = new pv.Panel()
+        .width(this.width)
+        .height(ProtoGraph.HEIGHT)
+        .left(ProtoGraph.LEFT_MARGIN)
+        .bottom(ProtoGraph.BOTTOM_MARGIN)
+        .top(ProtoGraph.TOP_MARGIN)
+        .right(ProtoGraph.RIGHT_MARGIN)
+        .canvas(this.div_id);
 		
-	// Add a line to the bottom of the graph
-	this.vis.add(pv.Rule)
-		.bottom(0);
-	// Add a line to the left of the graph.
-	this.vis.add(pv.Rule)
-		.left(0);
+    // Add a line to the bottom of the graph
+    this.vis.add(pv.Rule)
+        .bottom(0);
+    // Add a line to the left of the graph.
+    this.vis.add(pv.Rule)
+        .left(0);
 		
-	// Add X labels to the graph, use closures to refer to
-	// this.left_x_label and this.right_x_label so that later
-	// we can simply change those values and re-render the graph
-	// to change the X labels, instead of deleting and adding new
-	// pv.Labels
-	var that = this;
+    // Add X labels to the graph, use closures to refer to
+    // this.left_x_label and this.right_x_label so that later
+    // we can simply change those values and re-render the graph
+    // to change the X labels, instead of deleting and adding new
+    // pv.Labels
+    var that = this;
     this.vis.add(pv.Label)
         .bottom(0)
         .left(0)
         .textAlign('left')
         .textBaseline('top')
         .text(function() {
-			return that.left_x_label;
-		})
+            return that.left_x_label;
+        })
         .font(ProtoGraph.LABEL_STYLE);
     this.vis.add(pv.Label)
         .bottom(0)
@@ -70,18 +66,19 @@ function ProtoGraph(div_id, title, graph_width) {
         .textAlign('right')
         .textBaseline('top')
         .text(function() {
-			return that.right_x_label;
-		})
+            return that.right_x_label;
+        })
         .font(ProtoGraph.LABEL_STYLE);
 }
 
 // ProtoGraph constants, applies to all protographs
 ProtoGraph.graph_type = {
-    "PROTO_GRAPH_TIME_ONCE_TYPE":0,
+    "PROTO_GRAPH_SINGLE_TIME_TYPE":0,
     "PROTO_GRAPH_TRUE_FALSE_ARRAY_TYPE":1,
     "PROTO_GRAPH_INTEGER_TYPE":2,
     "PROTO_GRAPH_YES_NO_TYPE":3,
-    "PROTO_GRAPH_TIME_MULTI_TYPE":4
+    "PROTO_GRAPH_MULTI_TIME_TYPE":4,
+    "PROTO_GRPAH_CUSTOM_SLEEP_TYPE":5
 };
 
 ProtoGraph.HEIGHT = 120;
@@ -122,29 +119,29 @@ ProtoGraph._logger = log4javascript.getLogger();
  * subtype will be returned.
  */
 ProtoGraph.factory = function(graph_description, div_id, graph_width) {
-	// Switch among all the graph types, don't know if this is the best
-	// method to do this but here goes anyway
+    // Switch among all the graph types, don't know if this is the best
+    // method to do this but here goes anyway
 	
-	if (graph_description.type == 0) {
-		var new_graph = new ProtoGraphSingleTimeType(div_id, graph_description.text, graph_width);
-	}
-	if (graph_description.type == 1) {
+    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_SINGLE_TIME_TYPE) {
+        var new_graph = new ProtoGraphSingleTimeType(div_id, graph_description.text, graph_width);
+    }
+    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_TRUE_FALSE_ARRAY_TYPE) {
         var new_graph = new ProtoGraphTrueFalseArrayType(div_id, graph_description.text, graph_width, graph_description.y_labels);
     }
-	if (graph_description.type == 2) {
+    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_INTEGER_TYPE) {
         var new_graph = new ProtoGraphIntegerType(div_id, graph_description.text, graph_width, graph_description.y_labels);
     }
-	if (graph_description.type == 3) {
+    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_YES_NO_TYPE) {
         var new_graph = new ProtoGraphYesNoType(div_id, graph_description.text, graph_width);
     }
-	if (graph_description.type == 4) {
+    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_MULTI_TIME_TYPE) {
         var new_graph = new ProtoGraphMultiTimeType(div_id, graph_description.text, graph_width);
     }
-	if (graph_description.type == 5) {
-	    var new_graph = new ProtoGraphCustomSleepType(div_id, graph_description.text, graph_width, graph_description.sleep_labels);
-	}
+    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRPAH_CUSTOM_SLEEP_TYPE) {
+        var new_graph = new ProtoGraphCustomSleepType(div_id, graph_description.text, graph_width, graph_description.sleep_labels);
+    }
 	
-	return new_graph;
+    return new_graph;
 }
 
 
@@ -154,7 +151,7 @@ ProtoGraph.factory = function(graph_description, div_id, graph_width) {
 
 // Accessors
 ProtoGraph.prototype.get_div_id = function() {
-	return this.div_id;
+    return this.div_id;
 }
 
 // Helper function to replace X labels with day values, given
@@ -177,50 +174,50 @@ ProtoGraph.prototype.replace_y_labels = function(bottom_y_label, top_y_label) {
 //         average_label - The average label to use
 ProtoGraph.prototype.add_average_line = function(average, y_scale, average_label) {
     // Update the data for the average line, these will be propagated
-	// to already instantiated average lines through closures
-	this.average = average;
+    // to already instantiated average lines through closures
+    this.average = average;
     this.average_line_label = average_label;
     this.average_line_scale = pv.Scale.linear(0, this.num_days).range(0, this.width);
 
-	// If the average line has not yet been created, create it now
-	// Else, do nothing as we have already updated the average data
-	if (this.has_average_line == false) {
-	    // Add the line to the graph
-	    var that = this;
-	    this.vis.add(pv.Line)
-		    // Calculate an array of average values of length numDays+1
-	        .data(function() {
-				averageLine = [];
-			    for (var i = 0; i < that.num_days+1; i++) {
-			        averageLine.push(that.average);
-			    }
-			    return averageLine;
-			})
-	        .bottom(function(d) {
-	            return y_scale(d);
-	        })
-	        .left(function() {
-	            return that.average_line_scale(this.index);
-	        })
-	        .strokeStyle("lightgray")
-	        .strokeDasharray('10,5')
+    // If the average line has not yet been created, create it now
+    // Else, do nothing as we have already updated the average data
+    if (this.has_average_line == false) {
+        // Add the line to the graph
+        var that = this;
+        this.vis.add(pv.Line)
+            // Calculate an array of average values of length numDays+1
+            .data(function() {
+                averageLine = [];
+                for (var i = 0; i < that.num_days+1; i++) {
+                    averageLine.push(that.average);
+                }
+                return averageLine;
+            })
+            .bottom(function(d) {
+                return y_scale(d);
+            })
+            .left(function() {
+                return that.average_line_scale(this.index);
+            })
+            .strokeStyle("lightgray")
+            .strokeDasharray('10,5')
             .lineWidth(1);
     
-	    // Add an average label to the graph
-	    this.vis.add(pv.Label)
-	        .right(0)
-	        .bottom(function() {
-				return y_scale(that.average);
-			})
-	        .textAlign('left')
-	        .textBaseline('middle')
-	        .text(function(){
-				return that.average_line_label;
-			})
-	        .font(ProtoGraph.LABEL_STYLE)
-			
-		this.has_average_line = true;
-	} 
+        // Add an average label to the graph
+        this.vis.add(pv.Label)
+            .right(0)
+            .bottom(function() {
+                return y_scale(that.average);
+            })
+            .textAlign('left')
+            .textBaseline('middle')
+            .text(function(){
+                return that.average_line_label;
+            })
+            .font(ProtoGraph.LABEL_STYLE);
+            
+        this.has_average_line = true;
+    } 
 }
 
 // Add day demarcations to the bottom of the graph.
@@ -269,32 +266,32 @@ ProtoGraph.prototype.add_day_demarcations = function(num_ticks, margin) {
  * and which this current data point is, to every data point
  */
 ProtoGraph.prototype.preprocess_add_day_counts = function(_data) {
-	// Initialize the counting variables
-	var cur_day = new Date(0,0,0,0,0,0);
-	var cur_day_count = 1;
-	var total_count_per_day = new Object();
+    // Initialize the counting variables
+    var cur_day = new Date(0,0,0,0,0,0);
+    var cur_day_count = 1;
+    var total_count_per_day = new Object();
 	
-	// First pass over the data to count the number of points per day
-	_data.forEach(function(d) {
-		// Check if this is a new day
-	    if (!d.date.equals(cur_day)) {
-	        // Reset the counting vars
-	        cur_day = d.date;
-	        cur_day_count = 1;
-		}
-	    else {
-	        cur_day_count += 1;
-	    }
+    // First pass over the data to count the number of points per day
+    _data.forEach(function(d) {
+        // Check if this is a new day
+        if (!d.date.equals(cur_day)) {
+            // Reset the counting vars
+            cur_day = d.date;
+            cur_day_count = 1;
+        }
+        else {
+            cur_day_count += 1;
+        }
 	    
-	    d.day_count = cur_day_count;
+        d.day_count = cur_day_count;
         // Save the current day count for the second pass
         total_count_per_day[cur_day] = cur_day_count;
-	});
+    });
 	
-	// Second pass to set total number of data points per day
-	_data.forEach(function(d) {
-	    d.total_day_count = total_count_per_day[d.date];
-	});
+    // Second pass to set total number of data points per day
+    _data.forEach(function(d) {
+        d.total_day_count = total_count_per_day[d.date];
+    });
 }
 
 /*
@@ -302,7 +299,7 @@ ProtoGraph.prototype.preprocess_add_day_counts = function(_data) {
  * to the screen.
  */
 ProtoGraph.prototype.render = function() {
-	this.vis.render();
+    this.vis.render();
 }
 
 
@@ -316,17 +313,17 @@ ProtoGraph.prototype.render = function() {
 // title - The title of the graph
 // y_labels - How to label the graph
 function ProtoGraphIntegerType(div_id, title, graph_width, y_labels) {
-	// Inherit properties
-	ProtoGraph.call(this, div_id, title, graph_width);
+    // Inherit properties
+    ProtoGraph.call(this, div_id, title, graph_width);
 
-	// new properties
-	this.y_labels = y_labels;
-	this.min_val = 0;  // Integer ranges always start at 0
-	this.max_val = this.y_labels.length - 1;
-	this.y_scale = pv.Scale.linear(this.min_val,this.max_val).range(0, ProtoGraph.HEIGHT);
+    // new properties
+    this.y_labels = y_labels;
+    this.min_val = 0;  // Integer ranges always start at 0
+    this.max_val = this.y_labels.length - 1;
+    this.y_scale = pv.Scale.linear(this.min_val,this.max_val).range(0, ProtoGraph.HEIGHT);
 
     // The Y labels never change, add them now
-	var that = this;
+    var that = this;
     this.vis.add(pv.Label)
         .data(this.y_labels)
         .left(0)
@@ -344,71 +341,70 @@ ProtoGraphIntegerType.prototype = new ProtoGraph();
 // assumes the data one integer response per day.  Draws a bar graph
 // along with an average line.
 ProtoGraphIntegerType.prototype.apply_data = function(data, start_date, num_days) {
-	// Copy the new information
-	this.data = data;
-	this.num_days = num_days;
+    // Copy the new information
+    this.data = data;
+    this.num_days = num_days;
 	
-	// Replace the x labels with possible new labels
-	this.replace_x_labels(start_date, num_days);
+    // Replace the x labels with possible new labels
+    this.replace_x_labels(start_date, num_days);
 
-	// Split the data into categories using Scale.ordinal
-	var dayArray = [];
-	for (var i = 0; i < this.num_days; i += 1) {
-	    var next_day = start_date.incrementDay(i);
+    // Split the data into categories using Scale.ordinal
+    var dayArray = [];
+    for (var i = 0; i < this.num_days; i += 1) {
+        var next_day = start_date.incrementDay(i);
         dayArray.push(next_day);
-	}
+    }
 	
-	// Setup the X scale now
+    // Setup the X scale now
     this.x_scale = pv.Scale.ordinal(dayArray).splitBanded(0, this.width, ProtoGraph.BAR_WIDTH);
 	
     // Process the data as necessary
     this.preprocess_add_day_counts(this.data);
     
-	// If there is no data yet, setup the display
-	if (this.has_data == false) {
-	    // Add a bar for each response
+    // If there is no data yet, setup the display
+    if (this.has_data == false) {
+        // Add a bar for each response
         var that = this;
-	    this.vis.add(pv.Bar)
-		    // Make this a closure to automatically update data
-	        .data(function() {
-	            log.debug("data: " + that.data[0].response);
+        this.vis.add(pv.Bar)
+            // Make this a closure to automatically update data
+            .data(function() {
 				return that.data;
-			})
-	        .width(function(d) {
-	            // Shrink the bar width by the total number of responses per day
-	            // Add one to eliminate any spacing between bars
-				return that.x_scale.range().band / d.total_day_count + 1;
-			})
-	        .height(function(d) {
-	            return that.y_scale(d.response) + 1;
-	        })
-	        .bottom(1)
-	        .left(function(d) {
-	            // Shift the bar left by which response per day this is
-	            return that.x_scale(d.date) + that.x_scale.range().band * ((d.day_count - 1) / d.total_day_count);
-	        })
-	        .fillStyle(function(d) {
-	            return ProtoGraph.DAY_COLOR[d.day_count];
-	        });
+            })
+            .width(function(d) {
+                // Shrink the bar width by the total number of responses per day
+                // Add one to eliminate any spacing between bars
+                return that.x_scale.range().band / d.total_day_count + 1;
+            })
+            .height(function(d) {
+                return that.y_scale(d.response) + 1;
+            })
+            .bottom(1)
+            .left(function(d) {
+                // Shift the bar left by which response per day this is
+                return that.x_scale(d.date) + that.x_scale.range().band * ((d.day_count - 1) / d.total_day_count);
+            })
+            .fillStyle(function(d) {
+                return ProtoGraph.DAY_COLOR[d.day_count];
+            });
 			
-		this.has_data = true;
-	}
+        this.has_data = true;
+    }
 		  
-	// Overlay the average line
-	// Make an array of average values to correctly graph the line
-	var average = 0;
-	for (var i = 0; i < this.data.length; i++) {
-		average += this.data[i].response;
-	}
-	average /= this.data.length;
-	// Add the average line and label
-	this.add_average_line(average, this.y_scale, average.toFixed(1));
+    // Overlay the average line
+    // Make an array of average values to correctly graph the line
+    var average = 0;
+    for (var i = 0; i < this.data.length; i++) {
+        average += this.data[i].response;
+    }
+    average /= this.data.length;
+    // Add the average line and label
+    this.add_average_line(average, this.y_scale, average.toFixed(1));
 	
-	// splitBanded adds a margin in to the scale.  Find the margin
-	// from the range
-	var range = this.x_scale.range();
-	var margin = range[0] / 2;
-	// Only add ticks between days, so subtract one
+    // splitBanded adds a margin in to the scale.  Find the margin
+    // from the range
+    var range = this.x_scale.range();
+    var margin = range[0] / 2;
+    // Only add ticks between days, so subtract one
     this.add_day_demarcations(num_days - 1, margin);
 }
 
@@ -421,18 +417,18 @@ ProtoGraphIntegerType.prototype.apply_data = function(data, start_date, num_days
  */
 
 // ProtoGraphSingleTimeType constructor
-function ProtoGraphSingleTimeType(div_id, title, graph_width, data, start_date, num_days) {
+function ProtoGraphSingleTimeType(div_id, title, graph_width) {
     // Inherit properties
     ProtoGraph.call(this, div_id, title, graph_width);
 
     // Add the Y labels now
-	this.vis.add(pv.Label)
+    this.vis.add(pv.Label)
         .bottom(0)
         .left(0)
         .textAlign('right')
         .textBaseline('bottom')
         .text('00:01')
-        .font(ProtoGraph.LABEL_STYLE)
+        .font(ProtoGraph.LABEL_STYLE);
         
     this.vis.add(pv.Label)
         .top(0)
@@ -440,10 +436,11 @@ function ProtoGraphSingleTimeType(div_id, title, graph_width, data, start_date, 
         .textAlign('right')
         .textBaseline('top')
         .text('23:59')
-        .font(ProtoGraph.LABEL_STYLE)
+        .font(ProtoGraph.LABEL_STYLE);
 		
-	// Setup the Y scale
-	this.y_scale = pv.Scale.linear(new Date(0, 0, 0, 0, 0, 0), new Date(0, 0, 0, 23, 59, 59)).range(0, ProtoGraph.HEIGHT);
+    // Setup the Y scale
+    this.y_scale = pv.Scale.linear(new Date(0, 0, 0, 0, 0, 0), new Date(0, 0, 0, 23, 59, 59))
+                       .range(0, ProtoGraph.HEIGHT);
 }
 
 // Inherit methods from ProtoGraph
@@ -806,7 +803,7 @@ ProtoGraphYesNoType.prototype.apply_data = function(data, start_date, num_days) 
  */
 
 // ProtoGraphMultiTimeType constructor
-function ProtoGraphMultiTimeType(div_id, title, graph_width, data, start_date, num_days) {
+function ProtoGraphMultiTimeType(div_id, title, graph_width) {
     // Inherit properties
     ProtoGraph.call(this, div_id, title, graph_width);
 
@@ -1143,8 +1140,9 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
              // Shift index by this difference
              day_index += difference_in_days;
              
+             // If the index is now out of bounds, reset index back to -1
              if (day_index >= that.data.length) {
-                 return panel.i(-1);
+                 day_index = -1;
              }
              
              // If the index has changed, update the graph
