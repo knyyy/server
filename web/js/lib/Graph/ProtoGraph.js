@@ -119,26 +119,27 @@ ProtoGraph._logger = log4javascript.getLogger();
  * subtype will be returned.
  */
 ProtoGraph.factory = function(graph_description, div_id, graph_width) {
-    // Switch among all the graph types, don't know if this is the best
-    // method to do this but here goes anyway
-	
+    // Switch among all the graph types
     if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_SINGLE_TIME_TYPE) {
         var new_graph = new ProtoGraphSingleTimeType(div_id, graph_description.text, graph_width);
     }
-    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_TRUE_FALSE_ARRAY_TYPE) {
+    else if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_TRUE_FALSE_ARRAY_TYPE) {
         var new_graph = new ProtoGraphTrueFalseArrayType(div_id, graph_description.text, graph_width, graph_description.y_labels);
     }
-    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_INTEGER_TYPE) {
+    else if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_INTEGER_TYPE) {
         var new_graph = new ProtoGraphIntegerType(div_id, graph_description.text, graph_width, graph_description.y_labels);
     }
-    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_YES_NO_TYPE) {
+    else if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_YES_NO_TYPE) {
         var new_graph = new ProtoGraphYesNoType(div_id, graph_description.text, graph_width);
     }
-    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_MULTI_TIME_TYPE) {
+    else if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_MULTI_TIME_TYPE) {
         var new_graph = new ProtoGraphMultiTimeType(div_id, graph_description.text, graph_width);
     }
-    if (graph_description.type == ProtoGraph.graph_type.PROTO_GRPAH_CUSTOM_SLEEP_TYPE) {
+    else if (graph_description.type == ProtoGraph.graph_type.PROTO_GRPAH_CUSTOM_SLEEP_TYPE) {
         var new_graph = new ProtoGraphCustomSleepType(div_id, graph_description.text, graph_width, graph_description.sleep_labels);
+    }
+    else {
+        throw new TypeError("ProtoGraph.factory(): Unknown graph type in JSON.");
     }
 	
     return new_graph;
@@ -1150,7 +1151,6 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
                  return panel.i(day_index);
              }
          });
-     
      
      this.has_data = true;
  }
