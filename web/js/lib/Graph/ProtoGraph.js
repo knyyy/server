@@ -961,11 +961,13 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
     earliest_time_in_bed = earliest_time_in_bed.incrementHour(-1);
     latest_time_awake = latest_time_awake.incrementHour(1);
  
-    // Save the root panel to a local var for easier access, and
-    // add an index variable for later reference
-    var panel = this.vis.add(pv.Panel)
-        .def("i", -1);
- 
+    // Precalculate the difference in days between the start of the graph
+    // and the start of the actual data
+    var first_date = this.data[0].date;
+    var difference_between_first_and_start = this.start_date.getTime() -
+                                             first_date.getTime();
+    this.difference_in_days = Math.floor(difference_between_first_and_start / Date.one_day);
+    
     // Setup the Y labels and Y scale
     this.replace_y_labels(latest_time_awake.toStringHourAndMinute(), earliest_time_in_bed.toStringHourAndMinute());
     this.y_scale = pv.Scale.linear(earliest_time_in_bed, latest_time_awake).range(ProtoGraph.HEIGHT, 0);
@@ -975,14 +977,12 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
     // Setup the plots if there is no data yet
     if (this.has_data == false) {
         // Need "that" to access "this" inside the closures
-        var that = this;   
-     
-        // Precalculate the difference in days between the start of the graph
-        // and the start of the actual data
-        var first_date = that.data[0].date;
-        var difference_between_first_and_start = that.start_date.getTime() -
-                                                 first_date.getTime();
-        panel.def("difference_in_days", Math.floor(difference_between_first_and_start / Date.one_day));
+        var that = this;  
+        
+        // Save the root panel to a local var for easier access, and
+        // add an index variable for later reference
+        var panel = this.vis.add(pv.Panel)
+            .def("i", -1);
      
         // Plot time in bed
         panel.add(pv.Line)
@@ -990,7 +990,7 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
                 return that.data;
             })
             .left(function(d) {
-            // Shift the dot right by half a band to center it in the day
+                // Shift the dot right by half a band to center it in the day
                 var date_position = that.x_scale(d.date);
            
                 var position = that.x_scale(d.date) + that.x_scale.range().band / 2;
@@ -1162,7 +1162,7 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
                 var day_index = Math.floor(that.y_scale_linear.invert(mouse_pos));
                 
                 // Shift index by this difference
-                day_index += panel.difference_in_days();
+                day_index += that.difference_in_days;
                 
                 // If the index is now out of bounds, reset index back to -1
                 if (day_index >= that.data.length) {
