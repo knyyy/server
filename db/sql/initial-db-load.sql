@@ -28,7 +28,7 @@ INSERT INTO prompt_type (type, restriction) VALUES
   ("map", '{0:"No",1:"Yes"}'),
   ("array_boolean", "6"),
   ("null", NULL),
-  ("map", '{0:"10",1:"20",2:"30",3:"40",4:"50",5:"60+",6:"N/A"}'), -- FIXME confirm w Nithya
+  ("map", '{0:"10",1:"20",2:"30",3:"40",4:"50",5:"60+",6:"N/A"}'),
   ("map", '{0:"not at all",1:"slightly",2:"moderately",3:"very"}');
 
 INSERT INTO prompt (prompt_type_id, campaign_prompt_group_id, campaign_prompt_version_id, prompt_config_id, parent_config_id, question_text, legend_text) VALUES
@@ -63,11 +63,7 @@ INSERT INTO prompt (prompt_type_id, campaign_prompt_group_id, campaign_prompt_ve
   (7, 4, 1, 8, NULL, "How often did you feel difficulties were piling up so high that you could not overcome them?","difficulties too high to overcome"),
   (10, 4, 1, 9, NULL, "Did you exercise today?","did you exercise"),
   (8, 4, 1, 10, 9, "If yes, what type of exercise did you today?","type of exercise"),
-  
-  -- TODO - confirm w Nithya
   (13, 4, 1, 11, 9, "If you exercised, for how many minutes did you exercise?","how many minutes did you exercise"),
-  --
-  
   (14, 4, 1, 12, 9, "If you exercised, did you enjoy exercising?","exercise enjoyment"),
   (11, 4, 1, 13, 9, "If you didn't exercise, why not? (lack of time, lack of self-discipline, fatigue, procrastination, lack of interest, family work or responsibilities,","exercise interference"),
   
