@@ -31,20 +31,20 @@
 
     <!-- A large number of javascript includes, will reduce -->
     <!-- Main jQuery library -->
-    <script type="text/javascript" src="/js/lib/jquery/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="/js/thirdparty/jquery/jquery-1.4.2.min.js"></script>
     <!-- jQuery UI toolkit for tabs -->
-    <script type="text/javascript" src="/js/lib/jquery/jquery.tools.min.js"></script>
+    <script type="text/javascript" src="/js/thirdparty/jquery/jquery.tools.min.js"></script>
     <!-- jQuery UI for Datepicker -->
-    <script type="text/javascript" src="/js/lib/jquery/jquery-ui-1.7.2.custom.min.js"></script>
+    <script type="text/javascript" src="/js/thirdparty/jquery/jquery-ui-1.7.2.custom.min.js"></script>
     <!-- log4java like logging -->
     <script type="text/javascript" src="/js/lib/misc/log4javascript.js"></script>
     <!-- Protovis graphing library with hacked in IE support -->
-    <script type="text/javascript" src="/js/lib/Protovis/protovis-d3.2.js"></script>
+    <script type="text/javascript" src="/js/thirdparty/Protovis/protovis-d3.2.js"></script>
     <!-- Useful additions to Javascript objects -->
     <script type="text/javascript" src="/js/lib/misc/array_lib.js"></script>
     <script type="text/javascript" src="/js/lib/misc/date-functions.js"></script>
     <!-- Various validators to validate user input and server responses -->
-    <script type="text/javascript" src="/js/lib/jquery/jquery.validity.min.js"></script>
+    <script type="text/javascript" src="/js/thirdparty/jquery/jquery.validity.min.js"></script>
     <script type="text/javascript" src="/js/lib/validator/DateValidator.js"></script>
     <!-- Generates the different graph types using Protovis -->
     <script type="text/javascript" src="/js/lib/DataSource/DataSource.js"></script>
