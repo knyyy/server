@@ -50,6 +50,10 @@ body {
     border-bottom: 1px solid #C8C8C8;
 }
 
+#banner .user_id {
+  color: #002D4B; 
+}
+
 #main {
     padding-left: 5px;
     padding-right: 5px;

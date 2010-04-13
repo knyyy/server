@@ -71,17 +71,25 @@
   
     <h2>AndWellness</h2>
     <p>AndWellness is a mobile and web application that makes it easy to collect,
-    manage, and visualize data.</p>  
+    manage, and visualize personal data.  Participants can run the AndWellness
+    application, login, and answer survey prompts on any Android phone.</p>  
 
     <h3>Configure</h3>
-    <p>Something about configuration</p>
-    
-    
-    <h3>Deploy</h3>
-    <p>Something about deployation</p>
+    <p>Anyone can login and configure their own campaigns.  Campaigns each have any
+    number of participating users and are configured with the types of data to collect, and
+    how often to collect it.</p>
+
+    <h3>Collect</h3>
+    <p>Once a campaign has been configured, users can log in to their phone
+    application and being uploading data.  The campaign settings will automatically 
+    be loaded as necessary.  All data being collected is clearly labeled on the phone
+    and is uploaded through our secure SSL connection.</p>
     
     <h3>Visualize</h3>
-    <p>Something about visualization</p>
+    <p>Users can log in at the right to see visualizations of any data
+    uploaded from their phone.  All data types have a default visualization, and some
+    campaigns have defined custom visualizations where appropriate.  Feel free to 
+    browse your data anytime.</p>
   </div>
   
   <!-- Dashboard footer -->

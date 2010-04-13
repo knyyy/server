@@ -195,7 +195,7 @@
   
   <!-- Dashboard banner -->
   <div id="banner">
-    <span class="h">EMA Visualizations for <c:out value="${sessionScope.user.userName}"></c:out>.</span>
+    <span class="h">EMA Visualizations for <span class="user_id"><c:out value="${sessionScope.user.userName}"></c:out>.</span></span>
     <div id="logout"><a href="/app/logout">Logout</a></div>
   </div>
   
