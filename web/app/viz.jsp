@@ -52,7 +52,8 @@
     <script type="text/javascript" src="/js/lib/DashBoard/DashBoard.js"></script>
     <!-- Contains the query response visualization types -->
     <script type="text/javascript" src="/js/response_list.js"></script>
-    
+    <!-- Simple date formatting functions -->
+    <script type="text/javascript" src="/js/thirdparty/misc/date.format.js"></script>
 	
     <!--[if IE]>
 	<link href="/css/zp-ie.css" type="text/css" media="screen" rel="stylesheet" />
@@ -85,7 +86,7 @@
         log.addAppender(popUpAppender);
 
         // Uncomment the line below to disable logging
-        log4javascript.setEnabled(false);
+        //log4javascript.setEnabled(false);
 
         // Setup the datepickers for the date input box
         $("#startDate").datepicker({dateFormat: 'yy-mm-dd'});

@@ -399,6 +399,10 @@ Date.prototype.difference_in_days = function(second_day) {
     return Math.ceil((second_day.getTime()-this.getTime())/(Date.one_day));
 }
 
+Date.prototype.difference_in_hours = function(second_day) {
+    return Math.ceil((second_day.getTime()-this.getTime())/(Date.one_hour));
+}
+
 // Returns the month and day of the current date as a string
 Date.prototype.toStringMonthAndDay = function() {
     return Date.monthNamesShort[this.getMonth()] + " " + this.getDate();
@@ -415,6 +419,23 @@ Date.prototype.toStringHourAndMinute = function() {
 	}
 	
 	return this.getHours() + ':' + minute_string;
+}
+
+// Round the time down to the closest hour
+Date.prototype.roundDownToHour = function() {
+    return new Date(this.getFullYear(), this.getMonth(), this.getDate(),this.getHours(),0,0);
+}
+
+// Round the time up to the closest hour
+Date.prototype.roundUpToHour = function() {
+    var date_plus_one_hour = this.incrementHour(1);
+    
+    return new Date(date_plus_one_hour.getFullYear(), 
+                    date_plus_one_hour.getMonth(), 
+                    date_plus_one_hour.getDate(),
+                    date_plus_one_hour.getHours(),
+                    0,
+                    0);
 }
 
 // Return a date object of just the date (year/month/day)

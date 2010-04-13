@@ -897,28 +897,6 @@ function ProtoGraphCustomSleepType(div_id, title, graph_width, sleep_labels) {
     ProtoGraph.call(this, div_id, title, graph_width);
 
     this.sleep_labels = sleep_labels;
-    
-    // Add customizable Y labels now
-    var that = this;
-    this.vis.add(pv.Label)
-        .bottom(0)
-        .left(0)
-        .textAlign('right')
-        .textBaseline('bottom')
-        .text(function() {
-            return that.bottom_y_label;
-        })
-        .font(ProtoGraph.LABEL_STYLE);
-        
-    this.vis.add(pv.Label)
-        .top(0)
-        .left(0)
-        .textAlign('right')
-        .textBaseline('top')
-        .text(function() {
-            return that.top_y_label;
-        })
-        .font(ProtoGraph.LABEL_STYLE);
 }
 
 // Inherit methods from ProtoGraph
@@ -958,8 +936,8 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
     });
 
     // Give an hour margin on top and bottom to make graph look nicer
-    earliest_time_in_bed = earliest_time_in_bed.incrementHour(-1);
-    latest_time_awake = latest_time_awake.incrementHour(1);
+    earliest_time_in_bed = earliest_time_in_bed.incrementHour(-1).roundDownToHour();
+    latest_time_awake = latest_time_awake.incrementHour(1).roundUpToHour();
  
     // Precalculate the difference in days between the start of the graph
     // and the start of the actual data
@@ -968,12 +946,23 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
                                              first_date.getTime();
     this.difference_in_days = Math.floor(difference_between_first_and_start / Date.one_day);
     
-    // Setup the Y labels and Y scale
-    this.replace_y_labels(latest_time_awake.toStringHourAndMinute(), earliest_time_in_bed.toStringHourAndMinute());
-    this.y_scale = pv.Scale.linear(earliest_time_in_bed, latest_time_awake).range(ProtoGraph.HEIGHT, 0);
-    // Setup a linear Y scale to assist mapping the mouse position to day index
-    this.y_scale_linear = pv.Scale.linear(0, this.num_days).range(0, this.width);
- 
+    // Change the height of the graph to match the number of hours in the scale, that is
+    // find the difference in hours and multiple by the number of pixels per hour
+    var new_graph_height = earliest_time_in_bed.difference_in_hours(latest_time_awake) * 20;
+    this.vis.height(new_graph_height);
+    
+    if (ProtoGraph._logger.isDebugEnabled()) {
+        ProtoGraph._logger.debug("Setting new graph height to: " + new_graph_height);
+    }
+    
+    // Setup the y scale
+    this.y_scale = pv.Scale.linear(earliest_time_in_bed, latest_time_awake).range(0, new_graph_height);
+    // Setup a linear X scale to assist mapping the mouse position to day index
+    this.x_scale_linear = pv.Scale.linear(0, this.num_days).range(0, this.width);
+    
+    // Setup the Y labels
+    //this.replace_y_labels(earliest_time_in_bed.toStringHourAndMinute(), latest_time_awake.toStringHourAndMinute());
+    
     // Setup the plots if there is no data yet
     if (this.has_data == false) {
         // Need "that" to access "this" inside the closures
@@ -1057,6 +1046,25 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
             .fillStyle("red")
             .strokeStyle("red")
             .size(3);
+        
+        // Add Y ticks and labels
+        panel.add(pv.Rule)
+            .data(function() {
+                return that.y_scale.ticks();
+            })
+            .top(function(d) {
+                return that.y_scale(d);
+            })
+            .left(0)
+            .width(5)
+            .lineWidth(1)
+            .add(pv.Label)
+                .textAlign("right")
+                .textBaseline("middle")
+                .text(function(d) {
+                    return d.format('h:MM tt');
+                });
+
      
         // Add in a legend to display the currently selected day
         panel.add(pv.Label)
@@ -1082,7 +1090,7 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
             })
             .text(function() {
                 if (panel.i() >= 0) {
-                    return "Time to bed: " + that.data[panel.i()].time_in_bed.toStringHourAndMinute();
+                    return "Time to bed: " + that.data[panel.i()].time_in_bed.format('h:MM tt');
                 }
             });
          
@@ -1111,13 +1119,23 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
             })
             .text(function() {
                 if (panel.i() >= 0) {
-                    return "Time awake: " + that.data[panel.i()].time_awake.toStringHourAndMinute();
+                    return "Woke up at: " + that.data[panel.i()].time_awake.format('h:MM tt');
                 }
             });
      
+        // Display a static separation of prompt responses and calculated data
+        panel.add(pv.Label)
+            .top(55)
+            .right(0)
+            .textBaseline("bottom")
+            .visible(function() {
+                return panel.i() >= 0;
+            })
+            .text("Calculated metrics:");
+        
         // Display time asleep
         panel.add(pv.Label)
-            .top(50)
+            .top(65)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {
@@ -1159,7 +1177,7 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
                 // Grab the current x position of the mouse
                 var mouse_pos = panel.mouse().x;
                 // Find the day index under the mouse pointer
-                var day_index = Math.floor(that.y_scale_linear.invert(mouse_pos));
+                var day_index = Math.floor(that.x_scale_linear.invert(mouse_pos));
                 
                 // Shift index by this difference
                 day_index += that.difference_in_days;
