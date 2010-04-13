@@ -52,7 +52,7 @@ body {
 #main {
     padding-left: 5px;
     padding-right: 5px;
-    margin-right:155px;
+    margin-right: 155px;
 }
 
 #logout {
@@ -84,20 +84,29 @@ body {
     clear: left;
 }
 
-#submit {
+#grabDateForm #submit {
     margin-left: 65px;
     margin-top: 2px;
     background-color: #CBD893;
 }
 
-#startDate {
+#grabDateForm #startDate {
     background-color: #FBEF99;
     width: 85px;
-    height: 25px;
+    height: 22px;
     margin-top: -2px;
 }
 
-#startDate:focus {
+#loginForm {
+  font-size: .9em;
+}
+
+#loginForm input {
+   width: 110px;
+   height: 22px;
+}
+
+#grabDateForm #startDate:focus {
     background-color: #FDD041;
 }
 
