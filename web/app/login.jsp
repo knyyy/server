@@ -9,6 +9,8 @@
     <link href="/css/zp-compressed.css" type="text/css" media="screen, print" rel="stylesheet" />
 	<link href="/css/zp-print.css" type="text/css" media="print" rel="stylesheet" />
 	<link href="http://andwellness.cens.ucla.edu/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <!-- Custom CSS for the "dashboard" setup -->
+    <link type="text/css" href="/css/dashboard.css" rel="stylesheet" />
     
     <!--[if IE]>
 	<link href="/css/zp-ie.css" type="text/css" media="screen" rel="stylesheet" />
@@ -30,44 +32,51 @@
 	      line-height: 36px;
 	      font-weight: normal;
 		}
+        .t {
+          font-size: 24 px;
+          font-weight: normal;
+        }
 	</style>
     
   </head>
   <body>
   
-  <div class="zp-wrapper f">
-    <div class="zp-100 content">
-		 <div class="padding">
-  	      
-  	      <div class="f h p-bottom">
-  		    Welcome to AndWellness.
-  		  </div>
-    	  
-    	  
-          <form method="post" action="/app/login">
-		    <fieldset>
-
-	          <c:if test="${sessionScope.failedLogin == true}">
-			    <div class="notification error">You have entered an incorrect user name or password.</div>
-			  </c:if>
-			            				
-		      <div class="form-item">
-			    <label for="userName">User Name:</label>
-				<input tabindex="1" id="userName" type="text" name="u" />
-			  </div>
-			  <div class="form-item">
-				<label for="password">Password:</label>
-				<input tabindex="2" id="password" type="password" name="p" />
-			  </div>	
-			  <button tabindex="3" id="send" type="submit">Send</button>
-						
-		    </fieldset>
-		  </form>
-		  
-		  <p>Question? Comment? Problem? Email us at andwellness-info@cens.ucla.edu.</p>
-		  
-		  </div>
-      </div>
-    </div>
+    
+  <!-- Wrap the entire page in a custom div, maybe can use body instead -->
+  <div id="wrapper" class="f">
+  
+  <!-- Dashboard banner -->
+  <div id="banner">
+    <span class="h">Welcome to AndWellness.</span>
+  </div>
+  
+  <div id="controls">
+    <form method="post" action="/app/login" id="loginForm">
+      <c:if test="${sessionScope.failedLogin == true}">
+        <div class="notification error">You have entered an incorrect user name or password.</div>
+      </c:if>
+    
+      <label for="userName" class="label">User Name:</label>
+      <input id="userName" type="text" name="u"/>
+        
+      <label for="password" class="label">Password:</label>
+      <input id="password" type="password" name="p"/>
+      
+      <button type="submit" id="submit">Send</button>              
+    </form>
+  </div>
+  
+  <!-- Main body of the dashboard -->
+  <div id="main" class="t">
+    AndWellness is a mobile and web application that makes it easy to collect,
+    manage, and visualize data.  
+  </div>
+  
+  <!-- Dashboard footer -->
+  <div id="footer">
+    Question? Comment? Problem? Email us at andwellness-info@cens.ucla.edu.
+  </div>
+  
+  </div>
   </body>
 </html>
