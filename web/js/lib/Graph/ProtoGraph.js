@@ -373,8 +373,8 @@ ProtoGraphIntegerType.prototype.apply_data = function(data, start_date, num_days
             })
             .width(function(d) {
                 // Shrink the bar width by the total number of responses per day
-                // Add one to eliminate any spacing between bars
-                return that.x_scale.range().band / d.total_day_count + 1;
+                // Subtract one to be sure there is a space between bars
+                return that.x_scale.range().band / d.total_day_count - 1;
             })
             .height(function(d) {
                 return that.y_scale(d.response) + 1;
@@ -385,7 +385,9 @@ ProtoGraphIntegerType.prototype.apply_data = function(data, start_date, num_days
                 return that.x_scale(d.date) + that.x_scale.range().band * ((d.day_count - 1) / d.total_day_count);
             })
             .fillStyle(function(d) {
-                return ProtoGraph.DAY_COLOR[d.day_count];
+                //return ProtoGraph.DAY_COLOR[d.day_count];
+                // Always use the same color for now
+                return ProtoGraph.DAY_COLOR[0];
             });
 			
         this.has_data = true;
