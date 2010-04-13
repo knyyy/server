@@ -865,11 +865,11 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
         
         // Save the root panel to a local var for easier access, and
         // add an index variable for later reference
-        var panel = this.vis.add(pv.Panel)
+        this.panel = this.vis.add(pv.Panel)
             .def("i", -1);
         
         // Add the line plot
-        panel.add(pv.Dot)
+        this.panel.add(pv.Dot)
           .data(function() {
             return that.data;
           })
@@ -881,7 +881,7 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
           })
           .strokeStyle(function(d) {
               // first check if the mouse is over this dot
-              if (panel.i() == this.index) {
+              if (that.panel.i() == this.index) {
                   return "black";
               }
 
@@ -898,15 +898,15 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
           .size(5)
           // Event catcher to see if the mouse is in this dot
           .event("mouseover", function() {
-              return panel.i(this.index);
+              return that.panel.i(this.index);
           })
           // Simple event catcher to see if the mouse leaves this dot
           .event("mouseout", function() {
-              return panel.i(-1);
+              return that.panel.i(-1);
           });
         
         // Add a legend for the dot colors
-        panel.add(pv.Dot)
+        this.panel.add(pv.Dot)
             .right(-5)
             .bottom(10)
             .lineWidth(2)
@@ -917,7 +917,7 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
             .add(pv.Label)
             .text(": > 0 responses true.");
         
-        panel.add(pv.Dot)
+        this.panel.add(pv.Dot)
             .right(-5)
             .bottom(20)
             .lineWidth(2)
@@ -928,69 +928,70 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
             .add(pv.Label)
             .text(": 0 responses true.");
         
+        // Mouse over legend to display meta_data
+        this.panel.add(pv.Label)
+            .top(10)
+            .right(0)
+            .textBaseline("bottom")
+            .visible(function() {
+                return that.panel.i() >= 0;
+            })
+            .text(function() {
+                if (that.panel.i() >= 0) {
+                    var text = "Brushed? "
+                    
+                    if (that.data[that.panel.i()].meta_data[0] == 't')
+                        text += "Yes";
+                    else
+                        text += "No";
+                    
+                    return text;
+                }
+            });
+        
+        this.panel.add(pv.Label)
+            .top(20)
+            .right(0)
+            .textBaseline("bottom")
+            .visible(function() {
+                return that.panel.i() >= 0;
+            })
+            .text(function() {
+                if (that.panel.i() >= 0) {
+                    var text = "Ate? "
+                    
+                    if (that.data[that.panel.i()].meta_data[1] == 't')
+                        text += "Yes";
+                    else
+                        text += "No";
+                    
+                    return text;
+                }
+            });
+        
+        this.panel.add(pv.Label)
+            .top(30)
+            .right(0)
+            .textBaseline("bottom")
+            .visible(function() {
+                return that.panel.i() >= 0;
+            })
+            .text(function() {
+                if (that.panel.i() >= 0) {
+                    var text = "Drank? "
+                    
+                    if (that.data[that.panel.i()].meta_data[2] == 't')
+                        text += "Yes";
+                    else
+                        text += "No";
+                    
+                    return text;
+                }
+            });
+        
         this.has_data = true;
     }
     
-    // Mouse over legend to display meta_data
-    panel.add(pv.Label)
-        .top(10)
-        .right(0)
-        .textBaseline("bottom")
-        .visible(function() {
-            return panel.i() >= 0;
-        })
-        .text(function() {
-            if (panel.i() >= 0) {
-                var text = "Brushed? "
-                
-                if (that.data[panel.i()].meta_data[0] == 't')
-                    text += "Yes";
-                else
-                    text += "No";
-                
-                return text;
-            }
-        });
-    
-    panel.add(pv.Label)
-        .top(20)
-        .right(0)
-        .textBaseline("bottom")
-        .visible(function() {
-            return panel.i() >= 0;
-        })
-        .text(function() {
-            if (panel.i() >= 0) {
-                var text = "Ate? "
-                
-                if (that.data[panel.i()].meta_data[1] == 't')
-                    text += "Yes";
-                else
-                    text += "No";
-                
-                return text;
-            }
-        });
-    
-    panel.add(pv.Label)
-        .top(30)
-        .right(0)
-        .textBaseline("bottom")
-        .visible(function() {
-            return panel.i() >= 0;
-        })
-        .text(function() {
-            if (panel.i() >= 0) {
-                var text = "Drank? "
-                
-                if (that.data[panel.i()].meta_data[2] == 't')
-                    text += "Yes";
-                else
-                    text += "No";
-                
-                return text;
-            }
-        });
     
     // splitBanded adds a margin in to the scale.  Find the margin
     // from the range
@@ -1081,11 +1082,11 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
         
         // Save the root panel to a local var for easier access, and
         // add an index variable for later reference
-        var panel = this.vis.add(pv.Panel)
+        this.panel = this.vis.add(pv.Panel)
             .def("i", -1);
      
         // Plot time in bed
-        panel.add(pv.Line)
+        this.panel.add(pv.Line)
             .data(function() {
                 return that.data;
             })
@@ -1124,19 +1125,19 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
             .size(3);
      
         // Add in 2 dots and a dashed line for the mouseover
-        panel.add(pv.Dot)
+        this.panel.add(pv.Dot)
             .visible(function() {
-                return panel.i() >= 0;
+                return that.panel.i() >= 0;
             })
             .left(function() {
                 // Shift the dot right by half a band to center it in the day
-                var date_position = that.x_scale(that.data[panel.i()].date);
+                var date_position = that.x_scale(that.data[that.panel.i()].date);
                 
-                var position = that.x_scale(that.data[panel.i()].date) + that.x_scale.range().band / 2;
+                var position = that.x_scale(that.data[that.panel.i()].date) + that.x_scale.range().band / 2;
                 return position;
             })
             .bottom(function() {
-                return that.y_scale(that.data[panel.i()].time_in_bed);
+                return that.y_scale(that.data[that.panel.i()].time_in_bed);
             })
             .fillStyle("red")
             .strokeStyle("red")
@@ -1145,8 +1146,8 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
             .anchor("center")
             .add(pv.Rule)
             .height(function() {
-                return that.y_scale(that.data[panel.i()].time_in_bed) -
-                       that.y_scale(that.data[panel.i()].time_awake);
+                return that.y_scale(that.data[that.panel.i()].time_in_bed) -
+                       that.y_scale(that.data[that.panel.i()].time_awake);
             })
             .strokeStyle("black")
             .strokeDasharray('10,5')
@@ -1159,7 +1160,7 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
             .size(3);
         
         // Add Y ticks and labels
-        panel.add(pv.Rule)
+        this.panel.add(pv.Rule)
             .data(function() {
                 return that.y_scale.ticks();
             })
@@ -1178,89 +1179,89 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
 
      
         // Add in a legend to display the currently selected day
-        panel.add(pv.Label)
+        this.panel.add(pv.Label)
             .top(10)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {
-                return panel.i() >= 0;
+                return that.panel.i() >= 0;
             })
             .text(function() {
-                if (panel.i() >= 0) {
-                    return that.data[panel.i()].date.toStringMonthAndDay();
+                if (that.panel.i() >= 0) {
+                    return that.data[that.panel.i()].date.toStringMonthAndDay();
                 }
             });
          
         // Display time in bed
-        panel.add(pv.Label)
+        this.panel.add(pv.Label)
             .top(20)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {
-                return panel.i() >= 0;
+                return that.panel.i() >= 0;
             })
             .text(function() {
-                if (panel.i() >= 0) {
-                    return "Time to bed: " + that.data[panel.i()].time_in_bed.format('h:MM tt');
+                if (that.panel.i() >= 0) {
+                    return "Time to bed: " + that.data[that.panel.i()].time_in_bed.format('h:MM tt');
                 }
             });
          
      
         // Display time to fall asleep
-        panel.add(pv.Label)
+        this.panel.add(pv.Label)
             .top(30)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {
-                return panel.i() >= 0;
+                return that.panel.i() >= 0;
             })
             .text(function() {
-                if (panel.i() >= 0) {
-                    return "Fell asleep in: " + that.sleep_labels[that.data[panel.i()].time_to_fall_asleep];
+                if (that.panel.i() >= 0) {
+                    return "Fell asleep in: " + that.sleep_labels[that.data[that.panel.i()].time_to_fall_asleep];
                 }
             });
          
         // Display time awake
-        panel.add(pv.Label)
+        this.panel.add(pv.Label)
             .top(40)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {
-                return panel.i() >= 0;
+                return that.panel.i() >= 0;
             })
             .text(function() {
-                if (panel.i() >= 0) {
-                    return "Woke up at: " + that.data[panel.i()].time_awake.format('h:MM tt');
+                if (that.panel.i() >= 0) {
+                    return "Woke up at: " + that.data[that.panel.i()].time_awake.format('h:MM tt');
                 }
             });
      
         // Display a static separation of prompt responses and calculated data
-        panel.add(pv.Label)
+        this.panel.add(pv.Label)
             .top(55)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {
-                return panel.i() >= 0;
+                return that.panel.i() >= 0;
             })
             .text("Calculated metrics:");
         
         // Display time asleep
-        panel.add(pv.Label)
+        this.panel.add(pv.Label)
             .top(65)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {
-                return panel.i() >= 0;
+                return that.panel.i() >= 0;
             })
             .text(function() {
-                if (panel.i() >= 0) {
+                if (that.panel.i() >= 0) {
                     // Calculate time asleep by taking the time in bed, adding time to fall asleep,
                     // and finding time to time_awake
                  
                     // Time to sleep in milliseconds
-                    var time_to_sleep = that.data[panel.i()].time_to_fall_asleep * 10 * 60 * 1000;
-                    var milliseconds_asleep = that.data[panel.i()].time_awake.getTime() -
-                                              that.data[panel.i()].time_in_bed.getTime() -
+                    var time_to_sleep = that.data[that.panel.i()].time_to_fall_asleep * 10 * 60 * 1000;
+                    var milliseconds_asleep = that.data[that.panel.i()].time_awake.getTime() -
+                                              that.data[that.panel.i()].time_in_bed.getTime() -
                                               time_to_sleep;
                  
                     // Calculate a time string based on this
@@ -1279,14 +1280,14 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
          
         
         // Update the index based on the mouse location
-        panel.add(pv.Bar)
+        this.panel.add(pv.Bar)
             .fillStyle("rgba(0,0,0,.001)")
             .event("mouseout", function() {
-                return panel.i(-1);
+                return that.panel.i(-1);
             })
             .event("mousemove", function() {
                 // Grab the current x position of the mouse
-                var mouse_pos = panel.mouse().x;
+                var mouse_pos = that.panel.mouse().x;
                 // Find the day index under the mouse pointer
                 var day_index = Math.floor(that.x_scale_linear.invert(mouse_pos));
                 
@@ -1299,8 +1300,8 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
                 }
              
                 // If the index has changed, update the graph
-                if (panel.i() != day_index) {
-                    return panel.i(day_index);
+                if (that.panel.i() != day_index) {
+                    return that.panel.i(day_index);
                 }
             });
      
