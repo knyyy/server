@@ -44,15 +44,48 @@ body {
 }
 
 #banner {
-    padding-top: 10px;
-    padding-bottom: 10px;
     position: relative;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #C8C8C8;
 }
 
 #main {
     padding-left: 5px;
     padding-right: 5px;
     margin-right: 155px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 62.5%;
+}
+
+#main h1 {
+  font-family: "Arial Black", Arial, Helvetica, sans-serif;
+  font-size: 4em;
+}
+
+#main h2 {
+  font: bold;
+  color: #002D4B;
+  font-size: 3.5em;
+  margin-top: 25px;
+}
+
+#main h3 {
+  color: #002D4B;
+  font-size: 1.9em;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 25px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+
+#main p {
+  font-size: 1.7em;
+  line-height: 150%;
+  margin-left: 100px;
+  margin-right: 50px;
+  margin-bottom: 10px;
 }
 
 #logout {
@@ -69,6 +102,7 @@ body {
 
 #footer {
     height:20px;
+    color:#505050;
 }
 
 #grabDateForm {
@@ -87,11 +121,9 @@ body {
 #grabDateForm #submit {
     margin-left: 65px;
     margin-top: 2px;
-    background-color: #CBD893;
 }
 
 #grabDateForm #startDate {
-    background-color: #FBEF99;
     width: 85px;
     height: 22px;
     margin-top: -2px;
@@ -106,8 +138,13 @@ body {
    height: 22px;
 }
 
-#grabDateForm #startDate:focus {
-    background-color: #FDD041;
+#loginForm button {
+  margin-top: 3px; 
+}
+
+.graph_title {
+  font-size: 1.1em;
+  font-weight:bold;
 }
 
 .loading {

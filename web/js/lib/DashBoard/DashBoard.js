@@ -48,7 +48,7 @@ DashBoard.prototype.configure_html = function(json_config) {
         
         // Put the graph title and another div for the graph itself into this div
         $('#group_' + cur_group + ' > #prompt_' + config.prompt_id)
-            .append('<h3>' + config.text + '</h3>')
+            .append('<span class="graph_title">' + config.text + '</span>')
             .append('<div id="' + div_id + '"></div>');
         
         // Finally create a new graph and add it to the div

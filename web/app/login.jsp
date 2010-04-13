@@ -67,9 +67,21 @@
   </div>
   
   <!-- Main body of the dashboard -->
-  <div id="main" class="t">
-    AndWellness is a mobile and web application that makes it easy to collect,
-    manage, and visualize data.  
+  <div id="main">
+  
+    <h2>AndWellness</h2>
+    <p>AndWellness is a mobile and web application that makes it easy to collect,
+    manage, and visualize data.</p>  
+
+    <h3>Configure</h3>
+    <p>Something about configuration</p>
+    
+    
+    <h3>Deploy</h3>
+    <p>Something about deployation</p>
+    
+    <h3>Visualize</h3>
+    <p>Something about visualization</p>
   </div>
   
   <!-- Dashboard footer -->
