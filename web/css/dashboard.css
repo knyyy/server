@@ -54,6 +54,10 @@ body {
   color: #002D4B; 
 }
 
+#banner .banner_text {
+  background-color: #CDE8FF;
+}
+
 #main {
     padding-left: 5px;
     padding-right: 5px;

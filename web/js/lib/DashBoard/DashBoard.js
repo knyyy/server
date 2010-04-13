@@ -93,6 +93,9 @@ DashBoard.prototype.load_data = function(data_source) {
             if (graph instanceof ProtoGraphCustomSleepType) {
                 var new_data = data_source.retrieve_data_sleep_time();
             }
+            else if (graph instanceof ProtoGraphMultiTimeType) {
+                var new_data = data_source.retreive_data_saliva();
+            }
             // No custom data processing
             else {
                 var new_data = data_source.retrieve_data(prompt_id, group_id);

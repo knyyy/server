@@ -47,7 +47,7 @@
   
   <!-- Dashboard banner -->
   <div id="banner">
-    <span class="h">Welcome to AndWellness.</span>
+    <span class="h banner_text">Welcome to AndWellness.</span>
   </div>
   
   <div id="controls">

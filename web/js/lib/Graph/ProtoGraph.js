@@ -863,8 +863,13 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
         // Need "that" to access "this" inside the closures
         var that = this;
         
+        // Save the root panel to a local var for easier access, and
+        // add an index variable for later reference
+        var panel = this.vis.add(pv.Panel)
+            .def("i", -1);
+        
         // Add the line plot
-        this.vis.add(pv.Dot)
+        panel.add(pv.Dot)
           .data(function() {
             return that.data;
           })
@@ -875,13 +880,117 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
              return that.y_scale(Date.parseDate(d.response, "g:i").grabTime());
           })
           .strokeStyle(function(d) {
-             return ProtoGraph.DAY_COLOR[d.day_count]; 
+              // first check if the mouse is over this dot
+              if (panel.i() == this.index) {
+                  return "black";
+              }
+
+              var meta_data = d.meta_data;
+              var color_to_return = ProtoGraph.DAY_COLOR[0]; 
+              // If any of the meta data responses are true, make the dot red
+              meta_data.forEach(function(d) {
+                  if (d == 't')
+                      color_to_return = "red";
+              });
+              return color_to_return;
           })
           .lineWidth(2)
-          .size(20);
+          .size(5)
+          // Event catcher to see if the mouse is in this dot
+          .event("mouseover", function() {
+              return panel.i(this.index);
+          })
+          // Simple event catcher to see if the mouse leaves this dot
+          .event("mouseout", function() {
+              return panel.i(-1);
+          });
+        
+        // Add a legend for the dot colors
+        panel.add(pv.Dot)
+            .right(-5)
+            .bottom(10)
+            .lineWidth(2)
+            .size(5)
+            .strokeStyle("red")
+        // Add a label for this dot
+        .anchor("right")
+            .add(pv.Label)
+            .text(": > 0 responses true.");
+        
+        panel.add(pv.Dot)
+            .right(-5)
+            .bottom(20)
+            .lineWidth(2)
+            .size(5)
+            .strokeStyle(ProtoGraph.DAY_COLOR[0])
+        // Add a label for this dot
+        .anchor("right")
+            .add(pv.Label)
+            .text(": 0 responses true.");
         
         this.has_data = true;
     }
+    
+    // Mouse over legend to display meta_data
+    panel.add(pv.Label)
+        .top(10)
+        .right(0)
+        .textBaseline("bottom")
+        .visible(function() {
+            return panel.i() >= 0;
+        })
+        .text(function() {
+            if (panel.i() >= 0) {
+                var text = "Brushed? "
+                
+                if (that.data[panel.i()].meta_data[0] == 't')
+                    text += "Yes";
+                else
+                    text += "No";
+                
+                return text;
+            }
+        });
+    
+    panel.add(pv.Label)
+        .top(20)
+        .right(0)
+        .textBaseline("bottom")
+        .visible(function() {
+            return panel.i() >= 0;
+        })
+        .text(function() {
+            if (panel.i() >= 0) {
+                var text = "Ate? "
+                
+                if (that.data[panel.i()].meta_data[1] == 't')
+                    text += "Yes";
+                else
+                    text += "No";
+                
+                return text;
+            }
+        });
+    
+    panel.add(pv.Label)
+        .top(30)
+        .right(0)
+        .textBaseline("bottom")
+        .visible(function() {
+            return panel.i() >= 0;
+        })
+        .text(function() {
+            if (panel.i() >= 0) {
+                var text = "Drank? "
+                
+                if (that.data[panel.i()].meta_data[2] == 't')
+                    text += "Yes";
+                else
+                    text += "No";
+                
+                return text;
+            }
+        });
     
     // splitBanded adds a margin in to the scale.  Find the margin
     // from the range

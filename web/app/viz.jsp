@@ -86,7 +86,7 @@
         log.addAppender(popUpAppender);
 
         // Uncomment the line below to disable logging
-        log4javascript.setEnabled(false);
+        //log4javascript.setEnabled(false);
 
         // Setup the datepickers for the date input box
         $("#startDate").datepicker({dateFormat: 'yy-mm-dd'});
@@ -195,7 +195,7 @@
   
   <!-- Dashboard banner -->
   <div id="banner">
-    <span class="h">EMA Visualizations for <span class="user_id"><c:out value="${sessionScope.user.userName}"></c:out>.</span></span>
+    <span class="h banner_text">EMA Visualizations for <span class="user_id"><c:out value="${sessionScope.user.userName}"></c:out>.</span></span>
     <div id="logout"><a href="/app/logout">Logout</a></div>
   </div>
   

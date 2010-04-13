@@ -54,6 +54,43 @@ DataSourceJson.prototype.retrieve_data = function(prompt_id, group_id) {
 }
 
 /*
+ * Return data for the saliva data type.  This is an example of "meta tagging"
+ * data that should be done on the server-side.
+ */
+DataSourceJson.prototype.retreive_data_saliva = function() {
+    var saliva_sample_time = this.current_data.filter(function(data_point) {
+        return (data_point.prompt_id == 0 &&
+                data_point.prompt_group_id == 0);
+    });
+    
+    var saliva_meta_data = this.current_data.filter(function(data_point) {
+        return (data_point.prompt_id == 1 &&
+                data_point.prompt_group_id == 0);
+    });
+    
+    // be sure we have some data
+    if (saliva_sample_time == null || saliva_sample_time.length == 0) {
+        throw new DataSourceJson.NoDataError("retreive_data_saliva(): Found no data.");   
+    }
+    
+    // Used to store all the data needed for the saliva graph
+    var data_array = [];
+    
+    // Run over each data point
+    for (var i = 0; i < saliva_sample_time.length; i += 1) {
+        // Create a new data point
+        var data_point = new Object();
+        data_point.date = saliva_sample_time[i].date;
+        data_point.response = saliva_sample_time[i].response;
+        data_point.meta_data = saliva_meta_data[i].response;
+        
+        data_array.push(data_point);
+    }
+    
+    return data_array;
+}
+
+/*
  * Return data specifically for a customized sleep graph.  This is functionality
  * that should eventually be moved to the server side, but we can do this here
  * for now.
