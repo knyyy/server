@@ -303,4 +303,16 @@
   <session-config>
     <session-timeout>30</session-timeout>
   </session-config>
+  
+  <!--  force site-wide SSL (for now) -->  
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Restricted URLs</web-resource-name>
+      <url-pattern>/</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+  
 </web-app>
