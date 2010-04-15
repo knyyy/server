@@ -78,6 +78,12 @@ DataSourceJson.prototype.retreive_data_saliva = function() {
     
     // Run over each data point
     for (var i = 0; i < saliva_sample_time.length; i += 1) {
+        // Check for RESPONSE_SKIPPED, skip whole data point if so
+        if (saliva_sample_time[i].response == 'RESPONSE_SKIPPED' ||
+            saliva_meta_data[i].response == 'RESPONSE_SKIPPED') {
+            continue;
+        }
+        
         // Create a new data point
         var data_point = new Object();
         data_point.date = saliva_sample_time[i].date;
@@ -85,6 +91,11 @@ DataSourceJson.prototype.retreive_data_saliva = function() {
         data_point.meta_data = saliva_meta_data[i].response;
         
         data_array.push(data_point);
+    }
+    
+    // be sure we have some data
+    if (data_array.length == 0) {
+        throw new DataSourceJson.NoDataError("retrieve_data_sleep_time(): Found no data.");   
     }
     
     return data_array;
@@ -123,11 +134,6 @@ DataSourceJson.prototype.retrieve_data_sleep_time = function() {
                 (data_point.prompt_group_id == 1));
     });
     
-    // be sure we have some data
-    if (time_in_bed == null || time_in_bed.length == 0) {
-        throw new DataSourceJson.NoDataError("retrieve_data_sleep_time(): Found no data.");   
-    }
-    
     
     // Used to store all the data needed for the sleep graph
     var data_array = [];
@@ -135,6 +141,15 @@ DataSourceJson.prototype.retrieve_data_sleep_time = function() {
     
     // Run over each data point
     for (var i = 0; i < time_in_bed.length; i += 1) {
+        // Check to see if anything is RESPOSNE_SKIPPED, skip whole data point if so
+        if (time_in_bed[i].response == 'RESPONSE_SKIPPED' ||
+            time_to_fall_asleep[i].response == 'RESPONSE_SKIPPED' ||
+            time_awake[i].response == 'RESPONSE_SKIPPED' ||
+            reported_hours_asleep[i].response == 'RESPONSE_SKIPPED' ||
+            reported_sleep_quality[i].response == 'RESPONSE_SKIPPED') {
+            continue;
+        }
+        
         var cur_day = time_in_bed[i].date;
         
         // Make sure this is a new day of data
@@ -164,6 +179,11 @@ DataSourceJson.prototype.retrieve_data_sleep_time = function() {
         
         // Push data point onto the data array
         data_array.push(data_point);
+    }
+    
+    // be sure we have some data
+    if (data_array.length == 0) {
+        throw new DataSourceJson.NoDataError("retrieve_data_sleep_time(): Found no data.");   
     }
     
     return data_array;
