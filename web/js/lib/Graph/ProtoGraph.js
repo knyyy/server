@@ -938,6 +938,22 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
             })
             .text(function() {
                 if (that.panel.i() >= 0) {
+                    var cur_day = that.data[that.panel.i()].date.toStringMonthAndDay();
+                    var cur_time = Date.parseDate(that.data[that.panel.i()].response, "g:i").format('h:MM tt');
+                    
+                    return cur_day + ", " + cur_time;
+                }
+            });
+        
+        this.panel.add(pv.Label)
+            .top(25)
+            .right(0)
+            .textBaseline("bottom")
+            .visible(function() {
+                return that.panel.i() >= 0;
+            })
+            .text(function() {
+                if (that.panel.i() >= 0) {
                     var text = "Brushed? "
                     
                     if (that.data[that.panel.i()].meta_data[0] == 't')
@@ -950,7 +966,7 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
             });
         
         this.panel.add(pv.Label)
-            .top(20)
+            .top(35)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {
@@ -970,7 +986,7 @@ ProtoGraphMultiTimeType.prototype.apply_data = function(data, start_date, num_da
             });
         
         this.panel.add(pv.Label)
-            .top(30)
+            .top(45)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {
