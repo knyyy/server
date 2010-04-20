@@ -1049,6 +1049,22 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
     // Setup the X scale now
     this.x_scale = pv.Scale.ordinal(dayArray).splitBanded(0, this.width, ProtoGraph.BAR_WIDTH);
 
+    // Create a map from X position in the X scale to the corresponding day in the data array
+    this.x_scale_map = [];
+    var that = this;
+    dayArray.forEach(function(data_point) {
+        var location_in_data = -1;
+        // Run through every day in the data to see if we find a match
+        for (var i = 0; i < that.data.length; i += 1) {
+            // Check if the days are the same
+            if (that.data[i].date.difference_in_days(data_point) == 0) {
+                location_in_data = i;
+            }
+        }
+        // Now set the found location (-1 if not found)
+        that.x_scale_map.push(location_in_data);
+    });
+    
     // Find the earliest in bed and latest awake point for the Y scale and labels
     var earliest_time_in_bed = new Date(0,0,2,0,0,0);
     var latest_time_awake = new Date(0,0,0,0,0,0);
@@ -1067,13 +1083,6 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
     earliest_time_in_bed = earliest_time_in_bed.incrementHour(-1).roundDownToHour();
     latest_time_awake = latest_time_awake.incrementHour(1).roundUpToHour();
  
-    // Precalculate the difference in days between the start of the graph
-    // and the start of the actual data
-    var first_date = this.data[0].date;
-    var difference_between_first_and_start = this.start_date.getTime() -
-                                             first_date.getTime();
-    this.difference_in_days = Math.floor(difference_between_first_and_start / Date.one_day);
-    
     // Change the height of the graph to match the number of hours in the scale, that is
     // find the difference in hours and multiple by the number of pixels per hour
     var new_graph_height = earliest_time_in_bed.difference_in_hours(latest_time_awake) * 20;
@@ -1085,11 +1094,11 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
     
     // Setup the y scale
     this.y_scale = pv.Scale.linear(earliest_time_in_bed, latest_time_awake).range(0, new_graph_height);
+    
     // Setup a linear X scale to assist mapping the mouse position to day index
     this.x_scale_linear = pv.Scale.linear(0, this.num_days).range(0, this.width);
+
     
-    // Setup the Y labels
-    //this.replace_y_labels(earliest_time_in_bed.toStringHourAndMinute(), latest_time_awake.toStringHourAndMinute());
     
     // Setup the plots if there is no data yet
     if (this.has_data == false) {
@@ -1306,18 +1315,12 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
                 var mouse_pos = that.panel.mouse().x;
                 // Find the day index under the mouse pointer
                 var day_index = Math.floor(that.x_scale_linear.invert(mouse_pos));
-                
-                // Shift index by this difference
-                day_index += that.difference_in_days;
-                
-                // If the index is now out of bounds, reset index back to -1
-                if (day_index >= that.data.length) {
-                    day_index = -1;
-                }
+                // Now map to the location in the data_array
+                var data_index = that.x_scale_map[day_index];
              
                 // If the index has changed, update the graph
-                if (that.panel.i() != day_index) {
-                    return that.panel.i(day_index);
+                if (that.panel.i() != data_index) {
+                    return that.panel.i(data_index);
                 }
             });
      
