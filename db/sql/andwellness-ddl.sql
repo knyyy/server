@@ -149,7 +149,6 @@ CREATE TABLE prompt (
   legend_text tinytext NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (campaign_prompt_group_id, campaign_prompt_version_id, prompt_config_id),
-  UNIQUE (legend_text(255)),
   CONSTRAINT FOREIGN KEY (prompt_type_id) REFERENCES prompt_type (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FOREIGN KEY (campaign_prompt_group_id) REFERENCES campaign_prompt_group (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FOREIGN KEY (campaign_prompt_version_id) REFERENCES campaign_prompt_version (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -163,15 +162,15 @@ CREATE TABLE prompt (
   id integer unsigned NOT NULL auto_increment,
   prompt_id smallint(4) unsigned NOT NULL,
   user_id smallint(6) unsigned NOT NULL,
-  utc_time_stamp timestamp NOT NULL,
-  utc_epoch_millis bigint unsigned NOT NULL, 
+  time_stamp timestamp NOT NULL,
+  epoch_millis bigint unsigned NOT NULL, 
   phone_timezone varchar (32) NOT NULL,
   latitude double,
   longitude double,
   json_data text NOT NULL, -- the structure of the json_data is dependent on the prompt_type
   PRIMARY KEY (id),
   INDEX (user_id),
-  UNIQUE (user_id, prompt_id, utc_epoch_millis, json_data(25)), -- the number 25 is not arbitrary; it is the size of the longest JSON response we currently have
+  UNIQUE (user_id, prompt_id, epoch_millis, json_data(25)), -- the number 25 is not arbitrary; it is the size of the longest JSON response we currently have
   CONSTRAINT FOREIGN KEY (prompt_id) REFERENCES prompt (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -191,7 +190,7 @@ CREATE TABLE prompt (
 -- order to facilitate easier querying via tags and because tags are used 
 -- across all types of prompt responses so they have a natural structure.
 -- ----------------------------------------------------------------------------
- CREATE TABLE prompt_repsonse_tag (
+ CREATE TABLE prompt_response_tag (
   id integer unsigned NOT NULL auto_increment, 
   prompt_response_id integer unsigned NOT NULL,
   tag_id integer unsigned NOT NULL,
@@ -215,7 +214,7 @@ CREATE TABLE prompt (
 -- ----------------------------------------------
 -- Link group tags to actual prompt responses. 
 -- ----------------------------------------------
-CREATE TABLE prompt_group_repsonse_tag (
+CREATE TABLE prompt_group_response_tag (
   id integer unsigned NOT NULL auto_increment,
   prompt_response_id integer unsigned NOT NULL,
   group_tag_id integer unsigned NOT NULL,
@@ -231,14 +230,14 @@ CREATE TABLE prompt_group_repsonse_tag (
 CREATE TABLE mobility_mode_only_entry (
   id bigint unsigned NOT NULL auto_increment,
   user_id smallint(6) unsigned NOT NULL,
-  utc_time_stamp timestamp NOT NULL,
-  utc_epoch_millis bigint unsigned NOT NULL,
+  time_stamp timestamp NOT NULL,
+  epoch_millis bigint unsigned NOT NULL,
   phone_timezone varchar(32) NOT NULL,
   latitude double,
   longitude double,
   mode varchar(30) NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE (user_id, utc_epoch_millis), -- enforce no-duplicates rule at the table level
+  UNIQUE (user_id, epoch_millis), -- enforce no-duplicates rule at the table level
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -249,8 +248,8 @@ CREATE TABLE mobility_mode_only_entry (
 CREATE TABLE mobility_mode_features_entry (
   id integer unsigned NOT NULL auto_increment,
   user_id smallint(6) unsigned NOT NULL,
-  utc_time_stamp timestamp NOT NULL,
-  utc_epoch_millis bigint unsigned NOT NULL,
+  time_stamp timestamp NOT NULL,
+  epoch_millis bigint unsigned NOT NULL,
   phone_timezone varchar(32) NOT NULL,
   latitude double,
   longitude double,
@@ -262,7 +261,7 @@ CREATE TABLE mobility_mode_features_entry (
                              -- into separate columns is because the data will not be used outside of a debugging scenario.
                              -- It is simply stored the way it is sent by the phone (as a JSON array). 
   PRIMARY KEY (id),
-  UNIQUE INDEX (user_id, utc_epoch_millis),
+  UNIQUE INDEX (user_id, epoch_millis),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -273,11 +272,11 @@ CREATE TABLE mobility_mode_features_entry (
 CREATE TABLE mobility_entry_five_min_summary (
   id integer unsigned NOT NULL auto_increment,
   user_id smallint(6) unsigned NOT NULL,
-  utc_time_stamp timestamp NOT NULL,
+  time_stamp timestamp NOT NULL,
   phone_timezone varchar(32) NOT NULL,
   mode varchar(30) NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE INDEX (user_id, utc_time_stamp, mode),
+  UNIQUE INDEX (user_id,time_stamp, mode),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

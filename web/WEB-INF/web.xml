@@ -53,18 +53,19 @@
     <init-param>
       <param-name>ajaxUrls</param-name>
       <!--  To add a URL, make this a comma-separated list -->
-      <param-value>/app/viz</param-value>
+      <param-value>/app/q/ema,/app/q/percent-successful-location-updates,/app/q/completed-surveys-per-day,/app/q/hours-since-last-survey,/app/q/hours-since-last-update</param-value>
     </init-param>
   </filter>
   
   <!--  Add filter mappings for whatever resources require authenticated access --> 
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
-    <servlet-name>EmaVizServlet</servlet-name>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>AuthenticationFilter</filter-name>
     <servlet-name>jsp</servlet-name>
+    <servlet-name>EmaQueryServlet</servlet-name>
+    <servlet-name>SuccessfulLocationUpdatesQueryServlet</servlet-name>
+    <servlet-name>PromptGroupCountQueryServlet</servlet-name>
+    <servlet-name>MostRecentSurveyQueryServlet</servlet-name>
+    <servlet-name>MostRecentActivityQueryServlet</servlet-name>
   </filter-mapping>
     
   <!-- Servlets.  Note that url-patterns are matched against initial (or re-dispatched) requests, not a request possiblty modified
@@ -241,30 +242,163 @@
     <url-pattern>/app/sensor/login</url-pattern>
   </servlet-mapping>
   
-  <!--  Handle EMA Visualization Queries  -->
+  <!--  Handle EMA Queries  -->
   <servlet>
     <description>
-      Runs visualization queries for EMA (prompt/survey response) data. 
+      Runs queries for EMA (prompt response) data. 
     </description>
-    <servlet-name>EmaVizServlet</servlet-name>
-    <servlet-class>edu.ucla.cens.awserver.jee.servlet.EmaVizServlet</servlet-class>
+    <servlet-name>EmaQueryServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids.    
     -->
     <init-param>
       <param-name>controllerName</param-name>
-      <param-value>emaVizController</param-value>
+      <param-value>emaQueryController</param-value>
     </init-param>
     <init-param>
       <param-name>awRequestCreatorName</param-name>
-      <param-value>emaVizAwRequestCreator</param-value>
+      <param-value>emaQueryAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>emaQueryHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>emaQueryResponseWriter</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>EmaVizServlet</servlet-name>
-    <url-pattern>/app/viz</url-pattern>
+    <servlet-name>EmaQueryServlet</servlet-name>
+    <url-pattern>/app/q/ema</url-pattern>
+  </servlet-mapping>
+  
+  
+  <!--  Handle location update queries -->
+  <servlet>
+    <description>
+      Runs queries for the percentage of successful location updates per day. 
+    </description>
+    <servlet-name>SuccessfulLocationUpdatesQueryServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids.    
+    -->
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>successfulLocationUpdatesQueryController</param-value>
+    </init-param>
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>userOnlyAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>successfulLocationUpdatesQueryResponseWriter</param-value> 
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>SuccessfulLocationUpdatesQueryServlet</servlet-name>
+    <url-pattern>/app/q/percent-successful-location-updates</url-pattern>
+  </servlet-mapping>
+  
+  <!--  Handle completed surveys queries -->
+  <servlet>
+    <description>
+      Runs queries for the number of completed prompt groups per day. 
+    </description>
+    <servlet-name>PromptGroupCountQueryServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids.    
+    -->
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>promptGroupCountQueryController</param-value>
+    </init-param>
+     <init-param>
+      <param-name>awRequestCreatorName</param-name> <!-- note: shared with EMA query -->
+      <param-value>emaQueryAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>httpServletRequestValidatorName</param-name> <!-- note: shared with EMA query -->
+      <param-value>emaQueryHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>promptGroupCountQueryResponseWriter</param-value> 
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PromptGroupCountQueryServlet</servlet-name>
+    <url-pattern>/app/q/completed-surveys-per-day</url-pattern>
+  </servlet-mapping>
+  
+  <!--  Handle hours since last survey queries -->
+  <servlet>
+    <description>
+      Runs queries to determine the hours since the last survey
+    </description>
+    <servlet-name>MostRecentSurveyQueryServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids.    
+    -->
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>mostRecentSurveyQueryController</param-value>
+    </init-param>
+     <init-param>
+      <param-name>awRequestCreatorName</param-name> <!-- note: shared with successful location updates query -->
+      <param-value>userOnlyAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>mostRecentSurveyQueryResponseWriter</param-value> 
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>MostRecentSurveyQueryServlet</servlet-name>
+    <url-pattern>/app/q/hours-since-last-survey</url-pattern>
+  </servlet-mapping>
+  
+   <!--  Handle hours since last survey queries -->
+  <servlet>
+    <description>
+      Runs queries to determine the hours since the last survey or mobility message
+    </description>
+    <servlet-name>MostRecentActivityQueryServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids.    
+    -->
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>mostRecentActivityQueryController</param-value>
+    </init-param>
+     <init-param>
+      <param-name>awRequestCreatorName</param-name> <!-- note: shared with successful location updates query -->
+      <param-value>userOnlyAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>mostRecentActivityQueryResponseWriter</param-value> 
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>MostRecentActivityQueryServlet</servlet-name>
+    <url-pattern>/app/q/hours-since-last-update</url-pattern>
   </servlet-mapping>
   
   <welcome-file-list>
@@ -304,7 +438,7 @@
     <session-timeout>30</session-timeout>
   </session-config>
   
-  <!--  Turning off site-wide SSL because it causes problems with phones logging in over Edge    
+  <!--
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Restricted URLs</web-resource-name>

@@ -78,7 +78,8 @@ ProtoGraph.graph_type = {
     "PROTO_GRAPH_INTEGER_TYPE":2,
     "PROTO_GRAPH_YES_NO_TYPE":3,
     "PROTO_GRAPH_MULTI_TIME_TYPE":4,
-    "PROTO_GRPAH_CUSTOM_SLEEP_TYPE":5
+    "PROTO_GRAPH_CUSTOM_SLEEP_TYPE":5,
+	"PROTO_GRAPH_ALL_INTEGER_TYPE":6
 };
 
 ProtoGraph.HEIGHT = 120;
@@ -135,8 +136,11 @@ ProtoGraph.factory = function(graph_description, div_id, graph_width) {
     else if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_MULTI_TIME_TYPE) {
         var new_graph = new ProtoGraphMultiTimeType(div_id, graph_description.text, graph_width);
     }
-    else if (graph_description.type == ProtoGraph.graph_type.PROTO_GRPAH_CUSTOM_SLEEP_TYPE) {
+    else if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_CUSTOM_SLEEP_TYPE) {
         var new_graph = new ProtoGraphCustomSleepType(div_id, graph_description.text, graph_width, graph_description.sleep_labels);
+    }
+	else if (graph_description.type == ProtoGraph.graph_type.PROTO_GRAPH_ALL_INTEGER_TYPE) {
+        var new_graph = new ProtoGraphAllIntegerType(div_id, graph_description.text, graph_width, graph_description.x_labels);
     }
     else {
         throw new TypeError("ProtoGraph.factory(): Unknown graph type in JSON.");
@@ -153,6 +157,15 @@ ProtoGraph.factory = function(graph_description, div_id, graph_width) {
 // Accessors
 ProtoGraph.prototype.get_div_id = function() {
     return this.div_id;
+}
+
+// Check if the graph has no data
+ProtoGraph.prototype.is_empty = function() {
+	if (this.data.length == 0) {
+		return true;
+	}
+	
+	return false;
 }
 
 // Helper function to replace X labels with day values, given
@@ -1092,8 +1105,8 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
         ProtoGraph._logger.debug("Setting new graph height to: " + new_graph_height);
     }
     
-    // Setup the y scale
-    this.y_scale = pv.Scale.linear(earliest_time_in_bed, latest_time_awake).range(0, new_graph_height);
+    // Setup the y scale: earliest time in bed should be on the top
+    this.y_scale = pv.Scale.linear(earliest_time_in_bed, latest_time_awake).range(new_graph_height, 0);
     
     // Setup a linear X scale to assist mapping the mouse position to day index
     this.x_scale_linear = pv.Scale.linear(0, this.num_days).range(0, this.width);
@@ -1190,7 +1203,7 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
                 return that.y_scale.ticks();
             })
             .top(function(d) {
-                return that.y_scale(d);
+                return that.panel.height() - that.y_scale(d);
             })
             .left(0)
             .width(5)
@@ -1329,6 +1342,135 @@ ProtoGraphCustomSleepType.prototype.apply_data = function(data, start_date, num_
         this.has_data = true;
     }
  
+    // splitBanded adds a margin in to the scale.  Find the margin
+    // from the range
+    var range = this.x_scale.range();
+    var margin = range[0] / 2;
+    // Only add ticks between days, so subtract one
+    this.add_day_demarcations(num_days - 1, margin);
+}
+
+
+
+/*
+ * ProtoGraphAllIntegerType - A subtype of the ProtoGraph class to 
+ * visualize integer responses wuth no defined range or labels.
+ */
+
+// ProtoGraphAllIntegerType constructor
+// div_id - ID of the div element on which to create the graph
+// title - The title of the graph
+// x_labels - Labels for the different bars on the x axis
+function ProtoGraphAllIntegerType(div_id, title, graph_width, x_labels) {
+    // Inherit properties
+    ProtoGraph.call(this, div_id, title, graph_width);
+
+    // new properties
+    this.min_val = 0;  // Integer ranges always start at 0
+    this.max_val = 6;
+    this.y_scale = pv.Scale.linear(this.min_val,this.max_val).range(0, ProtoGraph.HEIGHT);
+    this.x_labels = x_labels;
+    
+    // The Y labels never change, add them now
+    var that = this;
+    this.vis.add(pv.Label)
+        .data(this.y_scale.ticks())
+        .left(0)
+        .bottom(function(d) {
+            return that.y_scale(d);
+        })
+        .visible(function(d) {
+        	return (d % 2) == 0;
+        })
+        .textAlign('right')
+        .textBaseline('middle');
+    
+}
+
+// Inherit methods from ProtoGraph
+ProtoGraphAllIntegerType.prototype = new ProtoGraph();
+
+// Draws a sparkline graph using the passed in integer data.  For now
+// assumes the data one integer response per day.  Draws a bar graph
+// along with an average line.
+ProtoGraphAllIntegerType.prototype.apply_data = function(data, start_date, num_days) {
+    // Copy the new information
+    this.data = data;
+    this.num_days = num_days;
+    
+    // Replace the x labels with possible new labels
+    this.replace_x_labels(start_date, num_days);
+
+    // Split the data into categories using Scale.ordinal
+    var dayArray = [];
+    for (var i = 0; i < this.num_days; i += 1) {
+        var next_day = start_date.incrementDay(i);
+        dayArray.push(next_day);
+    }
+    
+    // Setup the X scale now
+    this.x_scale = pv.Scale.ordinal(dayArray).splitBanded(0, this.width, ProtoGraph.BAR_WIDTH);
+    
+    // Process the data as necessary
+	// THIS SHOULD NOW BE DONE IN AwData.create_from!
+    //this.preprocess_add_day_counts(this.data);
+    
+    // If there is no data yet, setup the display
+    if (this.has_data == false) {
+        // Add a bar for each response
+        var that = this;
+        this.vis.add(pv.Bar)
+            // Make this a closure to automatically update data
+            .data(function() {
+                return that.data;
+            })
+            .width(function(d) {
+                // Shrink the bar width by the total number of responses per day
+                // Subtract one to be sure there is a space between bars
+                return that.x_scale.range().band / d.total_day_count - 1;
+            })
+            .height(function(d) {
+                return that.y_scale(d.response) + 1;
+            })
+            .bottom(1)
+            .left(function(d) {
+                // Shift the bar left by which response per day this is
+                return that.x_scale(d.date) + that.x_scale.range().band * ((d.day_count) / d.total_day_count);
+            })
+            .fillStyle(function(d) {
+                return ProtoGraph.DAY_COLOR[d.day_count];
+                // Always use the same color for now
+                //return ProtoGraph.DAY_COLOR[0];
+            });
+        
+        // Add a legend if x_labels exist
+        if (this.x_labels != null) {
+        	// Use i to count what index we are at when we iterate
+        	var i = 0;
+        	var that = this;
+        	this.x_labels.forEach(function(label) {
+        		// Add a color box to show what color this is
+        		that.vis.add(pv.Bar)
+        			.right(-5)
+        			.top(i*10)
+        			.height(5)
+        			.width(5)
+        			.strokeStyle(ProtoGraph.DAY_COLOR[i])
+        			.fillStyle(ProtoGraph.DAY_COLOR[i])
+        		.anchor("right")
+        			.add(pv.Label)
+        			.text(": " + label)
+        			.textAlign('left')
+        			.textBaseline('middle');
+        		
+        		// Move to next label
+        		i += 1;
+        	});
+        }
+            
+        this.has_data = true;
+    }
+    
     // splitBanded adds a margin in to the scale.  Find the margin
     // from the range
     var range = this.x_scale.range();
