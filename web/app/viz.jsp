@@ -24,7 +24,6 @@
     <link href="http://andwellness.cens.ucla.edu/favicon.ico" rel="shortcut icon" type="image/x-icon">
 
 
-	
 
 	<!-- CSS includes for various formatting -->
 	<!-- Custom CSS for the "dashboard" setup -->
@@ -35,6 +34,7 @@
 	<link type="text/css" href="/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
 	<link type="text/css" href="/css/jquery-validity.css" rel="stylesheet" /> 
     <link rel="stylesheet" type="text/css" href="/css/dateinput.css"/>
+
     
     <!-- A large number of javascript includes, will reduce -->
 	<!-- Main jQuery library -->
