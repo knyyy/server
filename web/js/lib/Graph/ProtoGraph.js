@@ -558,7 +558,9 @@ function ProtoGraphTrueFalseArrayType(divId, title, graphWidth, yLabels) {
 
     // Create a horizontal line to separate true from false, also throw
     // labels in for good measure
-	this.yScale = pv.Scale.ordinal(this.yLabels).split(0, this.height);
+	// Swap top to bottom for display purposes
+	this.yScale = pv.Scale.ordinal(this.yLabels).split(this.height,0);
+	var that = this;
     this.vis.add(pv.Rule)
         .data(this.yLabels)
         .bottom(this.yScale)
@@ -1042,6 +1044,11 @@ function ProtoGraphCustomSleepType(divId, title, graphWidth, sleepLabels) {
     ProtoGraph.call(this, divId, title, graphWidth);
 
     this.sleepLabels = sleepLabels;
+    // Hard code these in here for now
+    this.sleepQualityLabels = ['Very bad',
+                               'Bad',
+                               'Good',
+                               'Very Good'];
 }
 
 // Inherit methods from ProtoGraph
@@ -1277,9 +1284,37 @@ ProtoGraphCustomSleepType.prototype.loadData = function(data, startDate, numDays
                 }
             });
      
+        // Display actual hours of sleep
+        this.panel.add(pv.Label)
+        .top(50)
+        .right(0)
+        .textBaseline("bottom")
+        .visible(function() {
+            return that.panel.i() >= 0;
+        })
+        .text(function() {
+            if (that.panel.i() >= 0) {
+                return "Reported hrs asleep: " + that.data[that.panel.i()].reportedHoursAsleep + " hrs"; 
+            }
+        });
+        
+        // Display reported sleep quality
+        this.panel.add(pv.Label)
+        .top(60)
+        .right(0)
+        .textBaseline("bottom")
+        .visible(function() {
+            return that.panel.i() >= 0;
+        })
+        .text(function() {
+            if (that.panel.i() >= 0) {
+                return "Sleep quality: " + that.sleepQualityLabels[that.data[that.panel.i()].reportedSleepQuality];
+            }
+        });
+        
         // Display a static separation of prompt responses and calculated data
         this.panel.add(pv.Label)
-            .top(55)
+            .top(75)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {
@@ -1289,7 +1324,7 @@ ProtoGraphCustomSleepType.prototype.loadData = function(data, startDate, numDays
         
         // Display time asleep
         this.panel.add(pv.Label)
-            .top(65)
+            .top(85)
             .right(0)
             .textBaseline("bottom")
             .visible(function() {

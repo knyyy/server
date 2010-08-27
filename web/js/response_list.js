@@ -24,6 +24,7 @@
 	{groupId:3, promptId:6, text:'If yes, what type of exercise did you today?', type:2, yLabels:['none', 'light', 'moderate', 'vigorous']},
 	{groupId:3, promptId:7, text:'If you exercised, for how many minutes did you exercise?', type:2, yLabels:['10','20','30','40','50','60+']},
 	{groupId:3, promptId:8, text:'If you exercised, did you enjoy exercising?', type:2, yLabels:['Not at all', 'Slightly', 'Moderately', 'Very']},
+	{groupId:3, promptId:9, text:'If you didn\'t exercise, why not?', type:1, yLabels:['Lack of time', 'Lack of self-discipline', 'Fatigue', 'Procrastination', 'Lack of interest', 'Responsibilities']},
 	{groupId:3, promptId:10, text:'How many alcoholic beverages did you have today?', type:2, yLabels:['0','1','2','3','4','5','6','7','8','9','10+']},
 	{groupId:3, promptId:11, text:'How many caffeinated beverages did you have today?', type:2, yLabels:['0','1','2','3','4','5','6','7','8','9','10+']},
 	{groupId:3, promptId:12, text:'Did you have any high sugar food or drinks today? (soft drinks, candy, etc)', type:3},
@@ -43,9 +44,9 @@
 var groupList = [
  	'Saliva',
 	'Sleep',
-	'Emotional State',
+	'Morn/Noon Emotional',
 	'Diary',
-	'Emotional State'
+	'Evening Emotional'
 ];
 
 var mobilityModes = [
