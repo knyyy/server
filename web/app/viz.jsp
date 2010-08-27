@@ -176,7 +176,7 @@
             if (log.isWarnEnabled()) {
                 log.warn("Validation failed!");
             }
-            return false;	    	 
+            //return false;	    	 
         }
 
         // Switch on the loading graphic
