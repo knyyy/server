@@ -75,7 +75,7 @@ ViewGraph.prototype.configureHtml = function(config) {
             }
             
             // Setup the tabs with the prompt groups
-            $(that.divId).find('.tabs').append('<li><a href="' + newGroupNameRef + '">' + newGroupName + '</a></li>');
+            $(that.divId).find('.tabs').append('<li><a class="w1" href="' + newGroupNameRef + '">' + newGroupName + '</a></li>');
             $(that.divId).find('.panes').append('<div id="group_' + config.groupId + '"></div>');
             
             curGroup = config.groupId;
