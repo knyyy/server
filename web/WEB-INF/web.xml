@@ -186,17 +186,18 @@
     <url-pattern>/app/login</url-pattern>
   </servlet-mapping>
   
-  <!--  Sensor Upload -->
+  <!--  Sensor Upload - soon to be inactive and replaced with separate endpoints for each upload type -->
+  <!--
   <servlet>
     <description>
       processes data uploads from a sensor (phone) 
     </description>
     <servlet-name>SensorUploadServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.SensorUploadServlet</servlet-class>
-    
+  -->  
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids. -->  
-    
+  <!--  
     <init-param>
       <param-name>awRequestCreatorName</param-name>
       <param-value>sensorUploadAwRequestCreator</param-value>
@@ -213,15 +214,45 @@
     <servlet-name>SensorUploadServlet</servlet-name>
     <url-pattern>/app/sensor/upload</url-pattern>
   </servlet-mapping>
+  -->
   
-   <!--  Sensor Authentication - Initial Phone Login -->
+  <!--  Mobility Data Upload -->
+  <servlet>
+    <description>
+      processes mobility data uploads from a phone (or anywhere else) 
+    </description>
+    <servlet-name>MobilityUploadServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.MobilityUploadServlet</servlet-class>
+   
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids. -->  
+   
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>mobilityUploadAwRequestCreator</param-value>
+    </init-param>
+    
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>mobilityUploadController</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>MobilityUploadServlet</servlet-name>
+    <url-pattern>/app/p/upload/mobility</url-pattern>
+  </servlet-mapping>
+ 
+  
+  <!--  Phone Authentication - Initial Phone Login -->
   <servlet>
     <description>
       The first time a phone user logs in they use their default password. After this first login, they then must
       create a new password. The new password authenticates uploads (and any other future phone-server features). 
     </description>
-    <servlet-name>SensorAuthServlet</servlet-name>
-    <servlet-class>edu.ucla.cens.awserver.jee.servlet.SensorAuthServlet</servlet-class>
+    <servlet-name>PhoneAuthServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.PhoneAuthServlet</servlet-class>
     
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids. -->  
@@ -233,15 +264,44 @@
     
     <init-param>
       <param-name>controllerName</param-name>
-      <param-value>sensorAuthController</param-value>
+      <param-value>phoneAuthController</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>SensorAuthServlet</servlet-name>
-    <url-pattern>/app/sensor/login</url-pattern>
+    <servlet-name>PhoneAuthServlet</servlet-name>
+    <url-pattern>/app/p/login</url-pattern>
   </servlet-mapping>
+  
+  <!-- refactor into each type of upload
+  <servlet>
+    <description>
+      Processes mobility data uploads from a phone. 
+    </description>
+    <servlet-name>SensorUploadServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.SensorUploadServlet</servlet-class>
+  -->
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids. -->  
+  <!--  
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>sensorUploadAwRequestCreator</param-value>
+    </init-param>
+    
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>sensorUploadController</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>SensorUploadServlet</servlet-name>
+    <url-pattern>/app/sensor/upload</url-pattern>
+  </servlet-mapping>
+  -->
   
   <!--  Handle EMA Queries  -->
   <servlet>

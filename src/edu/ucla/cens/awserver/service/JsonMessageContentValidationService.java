@@ -15,7 +15,10 @@ import edu.ucla.cens.awserver.validator.json.JsonObjectValidator;
  * A service for validating the contents of JSON messages. The messages are sent to AW as a JSON Array where each element in the 
  * array corresponds to a type defined by the "t" (type) parameter in the original request URL. 
  * 
- * The JSON spec can be found <a href="http://www.lecs.cs.ucla.edu/wikis/andwellness/index.php/AndWellness-JSON">here</a>.
+ * The original JSON spec can be found <a href="http://www.lecs.cs.ucla.edu/wikis/andwellness/index.php/AndWellness-JSON">here</a>.
+ * The updated spec is <a href="http://www.lecs.cs.ucla.edu/wikis/andwellness/index.php/AndWellness-JSON-2.0">here</a>.
+ * 
+ * TODO - refactor because this class will now handle only one type of content (our upload types now have their own URLs). 
  * 
  * @author selsky
  */
@@ -26,9 +29,9 @@ public class JsonMessageContentValidationService implements Service {
 	private AwRequestAnnotator _incorrectEntryAnnotator;;
 	
 	/**
-	 * @throws IllegalArgumentException
-	 * @throws IllegalArgumentException 
-	 * @throws IllegalArgumentException  
+	 * @throws IllegalArgumentException if the provided validatorMap is null or empty
+	 * @throws IllegalArgumentException if the provided noDataAnnotator is null
+	 * @throws IllegalArgumentException if the provided incorrectEntryAnnotator is null
 	 */
 	public JsonMessageContentValidationService(Map<String, JsonObjectValidator[]> validatorMap, 
 		AwRequestAnnotator noDataAnnotator, AwRequestAnnotator incorrectEntryAnnotator) {
@@ -84,7 +87,7 @@ public class JsonMessageContentValidationService implements Service {
 			                                                                            // representing an upload data packet
 			
 			if(null == jsonObject) {
-				_incorrectEntryAnnotator.annotate(awRequest, "missing data packet");
+				_incorrectEntryAnnotator.annotate(awRequest, "missing data packet - empty JSON object");
 				return;
 			}
 			
