@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="andwellness-base" basedir="." default="dist-all">
+<project name="andwellness-server" basedir="." default="dist-all">
   <property file="build.properties"/>
   <property name="component.repository" location="${user.home}/.component-repository"/>
   <property name="version"  value="snapshot"/>
