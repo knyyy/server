@@ -26,13 +26,13 @@ import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.util.StringUtils;
 
 /**
- * Servlet for processing sensor authentication.
+ * Servlet for processing phone authentication.
  * 
  * @author selsky
  */
 @SuppressWarnings("serial") 
-public class SensorAuthServlet extends AbstractAwHttpServlet {
-	private static Logger _logger = Logger.getLogger(SensorAuthServlet.class);
+public class PhoneAuthServlet extends AbstractAwHttpServlet {
+	private static Logger _logger = Logger.getLogger(PhoneAuthServlet.class);
 	private Controller _controller;
 	private AwRequestCreator _awRequestCreator;
 	private List<String> _parameterList;
@@ -40,7 +40,7 @@ public class SensorAuthServlet extends AbstractAwHttpServlet {
 	/**
 	 * Default no-arg constructor.
 	 */
-	public SensorAuthServlet() {
+	public PhoneAuthServlet() {
 		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"p","u"}));
 	}
 		
@@ -78,7 +78,7 @@ public class SensorAuthServlet extends AbstractAwHttpServlet {
 	
 	/**
 	 * Dispatches to a Controller to perform sensor data upload. If the upload fails, an error message is persisted to the response.
-	 * If the request is successful, allow Tomcat to simply return HTTP 200.
+	 * If the request is successful, returns HTTP 200 and {"response":"success"}
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException { 
@@ -113,7 +113,7 @@ public class SensorAuthServlet extends AbstractAwHttpServlet {
 		
 		catch(Exception e) { 
 			
-			_logger.error("an error occurred on sensor data upload", e);
+			_logger.error("an error occurred on phone authentication", e);
 			// the exception is not wrapped inside a ServletException in order to avoid sending the Tomcat HTTP 500 error page 
 			// back to the client
 			
@@ -133,27 +133,28 @@ public class SensorAuthServlet extends AbstractAwHttpServlet {
 	}
 	
 	/**
-	 * Dispatches to processRequest().
+	 * Returns a 405 Method Not Allowed to the client because a GET is not allowed.
 	 */
-	@Override protected final void doGet(HttpServletRequest req, HttpServletResponse resp)
+	@Override protected final void doGet(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 
-		processRequest(req, resp);
+		_logger.warn("GET disallowed on phone authentication.");
+		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 
 	}
 
 	/**
 	 * Dispatches to processRequest().
 	 */
-	@Override protected final void doPost(HttpServletRequest req, HttpServletResponse resp)
+	@Override protected final void doPost(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
     
-		processRequest(req, resp);
+		processRequest(request, response);
 	
 	}
 	
 	/**
-	 * Pre-validate to avoid situations where someone is sending purposefully malicious data 
+	 * Pre-validate to avoid situations where someone is sending purposefully malicious data. 
 	 */
 	private boolean prevalidate(HttpServletRequest request) {
 		Map<?,?> parameterMap = request.getParameterMap(); // String, String[]
