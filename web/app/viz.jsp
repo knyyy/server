@@ -21,7 +21,7 @@
     
     <link href="/css/zp-compressed.css" type="text/css" media="screen, print" rel="stylesheet" />
     <link href="/css/zp-print.css" type="text/css" media="print" rel="stylesheet" />
-    <link href="http://andwellness.cens.ucla.edu/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
 
     
     
