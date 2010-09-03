@@ -6,7 +6,8 @@
      Spring ApplicationContext configuration for phone JSON-over-HTTP authentication 
   -->
   
-  <!-- Servlet-to-AW hooks are shared with authenticationController i.e., bean id authenticationAwRequestCreator -->
+  <!-- Servlet-to-AW hooks  -->
+  <bean id="phoneAuthAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.PhoneAuthAwRequestCreator" />
     
   <!-- Controller - all components here are reused from sensorUploadController.xml -->
   <bean id="phoneAuthController" class="edu.ucla.cens.awserver.controller.ControllerImpl">
@@ -19,9 +20,10 @@
       <list>
         <ref bean="uploadUserNameValidator" />
         <ref bean="uploadPasswordValidator" />
+        <ref bean="uploadPhoneVersionValidator" />
       </list>      
     </property>
-    <property name="featureName"><value>sensor authentication</value></property>
+    <property name="featureName"><value>phone authentication</value></property>
   </bean>
  
 </beans>

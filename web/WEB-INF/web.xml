@@ -248,8 +248,7 @@
   <!--  Phone Authentication - Initial Phone Login -->
   <servlet>
     <description>
-      The first time a phone user logs in they use their default password. After this first login, they then must
-      create a new password. The new password authenticates uploads (and any other future phone-server features). 
+     Performs an authentication check for user's logging in from the phone app.
     </description>
     <servlet-name>PhoneAuthServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.PhoneAuthServlet</servlet-class>
@@ -259,7 +258,7 @@
     
     <init-param>
       <param-name>awRequestCreatorName</param-name>
-      <param-value>authenticationAwRequestCreator</param-value>
+      <param-value>phoneAuthAwRequestCreator</param-value>
     </init-param>
     
     <init-param>

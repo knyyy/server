@@ -41,7 +41,7 @@ public class PhoneAuthServlet extends AbstractAwHttpServlet {
 	 * Default no-arg constructor.
 	 */
 	public PhoneAuthServlet() {
-		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"p","u"}));
+		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"p","u","phv"}));
 	}
 		
 	/**
@@ -161,7 +161,7 @@ public class PhoneAuthServlet extends AbstractAwHttpServlet {
 		
 		// Check for missing or extra parameters
 		
-		if(parameterMap.size() != 2) {
+		if(parameterMap.size() != _parameterList.size()) {
 			_logger.warn("an incorrect number of parameters was found on sensor authentication: " + parameterMap.size());
 			return false;
 		}
@@ -195,12 +195,15 @@ public class PhoneAuthServlet extends AbstractAwHttpServlet {
 		
 		String u = (String) request.getParameter("u");
 		String p = (String) request.getParameter("p");
+		String phv = (String) request.getParameter("phv");
 		
 		// Check for abnormal lengths (buffer overflow attack)
 		// 50 is an arbitrary number for length, but it would be very strange
 		// 180 characters for the password would represent a 60 character password with every character URL encoded
 		
-		if(greaterThanLength("user", "u", u, 50) || greaterThanLength("password", "p", p, 180)) { 
+		if(greaterThanLength("user", "u", u, 50) 
+			|| greaterThanLength("password", "p", p, 180) 
+			|| greaterThanLength("phone version", "phv", phv, 50)) { 
 			return false;
 		}
 		
