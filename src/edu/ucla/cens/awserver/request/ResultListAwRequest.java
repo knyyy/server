@@ -21,7 +21,7 @@ public class ResultListAwRequest extends AbstractAwRequest {
 
 	@Override
 	public String toString() {
-		return "CampaignExistsAwRequest [_resultList=" + _resultList
+		return "ResultsListAwRequest [_resultList=" + _resultList
 				+ ", toString()=" + super.toString() + "]";
 	}
 }
