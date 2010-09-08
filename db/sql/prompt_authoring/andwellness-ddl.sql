@@ -1,7 +1,4 @@
 -- MySQL DDL statements for the AndWellness database
--- Version 0.9.0
--- As the number of tables in the database grows, it would be a good idea 
--- to split this file up separate files per table.
 
 CREATE DATABASE andwellness CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE andwellness;
@@ -12,10 +9,25 @@ USE andwellness;
 -- --------------------------------------------------------------------
 CREATE TABLE campaign (
   id smallint(4) unsigned NOT NULL auto_increment,
-  name varchar(125) NOT NULL,
-  label varchar(250) default NULL, -- can be used as a separate display label
+  name varchar(250) NOT NULL,
+  label varchar(500) default NULL, -- can be used as a separate display label
   PRIMARY KEY (id),
   UNIQUE KEY (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------------------
+-- Links surveys (stored in raw XML format) to a campaign. 
+-- --------------------------------------------------------------------
+CREATE TABLE campaign_configuration (
+  id smallint(4) unsigned NOT NULL auto_increment,
+  campaign_id smallint(4) unsigned NOT NULL,
+  
+  version float unsigned NOT NULL,
+  xml mediumtext NOT NULL, -- the max length for mediumtext is roughly 5.6 million UTF-8 chars
+  
+  PRIMARY KEY (id),
+  UNIQUE (campaign_id, version),
+  CONSTRAINT FOREIGN KEY (campaign_id) REFERENCES campaign (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------------------------
@@ -85,17 +97,6 @@ CREATE TABLE user_role_campaign (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
--- Links surveys (stored in raw XML format) to a campaign. 
--- --------------------------------------------------------------------
-CREATE TABLE campaign_configuration (
-  id smallint(4) unsigned NOT NULL auto_increment,
-  campaign_id NOT NULL,
-  xml mediumtext NOT NULL, -- the max length for mediumtext is roughly 5.6 million UTF-8 chars
-  PRIMARY KEY (id),
-  CONSTRAINT FOREIGN KEY (campaign_id) REFERENCES campaign (id) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------------------
 -- Stores survey responses for a user in a campaign 
 -- --------------------------------------------------------------------
 CREATE TABLE survey_response (
@@ -124,9 +125,9 @@ CREATE TABLE survey_response (
 -- --------------------------------------------------------------------
 CREATE TABLE prompt_type (
     id tinyint unsigned NOT NULL auto_increment,
-    type varchar(10) NOT NULL,
+    type varchar(50) NOT NULL,
     PRIMARY KEY (id)
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
 -- Stores individual prompt responses for a user in a campaign. Both
@@ -159,7 +160,7 @@ CREATE TABLE url_based_resource (
     url text,
     UNIQUE (uuid), -- disallow duplicates and index on UUID
     PRIMARY KEY (id)
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
 -- High-frequency "mode only" mobility data. Mobility data is *not*
