@@ -12,7 +12,7 @@ CREATE TABLE campaign (
   name varchar(250) NOT NULL,
   label varchar(500) default NULL, -- can be used as a separate display label
   PRIMARY KEY (id),
-  UNIQUE KEY (name)
+  UNIQUE (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
@@ -21,10 +21,8 @@ CREATE TABLE campaign (
 CREATE TABLE campaign_configuration (
   id smallint(4) unsigned NOT NULL auto_increment,
   campaign_id smallint(4) unsigned NOT NULL,
-  
   version float unsigned NOT NULL,
   xml mediumtext NOT NULL, -- the max length for mediumtext is roughly 5.6 million UTF-8 chars
-  
   PRIMARY KEY (id),
   UNIQUE (campaign_id, version),
   CONSTRAINT FOREIGN KEY (campaign_id) REFERENCES campaign (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -45,9 +43,9 @@ CREATE TABLE user (
 
 -- ---------------------------------------------------------------------
 -- Due to IRB standards, we store personally identifying information
--- separately from the user's login credentials. This table is currently
+-- separately from the user's login credentials. ** This table is currently
 -- unused, but it is kept around in order to avoid changing the command
--- line registration process.
+-- line registration process. **
 -- ---------------------------------------------------------------------
 CREATE TABLE user_personal (
   id smallint(6) unsigned NOT NULL auto_increment,
