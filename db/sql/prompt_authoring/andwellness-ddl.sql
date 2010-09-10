@@ -21,7 +21,7 @@ CREATE TABLE campaign (
 CREATE TABLE campaign_configuration (
   id smallint(4) unsigned NOT NULL auto_increment,
   campaign_id smallint(4) unsigned NOT NULL,
-  version float unsigned NOT NULL,
+  version varchar(250) NOT NULL,
   xml mediumtext NOT NULL, -- the max length for mediumtext is roughly 5.6 million UTF-8 chars
   PRIMARY KEY (id),
   UNIQUE (campaign_id, version),
