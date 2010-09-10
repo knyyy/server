@@ -114,8 +114,8 @@ public abstract class AbstractAwRequest implements AwRequest {
 		throw new UnsupportedOperationException("it is illegal to invoke getJsonDataAsString() on this instance");
 	}
 
-	public String getPhoneVersion() {
-		throw new UnsupportedOperationException("it is illegal to invoke getPhoneVersion() on this instance");
+	public String getClient() {
+		throw new UnsupportedOperationException("it is illegal to invoke getClient() on this instance");
 	}
 
 	public int[] getPromptIdArray() {
@@ -207,8 +207,8 @@ public abstract class AbstractAwRequest implements AwRequest {
 		throw new UnsupportedOperationException("it is illegal to invoke setJsonDataAsString() on this instance");
 	}
 
-	public void setPhoneVersion(String phoneVersion) {
-		throw new UnsupportedOperationException("it is illegal to invoke setPhoneVersion() on this instance");
+	public void setClient(String client) {
+		throw new UnsupportedOperationException("it is illegal to invoke setClient() on this instance");
 	}
 
 	public void setPromptIdArray(int[] promptIdArray) {

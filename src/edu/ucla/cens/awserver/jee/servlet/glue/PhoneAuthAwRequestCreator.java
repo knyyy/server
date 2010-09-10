@@ -45,12 +45,13 @@ public class PhoneAuthAwRequestCreator implements AwRequestCreator {
 		user.setUserName(userName);
 		user.setPassword(password);
 		
-		String phv = request.getParameter("phv"); 
-		NDC.push(phv); // push the phone version into the Log4J NDC for the currently executing thread
+		String ci = request.getParameter("ci"); 
+		NDC.push("ci=" + ci); // push the client string into the Log4J NDC for the currently executing thread - this means that it
+		                      // will be in every log message for the thread
 		
 		AwRequest awRequest = new PhoneResultListAwRequest();
 		awRequest.setUser(user);
-		awRequest.setPhoneVersion(phv);
+		awRequest.setClient(ci);
 		
 		return awRequest;
 	}

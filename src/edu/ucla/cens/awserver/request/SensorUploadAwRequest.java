@@ -17,7 +17,7 @@ import edu.ucla.cens.awserver.domain.PromptType;
 public class SensorUploadAwRequest extends ResultListAwRequest {
 	// Input state // 
 	private String _requestType; 
-	private String _phoneVersion;
+	private String _client;
 	private String _protocolVersion;
 	private String _jsonDataAsString;
 	private String _sessionId;
@@ -121,12 +121,12 @@ public class SensorUploadAwRequest extends ResultListAwRequest {
 		_requestType = requestType;
 	}
 	
-	public String getPhoneVersion() {
-		return _phoneVersion;
+	public String getClient() {
+		return _client;
 	}
 	
-	public void setPhoneVersion(String phoneVersion) {
-		_phoneVersion = phoneVersion;
+	public void setClient(String client) {
+		_client = client;
 	}
 	
 	public String getProtocolVersion() {
@@ -221,7 +221,7 @@ public class SensorUploadAwRequest extends ResultListAwRequest {
 				+ _duplicatePromptResponseMap + ", _groupId=" + _groupId
 				+ ", _jsonDataAsJsonArray=" + _jsonDataAsJsonArray
 				+ ", _jsonDataAsString=" + _jsonDataAsString
-				+ ", _phoneVersion=" + _phoneVersion + ", _promptIdArray="
+				+ ", _client=" + _client + ", _promptIdArray="
 				+ Arrays.toString(_promptIdArray)
 				+ ", _promptTypeRestrictions=" + _promptTypeRestrictions
 				+ ", _protocolVersion=" + _protocolVersion + ", _requestType="

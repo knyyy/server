@@ -134,7 +134,7 @@ public class MessageLoggerService implements Service {
 						jsonObject.put("session_id", sessionId);
 						jsonObject.put("request_type", awRequest.getRequestType());
 						jsonObject.put("user", awRequest.getUser().getUserName());
-						jsonObject.put("phone_version", awRequest.getPhoneVersion());
+						jsonObject.put("client", awRequest.getClient());
 						jsonObject.put("protocol_version",awRequest.getProtocolVersion());
 						jsonObject.put("upload_file_name", uploadFileName);
 						

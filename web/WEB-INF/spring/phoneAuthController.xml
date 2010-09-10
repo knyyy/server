@@ -20,7 +20,7 @@
       <list>
         <ref bean="uploadUserNameValidator" />
         <ref bean="uploadPasswordValidator" />
-        <ref bean="uploadPhoneVersionValidator" />
+        <ref bean="uploadClientValidator" />
       </list>      
     </property>
     <property name="featureName"><value>phone authentication</value></property>

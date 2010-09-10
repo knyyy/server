@@ -63,7 +63,7 @@ public class SensorUploadAwRequestCreator implements AwRequestCreator {
 		awRequest.setSessionId(sessionId);
 		awRequest.setUser(user);
 		awRequest.setRequestType(requestType);
-		awRequest.setPhoneVersion(phoneVersion);
+		awRequest.setClient(phoneVersion);
 		awRequest.setProtocolVersion(protocolVersion);
 		awRequest.setJsonDataAsString(jsonData);
 				

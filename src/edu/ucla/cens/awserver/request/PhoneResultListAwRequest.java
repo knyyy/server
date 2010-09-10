@@ -7,13 +7,13 @@ package edu.ucla.cens.awserver.request;
  */
 public class PhoneResultListAwRequest extends ResultListAwRequest {
 	
-	private String _phoneVersion;
+	private String _client;
 
-	public String getPhoneVersion() {
-		return _phoneVersion;
+	public String getClient() {
+		return _client;
 	}
 
-	public void setPhoneVersion(String phoneVersion) {
-		_phoneVersion = phoneVersion;
+	public void setClient(String client) {
+		_client = client;
 	}
 }

@@ -26,7 +26,7 @@
       <list>
         <ref bean="uploadUserNameValidator" />
         <ref bean="uploadPasswordValidator" />
-        <ref bean="uploadPhoneVersionValidator" />
+        <ref bean="uploadClientValidator" />
         <ref bean="uploadJsonDataExistsValidator" />
         <ref bean="uploadCampaignIdValidator" />
       </list>

@@ -2,7 +2,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
-
+ 
+  <!-- TODO - there is no longer any difference between form-based and upload validation -->
+ 
   <bean id="formBasedLoginUserNameValidator" class="edu.ucla.cens.awserver.validator.AwRequestUserNameValidator">
     <constructor-arg index="0"><value>[a-z\.]{9,15}</value></constructor-arg>
     <constructor-arg index="1"><ref bean="failedRequestAnnotator" /></constructor-arg>
@@ -40,9 +42,9 @@
   </bean>
   -->
   
-  <bean id="uploadPhoneVersionValidator" class="edu.ucla.cens.awserver.validator.PositiveIntegerExistsAnnotatingValidator">
-    <constructor-arg index="0"><ref bean="uploadPhoneVersionFailedJsonRequestAnnotator" /></constructor-arg>
-    <constructor-arg index="1"><value>phoneVersion</value></constructor-arg>
+  <bean id="uploadClientValidator" class="edu.ucla.cens.awserver.validator.NonEmptyStringAnnotatingValidator">
+    <constructor-arg index="0"><ref bean="uploadClientFailedJsonRequestAnnotator" /></constructor-arg>
+    <constructor-arg index="1"><value>client</value></constructor-arg>
   </bean>
   
   <!--
@@ -91,11 +93,11 @@
   </bean>
   -->
   
-  <bean id="uploadPhoneVersionFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+  <bean id="uploadClientFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
         <property name="code" value="0302" />
-        <property name="text" value="missing or invalid phone version" />
+        <property name="text" value="missing or invalid client" />
       </bean>
     </constructor-arg>
   </bean>

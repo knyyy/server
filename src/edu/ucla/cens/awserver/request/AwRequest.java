@@ -62,8 +62,8 @@ public interface AwRequest {
 	public String getRequestType();
 	public void setRequestType(String requestType);
 	
-	public String getPhoneVersion();
-	public void setPhoneVersion(String phoneVersion);
+	public String getClient();
+	public void setClient(String client);
 	
 	public String getProtocolVersion();
 	public void setProtocolVersion(String protocolVersion);

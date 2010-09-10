@@ -41,7 +41,7 @@ public class PhoneAuthServlet extends AbstractAwHttpServlet {
 	 * Default no-arg constructor.
 	 */
 	public PhoneAuthServlet() {
-		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"p","u","phv"}));
+		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"p","u","ci"}));
 	}
 		
 	/**
@@ -195,7 +195,7 @@ public class PhoneAuthServlet extends AbstractAwHttpServlet {
 		
 		String u = (String) request.getParameter("u");
 		String p = (String) request.getParameter("p");
-		String phv = (String) request.getParameter("phv");
+		String ci = (String) request.getParameter("ci");
 		
 		// Check for abnormal lengths (buffer overflow attack)
 		// 50 is an arbitrary number for length, but it would be very strange
@@ -203,7 +203,7 @@ public class PhoneAuthServlet extends AbstractAwHttpServlet {
 		
 		if(greaterThanLength("user", "u", u, 50) 
 			|| greaterThanLength("password", "p", p, 180) 
-			|| greaterThanLength("phone version", "phv", phv, 50)) { 
+			|| greaterThanLength("client", "ci", ci, 100)) { 
 			return false;
 		}
 		

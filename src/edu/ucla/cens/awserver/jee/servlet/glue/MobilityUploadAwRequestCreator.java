@@ -5,6 +5,8 @@ import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.NDC;
+
 import edu.ucla.cens.awserver.domain.UserImpl;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.SensorUploadAwRequest;
@@ -25,9 +27,8 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 	}
 	
 	/**
-	 *  Pulls the u (userName), t (type), phv (phone version), prv (protocol version), and d (json data) parameters out of the 
-	 *  HttpServletRequest and places them in a new AwRequest. Also places the subdomain from the request URL into the AwRequest.
-	 *  Validation of the data is performed within a controller.
+	 *  Pulls the u (userName), c (campaign), ci (client), and d (json data) parameters out of the HttpServletRequest and places
+	 *  them in a new AwRequest.
 	 */
 	public AwRequest createFrom(HttpServletRequest request) {
 		String sessionId = request.getSession(false).getId(); // for upload logging to connect app logs to upload logs
@@ -35,7 +36,7 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 		String userName = request.getParameter("u");
 		String campaignId = request.getParameter("c");
 		String password = request.getParameter("p");
-		String phoneVersion = request.getParameter("phv");
+		String ci = request.getParameter("ci");
 		String jsonData = null; 
 		try {
 			
@@ -60,8 +61,9 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 		awRequest.setStartTime(System.currentTimeMillis());
 		awRequest.setSessionId(sessionId);
 		awRequest.setUser(user);
-		awRequest.setPhoneVersion(phoneVersion);
+		awRequest.setClient(ci);
 		awRequest.setJsonDataAsString(jsonData);
+		// TODO - drop request type?
 		awRequest.setRequestType("mobility");
 				
 		String requestUrl = request.getRequestURL().toString();
@@ -69,7 +71,10 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 			requestUrl += "?" + request.getQueryString(); 
 		}
 		
-		awRequest.setRequestUrl(requestUrl); // output in response in case of error
+		awRequest.setRequestUrl(requestUrl); // placed in the request for use in logging messages
+		
+		NDC.push("ci=" + ci); // push the client string into the Log4J NDC for the currently executing thread - this means that it 
+                              // will be in every log message for the thread
 		
 		return awRequest;
 	}
