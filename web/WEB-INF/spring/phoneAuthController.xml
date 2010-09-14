@@ -3,11 +3,18 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
   <!--  
-     Spring ApplicationContext configuration for phone JSON-over-HTTP authentication 
+     Spring ApplicationContext configuration for stateless JSON-over-HTTP authentication
+     
+     TODO fix naming 
   -->
   
-  <!-- Servlet-to-AW hooks  -->
+  <!-- Servlet-to-AW hooks -->
+  <!-- pre-validate -->
+  <bean id="authHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.AuthValidator" />
+  <!-- create AW request -->
   <bean id="phoneAuthAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.PhoneAuthAwRequestCreator" />
+  <!-- generate output -->
+  <bean id="statelessAuthResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.StatelessAuthResponseWriter" />
     
   <!-- Controller - all components here are reused from sensorUploadController.xml -->
   <bean id="phoneAuthController" class="edu.ucla.cens.awserver.controller.ControllerImpl">

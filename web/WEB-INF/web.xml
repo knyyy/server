@@ -148,7 +148,7 @@
     <url-pattern>*.jsp</url-pattern>
   </servlet-mapping>
     
-  <!--  Login  -->
+  <!--  Login  deprecated -->
   <servlet>
     <description>
       Logs a user into the system. 
@@ -219,7 +219,7 @@
   <!--  Mobility Data Upload -->
   <servlet>
     <description>
-      processes mobility data uploads from a phone (or anywhere else) 
+      processes mobility data uploads from a client 
     </description>
     <servlet-name>MobilityUploadServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.MobilityUploadServlet</servlet-class>
@@ -241,17 +241,19 @@
   
   <servlet-mapping>
     <servlet-name>MobilityUploadServlet</servlet-name>
-    <url-pattern>/app/p/upload/mobility</url-pattern>
+    <url-pattern>/app/u/mobility</url-pattern>
   </servlet-mapping>
  
   
-  <!--  Phone Authentication - Initial Phone Login -->
+  <!--  
+      Stateless Authentication - TODO rename servlet 
+  -->
   <servlet>
     <description>
-     Performs an authentication check for user's logging in from the phone app.
+     performs an authentication check for client login - the request is stateless so no token is returned
     </description>
-    <servlet-name>PhoneAuthServlet</servlet-name>
-    <servlet-class>edu.ucla.cens.awserver.jee.servlet.PhoneAuthServlet</servlet-class>
+    <servlet-name>StatelessAuthServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
     
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids. -->  
@@ -260,17 +262,25 @@
       <param-name>awRequestCreatorName</param-name>
       <param-value>phoneAuthAwRequestCreator</param-value>
     </init-param>
-    
+    <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>authHttpServletRequestValidator</param-value>
+    </init-param>
     <init-param>
       <param-name>controllerName</param-name>
       <param-value>phoneAuthController</param-value>
     </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>statelessAuthResponseWriter</param-value>
+    </init-param>
+    
     <load-on-startup>1</load-on-startup>
   </servlet>
   
   <servlet-mapping>
     <servlet-name>PhoneAuthServlet</servlet-name>
-    <url-pattern>/app/p/login</url-pattern>
+    <url-pattern>/app/auth</url-pattern>
   </servlet-mapping>
   
   <!-- refactor into each type of upload
