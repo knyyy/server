@@ -42,7 +42,7 @@ public class MobilityUploadServlet extends AbstractAwHttpServlet {
 	 */
 	public MobilityUploadServlet() {
 		// user, client id, data, password, campaign id
-		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"u","ci","d","p","c"})); 
+		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"u","ci","d","p"})); 
 	}
 		
 	/**
@@ -197,7 +197,6 @@ public class MobilityUploadServlet extends AbstractAwHttpServlet {
 		}
 		
 		String u = (String) request.getParameter("u");
-		String c = (String) request.getParameter("c");
 		String p = (String) request.getParameter("p");
 		String ci = (String) request.getParameter("ci");
 		
@@ -205,7 +204,6 @@ public class MobilityUploadServlet extends AbstractAwHttpServlet {
 		// 50 is an arbitrary number for length, but for these parameters it would be very strange
 		
 		if(greaterThanLength("user", "u", u, 50)
-		   || greaterThanLength("campaign", "c", c, 50)
 		   || greaterThanLength("client", "ci", ci, 100)
 		   || greaterThanLength("password", "p", p, 180) // handle up to 60 %-encoded characters
 		) {
