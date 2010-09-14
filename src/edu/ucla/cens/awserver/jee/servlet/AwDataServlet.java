@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import edu.ucla.cens.awserver.controller.Controller;
+import edu.ucla.cens.awserver.controller.ControllerException;
 import edu.ucla.cens.awserver.jee.servlet.glue.AwRequestCreator;
 import edu.ucla.cens.awserver.jee.servlet.validator.HttpServletRequestValidator;
 import edu.ucla.cens.awserver.jee.servlet.writer.ResponseWriter;
@@ -20,7 +21,8 @@ import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.util.StringUtils;
 
 /**
- * Servlet for responding to requests for JSON (and in the future other types of) data.
+ * Servlet for responding to requests for JSON data. The data Writer is configurable, so this class may also be used for emitting
+ * data that is formatted in other ways (like XML or HTML).
  * 
  * @author selsky
  */
@@ -105,10 +107,25 @@ public class AwDataServlet extends AbstractAwHttpServlet {
 		// Map data from the inbound request to our internal format
 		AwRequest awRequest = _awRequestCreator.createFrom(request);
 		
-		// Execute feature-specific logic
-		// TODO - need a try/catch here
-		_controller.execute(awRequest);
+		try {
 			
+			// Execute feature-specific logic
+			_controller.execute(awRequest);
+			
+		} catch (ControllerException ce) {
+			
+			if(! awRequest.isFailedRequest()) { // this is bad because it means an error occurred and the code didn't mark up 
+				                                // the awRequest correctly
+				_logger.warn("caught a ControllerException where the awRequest was not marked as failed: " + ce.getMessage());
+				awRequest.setFailedRequest(true);
+			}
+			
+			if(null == awRequest.getFailedRequestErrorMessage()) {
+				awRequest.setFailedRequestErrorMessage("an general error occurred processing the request");
+			}
+			
+		}
+		
 		// Write the output
 		_responseWriter.write(request, response, awRequest);
 							
@@ -120,7 +137,7 @@ public class AwDataServlet extends AbstractAwHttpServlet {
 	@Override protected final void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
 
-		_logger.warn("GET attempted.");
+		_logger.warn("GET attempted and denied.");
 		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 
 	}

@@ -7,8 +7,12 @@
   -->
   
   <!-- Servlet-to-AW hooks -->
+  <!-- pre-validate -->
+  <bean id="mobilityUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MobilityUploadValidator" />
   <!-- create AwRequest from data in the HttpServletRequest -->
   <bean id="mobilityUploadAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.MobilityUploadAwRequestCreator" />
+  <!-- generate output -->
+  <bean id="successOrFailResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.SuccessOrFailResponseWriter" />
   
   <!-- Controller - main workflow -->
   <bean id="mobilityUploadController" class="edu.ucla.cens.awserver.controller.ControllerImpl">

@@ -4,27 +4,23 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Iterator;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.request.AwRequest;
 
 /**
+ * Writer for cases where the result being output is a simple success message or the failure message contained in an awRequest.
+ * 
  * @author selsky
  */
-public class StatelessAuthResponseWriter extends AbstractResponseWriter {
-	private static Logger _logger = Logger.getLogger(StatelessAuthResponseWriter.class);
+public class SuccessOrFailResponseWriter extends AbstractResponseWriter {
+	private static Logger _logger = Logger.getLogger(SuccessOrFailResponseWriter.class);
 	
-	/**
-	 * Generates the JSON response to the client. For successful responses, an array of campaign names is returned.
-	 */
 	@Override
 	public void write(HttpServletRequest request, HttpServletResponse response, AwRequest awRequest) {
 		Writer writer = null;
@@ -41,21 +37,8 @@ public class StatelessAuthResponseWriter extends AbstractResponseWriter {
 			
 			// Build the appropriate response 
 			if(! awRequest.isFailedRequest()) {
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("result", "success");
 				
-				Set<String> keys = awRequest.getUser().getCampaignRoles().keySet();
-				Iterator<String> iterator = keys.iterator();
-				
-				JSONArray jsonArray = new JSONArray();
-					
-				while(iterator.hasNext()) {
-					jsonArray.put(iterator.next());
-				}
-				
-				jsonObject.put("campaigns", jsonArray);
-				
-				responseText = jsonObject.toString();
+				responseText = new JSONObject().put("result", "success").toString();
 				
 			} else {
 				
@@ -96,4 +79,5 @@ public class StatelessAuthResponseWriter extends AbstractResponseWriter {
 			}
 		}
 	}
+
 }

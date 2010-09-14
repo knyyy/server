@@ -68,7 +68,7 @@
     <servlet-name>MostRecentSurveyQueryServlet</servlet-name>
     <servlet-name>MostRecentActivityQueryServlet</servlet-name>
   </filter-mapping>
-    
+  
   <!-- Servlets.  Note that url-patterns are matched against initial (or re-dispatched) requests, not a request possiblty modified
        by filters.  -->
 
@@ -222,16 +222,42 @@
       processes mobility data uploads from a client 
     </description>
     <servlet-name>MobilityUploadServlet</servlet-name>
-    <servlet-class>edu.ucla.cens.awserver.jee.servlet.MobilityUploadServlet</servlet-class>
-   
-    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
-          The param-value elements are Spring bean ids. -->  
-   
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
     <init-param>
       <param-name>awRequestCreatorName</param-name>
       <param-value>mobilityUploadAwRequestCreator</param-value>
     </init-param>
-    
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>mobilityUploadController</param-value>
+    </init-param>
+    <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>mobilityUploadHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>successOrFailResponseWriter</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>MobilityUploadServlet</servlet-name>
+    <url-pattern>/app/u/mobility</url-pattern>
+  </servlet-mapping>
+ 
+ <!--  Survey Data Upload 
+  <servlet>
+    <description>
+      processes survey data uploads from a client 
+    </description>
+    <servlet-name>SurveyUploadServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.MobilityUploadServlet</servlet-class>
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>mobilityUploadAwRequestCreator</param-value>
+    </init-param>
     <init-param>
       <param-name>controllerName</param-name>
       <param-value>mobilityUploadController</param-value>
@@ -243,10 +269,10 @@
     <servlet-name>MobilityUploadServlet</servlet-name>
     <url-pattern>/app/u/mobility</url-pattern>
   </servlet-mapping>
- 
+ -->
   
   <!--  
-      Stateless Authentication - TODO rename servlet 
+      Stateless Authentication  
   -->
   <servlet>
     <description>
@@ -254,13 +280,11 @@
     </description>
     <servlet-name>StatelessAuthServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
-    
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids. -->  
-    
     <init-param>
       <param-name>awRequestCreatorName</param-name>
-      <param-value>phoneAuthAwRequestCreator</param-value>
+      <param-value>statelessAuthAwRequestCreator</param-value>
     </init-param>
     <init-param>
       <param-name>httpServletRequestValidatorName</param-name>
@@ -268,7 +292,7 @@
     </init-param>
     <init-param>
       <param-name>controllerName</param-name>
-      <param-value>phoneAuthController</param-value>
+      <param-value>statelessAuthController</param-value>
     </init-param>
     <init-param>
       <param-name>responseWriterName</param-name>
@@ -279,7 +303,7 @@
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>PhoneAuthServlet</servlet-name>
+    <servlet-name>StatelessAuthServlet</servlet-name>
     <url-pattern>/app/auth</url-pattern>
   </servlet-mapping>
   
@@ -378,21 +402,25 @@
   </servlet-mapping>
   
   <!--  Handle completed surveys queries -->
+  <!--
   <servlet>
     <description>
       Runs queries for the number of completed prompt groups per day. 
     </description>
     <servlet-name>PromptGroupCountQueryServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    -->
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids.    
     -->
+    <!--
     <init-param>
       <param-name>controllerName</param-name>
       <param-value>promptGroupCountQueryController</param-value>
     </init-param>
      <init-param>
-      <param-name>awRequestCreatorName</param-name> <!-- note: shared with EMA query -->
+      <param-name>awRequestCreatorName</param-name> --> <!-- note: shared with EMA query -->
+    <!--
       <param-value>emaQueryAwRequestCreator</param-value>
     </init-param>
     <init-param>
@@ -410,23 +438,21 @@
     <servlet-name>PromptGroupCountQueryServlet</servlet-name>
     <url-pattern>/app/q/completed-surveys-per-day</url-pattern>
   </servlet-mapping>
+  -->
   
-  <!--  Handle mobility mode count queries -->
+  <!--  Handle mobility mode count queries 
   <servlet>
     <description>
       Runs queries for the aggregate number of mobility modes per day 
     </description>
     <servlet-name>MobilityModeCountQueryServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
-    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
-          The param-value elements are Spring bean ids.    
-    -->
     <init-param>
       <param-name>controllerName</param-name>
       <param-value>mobilityModeCountQueryController</param-value>
     </init-param>
      <init-param>
-      <param-name>awRequestCreatorName</param-name> <!-- note: shared with EMA query -->
+      <param-name>awRequestCreatorName</param-name> 
       <param-value>emaQueryAwRequestCreator</param-value>
     </init-param>
     <init-param>
@@ -444,6 +470,7 @@
     <servlet-name>MobilityModeCountQueryServlet</servlet-name>
     <url-pattern>/app/q/mobility-modes-per-day</url-pattern>
   </servlet-mapping>
+  -->
   
   <!--  Handle hours since last survey queries -->
   <servlet>

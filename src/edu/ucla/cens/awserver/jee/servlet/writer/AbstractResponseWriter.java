@@ -27,7 +27,7 @@ public abstract class AbstractResponseWriter implements ResponseWriter {
 	}
 	
 	/**
-	 * There is functionality in Tomcat 6 to perform this action, but it is nice to have in explicitly documented in our code.
+	 * There is functionality in Tomcat 6 to perform this action, but it is also nice to have it controlled programmatically.
 	 * 
 	 * @return an OutputStream appropriate for the headers found in the request.
 	 */
