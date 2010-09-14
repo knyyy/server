@@ -103,15 +103,15 @@ public class AuthenticationService extends AbstractDaoService {
 					}
 					
 					// set the campaigns and the roles within the campaigns that the user belongs to
-					awRequest.getUser().addCampaignRole(loginResult.getCampaignId(), loginResult.getUserRoleId());
+					awRequest.getUser().addCampaignRole(loginResult.getCampaignName(), loginResult.getUserRoleId());
 				}
 				
 				// Set the current campaign on the user if the user belongs to only one campaign. If the user belongs to more
-				// than one campaign, he or she will have to choose a campaign post-login (TODO campaign-chooser functionality)
+				// than one campaign, they will have to choose a campaign post-login (TODO campaign-chooser functionality in FrontEnd)
 				if(userBelongsToOneCampaign(results)) {
 					awRequest.getUser().setCurrentCampaignId(String.valueOf(((LoginResult)results.get(0)).getCampaignId()));
+					awRequest.getUser().setCurrentCampaignName(((LoginResult)results.get(0)).getCampaignName());
 				}
-				
 				
 				_logger.info("user " + awRequest.getUser().getUserName() + " successfully logged in");
 				

@@ -20,13 +20,13 @@ public class AuthenticationDao extends AbstractDao {
 	private String _salt;
 	private boolean _performHash;
 	
-	private static final String _selectSql = "select user.id, user.enabled, user.new_account, campaign.id, " +
-			                                 "user_role_campaign.user_role_id " +
-			                                 "from campaign, user, user_role_campaign " +
-			                                 "where user.login_id = ? " +
-			                                     "and user.password = ? " + 
-			                                     "and user.id = user_role_campaign.user_id " +
-			                                     "and campaign.id = user_role_campaign.campaign_id";
+	private static final String _selectSql = "select user.id, user.enabled, user.new_account, campaign.id, campaign.name,"
+		                                     +     " user_role_campaign.user_role_id" 
+		                                     + " from campaign, user, user_role_campaign"
+		                                     + " where user.login_id = ?"
+		                                     +   " and user.password = ?"
+		                                     +   " and user.id = user_role_campaign.user_id"
+		                                     +   " and campaign.id = user_role_campaign.campaign_id";
 	
 	/**
 	 * @param dataSource the data source used to connect to the MySQL db

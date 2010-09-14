@@ -14,10 +14,11 @@ import java.util.Map;
 public class UserImpl implements User {
 	private int _id;
 	private String  _userName;
-    private Map<Integer, List<Integer>> _campaignRoles;
+    private Map<String, List<Integer>> _campaignRoles;
 	private boolean _loggedIn;
 	private String _password;
 	private String _currentCampaignId;
+	private String _currentCampaignName;
 	
 	public UserImpl() {
 		_id = -1;
@@ -32,10 +33,11 @@ public class UserImpl implements User {
 		}
 		_id = user.getId();
 		_userName = user.getUserName();
-		_campaignRoles = new HashMap<Integer, List<Integer>>();
+		_campaignRoles = new HashMap<String, List<Integer>>();
 		_campaignRoles.putAll(user.getCampaignRoles()); // shallow copy ok because once a user is created it is read-only in practice 
 		_loggedIn = user.isLoggedIn();
 		_currentCampaignId = user.getCurrentCampaignId();
+		_currentCampaignName = user.getCurrentCampaignName();
 	}
 	
     public int getId() {
@@ -46,19 +48,19 @@ public class UserImpl implements User {
     	_id = id;
     }
     
-	public Map<Integer, List<Integer>> getCampaignRoles() {
+	public Map<String, List<Integer>> getCampaignRoles() {
 		return _campaignRoles;
 	}
 	
-	public void addCampaignRole(Integer campaignId, Integer roleId) {
+	public void addCampaignRole(String campaignName, Integer roleId) {
 		if(null == _campaignRoles) {
-			_campaignRoles = new HashMap<Integer, List<Integer>>();
+			_campaignRoles = new HashMap<String, List<Integer>>();
 		}
 		
-		List<Integer> roles = _campaignRoles.get(campaignId);
+		List<Integer> roles = _campaignRoles.get(campaignName);
 		if(null == roles) {
 			roles = new ArrayList<Integer>();
-			_campaignRoles.put(campaignId, roles);
+			_campaignRoles.put(campaignName, roles);
 		}
 		
 		roles.add(roleId);
@@ -96,6 +98,14 @@ public class UserImpl implements User {
 		return _currentCampaignId;
 	}
 
+	public void setCurrentCampaignName(String name) {
+		_currentCampaignName = name;
+	}
+	
+	public String getCurrentCampaignName() {
+		return _currentCampaignName;
+	}
+	
 	public boolean getIsResearcherOrAdmin() {
 		boolean isResearcherOrAdmin = false;
 		List<Integer> list = getCampaignRoles().get(Integer.valueOf(getCurrentCampaignId()));
@@ -110,11 +120,13 @@ public class UserImpl implements User {
 		
 		return isResearcherOrAdmin;
 	}
-	
+
 	@Override
-	public String toString() { // password is deliberately omitted
+	public String toString() {
 		return "UserImpl [_campaignRoles=" + _campaignRoles
-				+ ", _currentCampaignId=" + _currentCampaignId + ", _id=" + _id
-				+ ", _loggedIn=" + _loggedIn + ", _userName=" + _userName + "]";
-	}
+				+ ", _currentCampaignId=" + _currentCampaignId
+				+ ", _currentCampaignName=" + _currentCampaignName + ", _id="
+				+ _id + ", _loggedIn=" + _loggedIn + ", _password=" + _password
+				+ ", _userName=" + _userName + "]";
+	}	
 }
