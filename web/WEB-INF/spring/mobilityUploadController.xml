@@ -28,7 +28,6 @@
         <ref bean="uploadPasswordValidator" />
         <ref bean="uploadClientValidator" />
         <ref bean="uploadJsonDataExistsValidator" />
-        <ref bean="uploadCampaignIdValidator" />
       </list>
     </property>
     <property name="postProcessingService">
