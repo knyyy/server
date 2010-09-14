@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -25,7 +26,7 @@ import edu.ucla.cens.awserver.util.StringUtils;
  */
 @SuppressWarnings("serial") 
 public class AwDataServlet extends AbstractAwHttpServlet {
-//	private static Logger _logger = Logger.getLogger(EmaVizServlet.class);
+	private static Logger _logger = Logger.getLogger(AwDataServlet.class);
 	
 	private AwRequestCreator _awRequestCreator;
 	private Controller _controller;
@@ -105,6 +106,7 @@ public class AwDataServlet extends AbstractAwHttpServlet {
 		AwRequest awRequest = _awRequestCreator.createFrom(request);
 		
 		// Execute feature-specific logic
+		// TODO - need a try/catch here
 		_controller.execute(awRequest);
 			
 		// Write the output
@@ -118,7 +120,8 @@ public class AwDataServlet extends AbstractAwHttpServlet {
 	@Override protected final void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
 
-		processRequest(req, resp);
+		_logger.warn("GET attempted.");
+		resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 
 	}
 
