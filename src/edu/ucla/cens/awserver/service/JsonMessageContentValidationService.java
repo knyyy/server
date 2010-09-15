@@ -1,6 +1,6 @@
 package edu.ucla.cens.awserver.service;
 
-import java.util.Map;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -13,18 +13,15 @@ import edu.ucla.cens.awserver.validator.json.JsonObjectValidator;
 
 /**
  * A service for validating the contents of JSON messages. The messages are sent to AW as a JSON Array where each element in the 
- * array corresponds to a type defined by the "t" (type) parameter in the original request URL. 
- * 
- * The original JSON spec can be found <a href="http://www.lecs.cs.ucla.edu/wikis/andwellness/index.php/AndWellness-JSON">here</a>.
- * The updated spec is <a href="http://www.lecs.cs.ucla.edu/wikis/andwellness/index.php/AndWellness-JSON-2.0">here</a>.
- * 
- * TODO - refactor because this class will now handle only one type of content (our upload types now have their own URLs). 
+ * array corresponds to a type defined by the original request URL /app/u/survey or /app/u/mobility. 
+ *
+ * The JSON spec can be found here: http://www.lecs.cs.ucla.edu/wikis/andwellness/index.php/AndWellness-Upload-API
  * 
  * @author selsky
  */
 public class JsonMessageContentValidationService implements Service {
 	private static Logger _logger = Logger.getLogger(JsonMessageContentValidationService.class);
-	private Map<String, JsonObjectValidator[]> _validatorMap;
+	private List<JsonObjectValidator> _validators;
 	private AwRequestAnnotator _noDataAnnotator;
 	private AwRequestAnnotator _incorrectEntryAnnotator;;
 	
@@ -33,11 +30,11 @@ public class JsonMessageContentValidationService implements Service {
 	 * @throws IllegalArgumentException if the provided noDataAnnotator is null
 	 * @throws IllegalArgumentException if the provided incorrectEntryAnnotator is null
 	 */
-	public JsonMessageContentValidationService(Map<String, JsonObjectValidator[]> validatorMap, 
+	public JsonMessageContentValidationService(List<JsonObjectValidator> validators, 
 		AwRequestAnnotator noDataAnnotator, AwRequestAnnotator incorrectEntryAnnotator) {
 		
-		if(null == validatorMap || validatorMap.size() == 0) {
-			throw new IllegalArgumentException("the provided validator Map cannot be null or empty");
+		if(null == validators || validators.size() == 0) {
+			throw new IllegalArgumentException("the provided validator List cannot be null or empty");
 		}
 		
 		if(null == noDataAnnotator) {
@@ -48,7 +45,7 @@ public class JsonMessageContentValidationService implements Service {
 			throw new IllegalArgumentException("the provided AwRequestAnnotator (incorrectEntryAnnotator) cannot be null");
 		}
 		
-		_validatorMap = validatorMap;
+		_validators = validators;
 		_noDataAnnotator = noDataAnnotator;
 		_incorrectEntryAnnotator = incorrectEntryAnnotator;
 	}
@@ -65,8 +62,6 @@ public class JsonMessageContentValidationService implements Service {
 	 * validation. The reason this is done is that incorrect data in the messages implies a logical error on the device uploading
 	 * the data (or that the server validation rule is too strict) and also that it will be simpler to fix one error at a time 
 	 * rather than having to go through many error messages in a server response.
-	 * 
-	 * A syntactically valid JSON Array that is found in the AwRequest using the key <code>jsonData</code> is required.
 	 */
 	public void execute(AwRequest awRequest) {
 		_logger.info("beginning JSON message content validation");
@@ -91,13 +86,9 @@ public class JsonMessageContentValidationService implements Service {
 				return;
 			}
 			
-			awRequest.setCurrentMessageIndex(i);
+			awRequest.setCurrentMessageIndex(i); // keep track of the current index for error logging
 			
-			// Given the request type, retrieve the validator array to execute for the particular type
-
-			JsonObjectValidator[] validators = _validatorMap.get("mobility"); // TO DO, for now this is hardcoded
-			
-			for(JsonObjectValidator validator : validators) {
+			for(JsonObjectValidator validator : _validators) {
 				
 				if(! validator.validate(awRequest, jsonObject)) {
 					

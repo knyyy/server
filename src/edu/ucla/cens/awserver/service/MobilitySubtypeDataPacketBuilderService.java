@@ -17,14 +17,14 @@ import edu.ucla.cens.awserver.util.JsonUtils;
  * 
  * @author selsky
  */
-public class DataPacketBuilderService implements Service {
-	private static Logger _logger = Logger.getLogger(DataPacketBuilderService.class);
+public class MobilitySubtypeDataPacketBuilderService implements Service {
+	private static Logger _logger = Logger.getLogger(MobilitySubtypeDataPacketBuilderService.class);
 	private Map<String, DataPacketBuilder> _builderMap;
-		
+	
 	/**
 	 * @throws IllegalArgumentException if the provided Map is null or empty
 	 */
-	public DataPacketBuilderService(Map<String, DataPacketBuilder> builderMap) {
+	public MobilitySubtypeDataPacketBuilderService(Map<String, DataPacketBuilder> builderMap) {
 		if(null == builderMap || builderMap.isEmpty()) {
 			throw new IllegalArgumentException("a builderMap is required");
 		}
@@ -50,9 +50,7 @@ public class DataPacketBuilderService implements Service {
 		for(int i = 0; i < length; i++) {
 //			
 //			String builderName = "prompt";
-//			 
-//			if(_createMobilityPackets) {
-				
+//				
 				String subtype = JsonUtils.getStringFromJsonObject(JsonUtils.getJsonObjectFromJsonArray(jsonArray, i), "subtype");
 				
 				if("mode_features".equals(subtype)) {

@@ -40,5 +40,40 @@
     </property>
     <property name="featureName"><value>phone mobility upload</value></property>
   </bean>
-  
 </beans>
+
+<!-- Validate JSON content according to app business rules -->
+<!-- 
+  <bean id="jsonMessageContentValidationService" class="edu.ucla.cens.awserver.service.JsonMessageContentValidationService">
+    <constructor-arg index="0">
+      <list>
+        <ref bean="jsonMsgMobilitySubtypeValidator" />
+      </list>
+-->      
+        <!-- Move to surveyUploadController.xml and refactor
+        <entry>
+          <key><value>prompt</value></key>
+          <list>
+            <ref bean="jsonMsgDateValidator" />
+            <ref bean="jsonMsgTimeValidator" />
+            <ref bean="jsonMsgTimezoneValidator" />
+            <ref bean="jsonMsgLocationValidator" />
+            <ref bean="jsonMsgLatitudeValidator" />
+            <ref bean="jsonMsgLongitudeValidator" />
+            <ref bean="jsonMsgPromptVersionIdValidator" />
+            <ref bean="jsonMsgPromptGroupIdValidator" />
+        -->
+            <!--  the tags array is ignored because it is unused for now -->
+        <!--
+            <ref bean="jsonMsgPromptResponsesExistValidator" />
+            <ref bean="jsonMsgPromptResponsesValidator" />
+          </list>
+        </entry>
+        -->
+<!--      
+      </map>
+    </constructor-arg>
+    <constructor-arg index="1"><ref bean="jsonMsgEmptyArrayAnnotator" /></constructor-arg>
+    <constructor-arg index="2"><ref bean="jsonMsgIncorrectArrayAnnotator" /></constructor-arg>
+  </bean>
+-->
