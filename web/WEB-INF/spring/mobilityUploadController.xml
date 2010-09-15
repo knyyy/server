@@ -1,5 +1,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
   <!--  
@@ -37,7 +38,7 @@
     <property name="postProcessingService">
       <ref bean="messageLoggerService" />
     </property>
-    <property name="featureName"><value>phone mobility upload</value></property>
+    <property name="featureName"><value>mobility upload</value></property>
   </bean>
   
   <!-- Authentication -->
@@ -264,7 +265,15 @@
       <value>longitude</value>
     </constructor-arg>
   </bean>
-
+  
+  <util:list id="mobilityModes">
+    <value>still</value>
+    <value>walk</value>
+    <value>run</value>
+    <value>bike</value>
+    <value>drive</value>
+  </util:list>
+  
   <bean id="jsonMsgModeOnlyModeValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgMobilityModeValidator">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
@@ -277,13 +286,7 @@
       </bean>
     </constructor-arg>
     <constructor-arg index="1">
-      <list>
-        <value>still</value>
-        <value>walk</value>
-        <value>run</value>
-        <value>bike</value>
-        <value>drive</value>
-      </list>
+     <ref bean="mobilityModes" />
     </constructor-arg>
     <constructor-arg index="2">
       <value>false</value>
@@ -318,13 +321,7 @@
       </bean>
     </constructor-arg>
     <constructor-arg index="1">
-      <list>
-        <value>still</value>
-        <value>walk</value>
-        <value>run</value>
-        <value>bike</value>
-        <value>drive</value>
-      </list>
+      <ref bean="mobilityModes" />
     </constructor-arg>
     <constructor-arg index="2">
       <value>true</value>
