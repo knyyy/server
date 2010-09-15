@@ -95,7 +95,7 @@ public class JsonMessageContentValidationService implements Service {
 			
 			// Given the request type, retrieve the validator array to execute for the particular type
 
-			JsonObjectValidator[] validators = _validatorMap.get(awRequest.getRequestType());
+			JsonObjectValidator[] validators = _validatorMap.get("mobility"); // TO DO, for now this is hardcoded
 			
 			for(JsonObjectValidator validator : validators) {
 				

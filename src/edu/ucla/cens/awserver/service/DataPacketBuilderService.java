@@ -40,7 +40,9 @@ public class DataPacketBuilderService implements Service {
 		JSONArray jsonArray = awRequest.getJsonDataAsJsonArray();
 		int length = jsonArray.length();
 		List<DataPacket> dataPackets = new ArrayList<DataPacket>(length);
-		String requestType = awRequest.getRequestType();
+		
+		// TODO mobility is hardcoded for now
+		String requestType = "mobility"; // awRequest.getRequestType();
 		
 		// TODO eventually this could be made smarter (more generic) - it should just be able to loop through the map without
 		// needing to know actual key values. 

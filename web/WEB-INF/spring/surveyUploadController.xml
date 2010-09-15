@@ -1,0 +1,44 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+  <!--  
+     Spring ApplicationContext configuration for survey data upload 
+  -->
+  
+  <!-- Servlet-to-AW hooks -->
+  <!-- pre-validate -->
+  <bean id="surveyUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MobilityUploadValidator" />
+  <!-- create AwRequest from data in the HttpServletRequest -->
+  <bean id="surveyUploadAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.SurveyUploadAwRequestCreator" />
+  <!-- the response writer is shared with mobilityUploadController.xml -->
+  
+  <!-- Controller - main workflow -->
+  <bean id="surveyUploadController" class="edu.ucla.cens.awserver.controller.ControllerImpl">
+    <constructor-arg index="0">
+    <!-- service the upload request -->
+      <list>
+        <ref bean="uploadAuthenticationService" />
+        <ref bean="jsonMessageSyntaxValidationService" />
+        <!-- 
+        <ref bean="jsonMessageContentValidationService" />
+        <ref bean="dataPacketBuilderService" />
+        <ref bean="uploadService" />
+        -->
+      </list>
+    </constructor-arg>
+    <property name="validators">
+      <list>
+        <ref bean="uploadUserNameValidator" />
+        <ref bean="hashedPasswordValidator" />
+        <!-- any validator that simply checked for a empty string has been removed because it was redundant with 
+             validation performed in the servlet world -->
+      </list>
+    </property>
+    <property name="postProcessingService">
+      <ref bean="messageLoggerService" />
+    </property>
+    <property name="featureName"><value>phone mobility upload</value></property>
+  </bean>
+  
+</beans>

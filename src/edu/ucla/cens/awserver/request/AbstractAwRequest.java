@@ -154,9 +154,12 @@ public abstract class AbstractAwRequest implements AwRequest {
 		throw new UnsupportedOperationException("it is illegal to invoke getUserNameRequestParam() on this instance");
 	}
 
-
 	public String getVersionId() {
 		throw new UnsupportedOperationException("it is illegal to invoke getVersionId() on this instance");
+	}
+	
+	public String getCampaignVersion() {
+		throw new UnsupportedOperationException("it is illegal to invoke getCampaignVersion() on this instance");
 	}
 
 	public void setResultList(List<?> resultList) {
@@ -246,4 +249,9 @@ public abstract class AbstractAwRequest implements AwRequest {
 	public void setUserNameRequestParam(String userNameRequestParam) {
 		throw new UnsupportedOperationException("it is illegal to invoke setUserNameRequestParam() on this instance");
 	}
+	
+	public void setCampaignVersion(String campaignVersion) {
+		throw new UnsupportedOperationException("it is illegal to invoke setCampaignVersion() on this instance");
+	}
+
 }

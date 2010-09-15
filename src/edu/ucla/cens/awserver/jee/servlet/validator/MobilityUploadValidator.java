@@ -67,7 +67,7 @@ public class MobilityUploadValidator extends AbstractHttpServletRequestValidator
 		// Check for abnormal lengths (buffer overflow attack)
 		// 50 is an arbitrary number for length, but for these parameters it would be very strange
 		
-		if(greaterThanLength("user", "u", u, 50)
+		if(greaterThanLength("user", "u", u, 75)
 		   || greaterThanLength("client", "ci", ci, 100)
 		   || greaterThanLength("password", "p", p, 180) // handle up to 60 %-encoded characters
 		) {

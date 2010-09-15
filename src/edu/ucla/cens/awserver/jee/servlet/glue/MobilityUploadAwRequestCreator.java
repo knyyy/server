@@ -9,7 +9,7 @@ import org.apache.log4j.NDC;
 
 import edu.ucla.cens.awserver.domain.UserImpl;
 import edu.ucla.cens.awserver.request.AwRequest;
-import edu.ucla.cens.awserver.request.SensorUploadAwRequest;
+import edu.ucla.cens.awserver.request.MobilityUploadAwRequest;
 
 /**
  * Transformer for creating an AwRequest for the upload feature.
@@ -56,15 +56,13 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 		user.setPassword(password);
 		user.setCurrentCampaignId(campaignId);
 		
-		AwRequest awRequest = new SensorUploadAwRequest();
+		AwRequest awRequest = new MobilityUploadAwRequest();
 
 		awRequest.setStartTime(System.currentTimeMillis());
 		awRequest.setSessionId(sessionId);
 		awRequest.setUser(user);
 		awRequest.setClient(ci);
 		awRequest.setJsonDataAsString(jsonData);
-		// TODO - drop request type?
-		awRequest.setRequestType("mobility");
 				
 		String requestUrl = request.getRequestURL().toString();
 		if(null != request.getQueryString()) {

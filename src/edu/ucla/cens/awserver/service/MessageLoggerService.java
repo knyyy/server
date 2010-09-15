@@ -16,10 +16,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.request.AwRequest;
+import edu.ucla.cens.awserver.request.SurveyUploadAwRequest;
 import edu.ucla.cens.awserver.util.JsonUtils;
 
 /**
  * Service for logging details about data uploads.
+ * 
+ * TODO - update when all new upload types are finished
  * 
  * @author selsky
  */
@@ -79,7 +82,7 @@ public class MessageLoggerService implements Service {
 		builder.append(" user=" + user);
 		builder.append(" isLoggedIn=" + awRequest.getUser().isLoggedIn());
 		builder.append(" sessionId=" + sessionId);
-		builder.append(" requestType=" + awRequest.getRequestType());
+		// builder.append(" requestType=" + awRequest.getRequestType());
 		builder.append(" numberOfRecords=" + totalNumberOfMessages);
 		builder.append(" numberOfDuplicates=" + numberOfDuplicates);
 		builder.append(" proccessingTimeMillis=" + processingTime);
@@ -155,7 +158,7 @@ public class MessageLoggerService implements Service {
 			}
 			
 			List<Integer> duplicateIndexList = awRequest.getDuplicateIndexList();
-			Map<Integer, List<Integer>> duplicatePromptResponseMap = awRequest.getDuplicatePromptResponseMap();
+			Map<Integer, List<Integer>> duplicatePromptResponseMap = (awRequest instanceof SurveyUploadAwRequest) ? awRequest.getDuplicatePromptResponseMap() : null;
 			
 			if(null != duplicateIndexList && duplicateIndexList.size() > 0) {
 				
@@ -168,7 +171,8 @@ public class MessageLoggerService implements Service {
 					
 					int duplicateIndex = duplicateIndexList.get(i);
 					
-					if("prompt".equals(awRequest.getRequestType())) {
+					// if("prompt".equals(awRequest.getRequestType())) {
+					if(awRequest instanceof SurveyUploadAwRequest) {
 
 						if(lastDuplicateIndex != duplicateIndex) {
 							List<Integer> list = duplicatePromptResponseMap.get(duplicateIndex);

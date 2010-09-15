@@ -26,11 +26,13 @@ public interface User {
 	public boolean isLoggedIn();
 	public void setLoggedIn(boolean b);
 	
+	// TODO - these are actually not properties of the user - they are processing state on the *request*
 	public void setCurrentCampaignId(String id);
 	public String getCurrentCampaignId();
 	
 	public void setCurrentCampaignName(String name);
 	public String getCurrentCampaignName();
+	// -------
 	
 	public boolean getIsResearcherOrAdmin();
 }

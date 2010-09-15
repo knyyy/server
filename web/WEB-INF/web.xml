@@ -247,30 +247,33 @@
     <url-pattern>/app/u/mobility</url-pattern>
   </servlet-mapping>
  
- <!--  Survey Data Upload 
+ <!--  Survey Data Upload -->
   <servlet>
     <description>
       processes survey data uploads from a client 
     </description>
     <servlet-name>SurveyUploadServlet</servlet-name>
-    <servlet-class>edu.ucla.cens.awserver.jee.servlet.MobilityUploadServlet</servlet-class>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
     <init-param>
       <param-name>awRequestCreatorName</param-name>
-      <param-value>mobilityUploadAwRequestCreator</param-value>
+      <param-value>surveyUploadAwRequestCreator</param-value>
     </init-param>
     <init-param>
       <param-name>controllerName</param-name>
-      <param-value>mobilityUploadController</param-value>
+      <param-value>surveyUploadController</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>successOrFailResponseWriter</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>MobilityUploadServlet</servlet-name>
-    <url-pattern>/app/u/mobility</url-pattern>
+    <servlet-name>SurveyUploadServlet</servlet-name>
+    <url-pattern>/app/u/survey</url-pattern>
   </servlet-mapping>
- -->
-  
+   
   <!--  
       Stateless Authentication  
   -->
@@ -566,7 +569,7 @@
 
   <!-- Sets the webapp's session timeout (minutes). -->
   <session-config>
-    <session-timeout>30</session-timeout>
+    <session-timeout>1</session-timeout>
   </session-config>
   
   <!--

@@ -38,7 +38,7 @@ public class UploadService implements Service {
 	public void execute(AwRequest awRequest) {
 		try {
 		
-			_daoMap.get(awRequest.getRequestType()).execute(awRequest);
+			_daoMap.get("mobility").execute(awRequest); // TODO - mobility is hardcoded for now
 			
 		} catch(DataAccessException dae) {
 			

@@ -73,9 +73,9 @@ public class AuthValidator extends AbstractHttpServletRequestValidator {
 		// 50 is an arbitrary number for length, but it would be very strange
 		// 180 characters for the password would represent a 60 character password with every character URL encoded
 		
-		if(greaterThanLength("user", "u", u, 50) 
+		if(greaterThanLength("user", "u", u, 75) 
 			|| greaterThanLength("password", "p", p, 180) 
-			|| greaterThanLength("client", "ci", ci, 100)) { 
+			|| greaterThanLength("client", "ci", ci, 600)) { 
 			return false;
 		}
 		

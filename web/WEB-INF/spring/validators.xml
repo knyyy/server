@@ -20,16 +20,18 @@
     <constructor-arg index="1"><ref bean="uploadUserNameFailedJsonRequestAnnotator" /></constructor-arg>
   </bean>
   
-  <bean id="uploadPasswordValidator" class="edu.ucla.cens.awserver.validator.AwRequestPasswordValidator">
+  <bean id="hashedPasswordValidator" class="edu.ucla.cens.awserver.validator.AwRequestPasswordValidator">
     <constructor-arg index="0"><value>[\w\.\$\/]{50,60}</value></constructor-arg>
     <constructor-arg index="1"><ref bean="uploadPasswordFailedJsonRequestAnnotator" /></constructor-arg>
   </bean>
   
-  <bean id="uploadCampaignIdValidator" class="edu.ucla.cens.awserver.validator.AwRequestCampaignIdValidator">
+  <!-- unused 
+  <bean id="uploadCampaignExistsValidator" class="edu.ucla.cens.awserver.validator.NonEmptyStringAnnotatingValidator">
     <constructor-arg index="0"><ref bean="uploadCampaignIdFailedJsonRequestAnnotator" /></constructor-arg>
   </bean>
+  -->
   
-  <!-- deprecated 
+  <!-- unused 
   <bean id="sensorUploadRequestTypeValidator" class="edu.ucla.cens.awserver.validator.RequiredStringAnnotatingValidator">
     <constructor-arg index="0"><ref bean="sensorUploadRequestTypeFailedJsonRequestAnnotator" /></constructor-arg>
     <constructor-arg index="1"><value>requestType</value></constructor-arg>
@@ -41,13 +43,13 @@
     </constructor-arg>
   </bean>
   -->
-  
-  <bean id="uploadClientValidator" class="edu.ucla.cens.awserver.validator.NonEmptyStringAnnotatingValidator">
+  <!-- unused
+  <bean id="uploadClientExistsValidator" class="edu.ucla.cens.awserver.validator.NonEmptyStringAnnotatingValidator">
     <constructor-arg index="0"><ref bean="uploadClientFailedJsonRequestAnnotator" /></constructor-arg>
     <constructor-arg index="1"><value>client</value></constructor-arg>
   </bean>
-  
-  <!--
+  -->
+  <!-- unused
   <bean id="sensorUploadProtocolVersionValidator" class="edu.ucla.cens.awserver.validator.RequiredStringAnnotatingValidator">
     <constructor-arg index="0"><ref bean="sensorUploadProtocolVersionFailedJsonRequestAnnotator" /></constructor-arg>
     <constructor-arg index="1"><value>protocolVersion</value></constructor-arg>

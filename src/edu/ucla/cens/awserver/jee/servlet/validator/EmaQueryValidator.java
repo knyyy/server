@@ -75,7 +75,7 @@ public class EmaQueryValidator extends AbstractHttpServletRequestValidator {
 		
 		if(greaterThanLength("startDate", "s", s, 50) 
 		   || greaterThanLength("endDate", "e", e, 50)
-		   || greaterThanLength("userName", "u", u, 50)) {
+		   || greaterThanLength("userName", "u", u, 75)) {
 			
 			return false;
 		}

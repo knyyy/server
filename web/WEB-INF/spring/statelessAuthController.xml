@@ -26,11 +26,12 @@
     <property name="validators">
       <list>
         <ref bean="uploadUserNameValidator" />
-        <ref bean="uploadPasswordValidator" />
-        <ref bean="uploadClientValidator" />
+        <ref bean="hashedPasswordValidator" />
+        <!-- any validator that simply checked for a empty string has been removed because it was redundant with 
+             validation performed in the servlet world -->
       </list>      
     </property>
-    <property name="featureName"><value>phone authentication</value></property>
+    <property name="featureName"><value>stateless authentication</value></property>
   </bean>
  
 </beans>
