@@ -9,4 +9,6 @@ public interface CacheService {
 	
 	Object lookup(Object key);
 	
+	boolean containsKey(Object key);
+	
 }

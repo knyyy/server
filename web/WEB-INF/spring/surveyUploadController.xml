@@ -31,6 +31,7 @@
       <list>
         <ref bean="uploadUserNameValidator" />
         <ref bean="hashedPasswordValidator" />
+        <ref bean="campaignNameVersionValidator" />
         <!-- any validator that simply checked for a empty string has been removed because it was redundant with 
              validation performed in the servlet world -->
       </list>
@@ -59,6 +60,23 @@
     </constructor-arg>
     <constructor-arg index="1"><ref bean="jsonMsgEmptyArrayAnnotator" /></constructor-arg>
     <constructor-arg index="2"><ref bean="jsonMsgIncorrectArrayAnnotator" /></constructor-arg>
+  </bean>
+  
+  
+  <bean id="campaignNameVersionValidator" class="edu.ucla.cens.awserver.validator.survey.CampaignNameVersionValidator">
+     <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+        <constructor-arg index="0">
+           <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+            <property name="code" value="0604" />
+            <property name="text" value="invalid campaign name-version" />
+          </bean>
+        </constructor-arg>
+      </bean>
+    </constructor-arg>
+    <constructor-arg index="1">
+      <ref bean="configurationCacheService" />
+    </constructor-arg>
   </bean>
   
 </beans>

@@ -56,8 +56,14 @@ public class ConfigurationCacheService extends AbstractCacheService {
 	 */
 	@Override
 	public Object lookup(Object key) {
-		// TODO Auto-generated method stub
-		return null;
+		return _configurationMap.get(key);
 	}
-
+	
+	/**
+	 * Returns whether this cache contains a Configuration identified by the provided key.
+	 */
+	@Override
+	public boolean containsKey(Object key) {
+		return _configurationMap.containsKey(key);
+	}
 }

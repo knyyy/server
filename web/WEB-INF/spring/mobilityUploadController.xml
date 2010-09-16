@@ -154,6 +154,8 @@
             <ref bean="jsonMsgLocationValidator" />
             <ref bean="jsonMsgLatitudeValidator" />
             <ref bean="jsonMsgLongitudeValidator" />
+            <ref bean="jsonMsgLocationAccuracyValidator" />
+            <ref bean="jsonMsgLocationProviderValidator" />
             <ref bean="jsonMsgModeOnlyModeValidator" />
           </list>
         </entry>
@@ -166,6 +168,8 @@
             <ref bean="jsonMsgLocationValidator" />
             <ref bean="jsonMsgLatitudeValidator" />
             <ref bean="jsonMsgLongitudeValidator" />
+            <ref bean="jsonMsgLocationAccuracyValidator" />
+            <ref bean="jsonMsgLocationProviderValidator" />            
             <ref bean="jsonMsgFeaturesExistValidator" />
             <ref bean="jsonMsgModeFeaturesModeValidator" />
             <ref bean="jsonMsgModeFeaturesSpeedValidator" />
@@ -271,7 +275,7 @@
       <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
         <constructor-arg index="0">
           <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-            <property name="code" value="0405" />
+            <property name="code" value="0406" />
             <property name="text" value="missing or invalid accuracy" />
           </bean>
         </constructor-arg>  
@@ -284,14 +288,13 @@
       <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
         <constructor-arg index="0">
           <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-            <property name="code" value="0405" />
+            <property name="code" value="0407" />
             <property name="text" value="missing or invalid provider" />
           </bean>
         </constructor-arg>  
       </bean>
     </constructor-arg>
   </bean>
-  
   
   <util:list id="mobilityModes">
     <value>still</value>

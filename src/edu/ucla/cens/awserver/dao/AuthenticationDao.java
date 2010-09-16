@@ -10,8 +10,7 @@ import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.util.StringUtils;
 
 /**
- * DAO for performing user authentication. Incoming passwords are salted and hashed using bcrypt. The salt must be shared 
- * between the server and the phone.
+ * DAO for performing user authentication.
  * 
  * @author selsky
  */
