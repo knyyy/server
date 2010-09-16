@@ -21,6 +21,8 @@ public abstract class AbstractDataPacketBuilder implements DataPacketBuilder {
 		JSONObject location = JsonUtils.getJsonObjectFromJsonObject(source, "location");
 		Double latitude = checkForDoubleNaN(location, "latitude");
 		Double longitude = checkForDoubleNaN(location, "longitude");
+		Double accuracy = JsonUtils.getDoubleFromJsonObject(location, "accuracy");
+		String provider = JsonUtils.getStringFromJsonObject(location, "provider");
 		
 //		String stringUtcDate = DateUtils.convertDateToUtc(date, timezone);
 //		long utcTime = DateUtils.convertTimeToUtc(time, timezone);
@@ -32,6 +34,8 @@ public abstract class AbstractDataPacketBuilder implements DataPacketBuilder {
 		packet.setTimezone(timezone);
 		packet.setLatitude(latitude);
 		packet.setLongitude(longitude);
+		packet.setAccuracy(accuracy);
+		packet.setProvider(provider);
 	}
 	
 	private Double checkForDoubleNaN(JSONObject source, String key) {

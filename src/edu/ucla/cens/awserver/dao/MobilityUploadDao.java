@@ -29,12 +29,12 @@ public class MobilityUploadDao extends AbstractUploadDao {
 
 	private final String _insertMobilityModeOnlySql = "insert into mobility_mode_only_entry" +
 	                                                  " (user_id, time_stamp, epoch_millis, phone_timezone, latitude," +
-	                                                  " longitude, mode) values (?,?,?,?,?,?,?) ";
+	                                                  " longitude, accuracy, provider, mode) values (?,?,?,?,?,?,?,?,?) ";
 
 	private final String _insertMobilityModeFeaturesSql = "insert into mobility_mode_features_entry" +
 			                                              " (user_id, time_stamp, epoch_millis, phone_timezone, latitude," +
-			                                              " longitude, mode, speed, variance, average, fft)" +
-			                                              " values (?,?,?,?,?,?,?,?,?,?,?)";
+			                                              " longitude, accuracy, provider, mode, speed, variance, average, fft)" +
+			                                              " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	public MobilityUploadDao(DataSource datasource) {
 		super(datasource);
@@ -148,7 +148,9 @@ public class MobilityUploadDao extends AbstractUploadDao {
 						ps.setDouble(6, dataPacket.getLongitude());
 					}
 										
-					ps.setString(7, dataPacket.getMode());
+					ps.setDouble(7, dataPacket.getAccuracy());
+					ps.setString(8, dataPacket.getProvider());
+					ps.setString(9, dataPacket.getMode());
 					
 					return ps;
 				}
@@ -183,11 +185,14 @@ public class MobilityUploadDao extends AbstractUploadDao {
 						ps.setDouble(6, dataPacket.getLongitude());
 					}
 					
-					ps.setString(7, dataPacket.getMode());
-					ps.setDouble(8, dataPacket.getSpeed());
-					ps.setDouble(9, dataPacket.getVariance());
-					ps.setDouble(10, dataPacket.getAverage());
-					ps.setString(11, dataPacket.getFftArray());
+					
+					ps.setDouble(7, dataPacket.getAccuracy());
+					ps.setString(8, dataPacket.getProvider());
+					ps.setString(9, dataPacket.getMode());
+					ps.setDouble(10, dataPacket.getSpeed());
+					ps.setDouble(11, dataPacket.getVariance());
+					ps.setDouble(12, dataPacket.getAverage());
+					ps.setString(13, dataPacket.getFftArray());
 											
 					return ps;
 				}
@@ -204,7 +209,8 @@ public class MobilityUploadDao extends AbstractUploadDao {
 			_logger.error("caught DataAccessException when running SQL '" + _insertMobilityModeFeaturesSql + "' with the following" +
 				" parameters: " + userId + ", " + Timestamp.valueOf(mmfdp.getDate()) + ", " + mmfdp.getEpochTime() + ", " +
 				mmfdp.getTimezone() + ", " + (mmfdp.getLatitude().equals(Double.NaN) ? "null" : mmfdp.getLatitude()) +  ", " + 
-			    (mmfdp.getLongitude().equals(Double.NaN) ? "null" : mmfdp.getLongitude()) + ", " + mmfdp.getMode() + ", " + 
+			    (mmfdp.getLongitude().equals(Double.NaN) ? "null" : mmfdp.getLongitude()) + ", " + mmfdp.getAccuracy() + ", " +
+			    mmfdp.getProvider() + ", " +  mmfdp.getMode() + ", " + 
 			    mmfdp.getSpeed() + ", " + mmfdp.getVariance() + ", " + mmfdp.getAverage() + ", " + mmfdp.getFftArray());
 			 
 		} else {
@@ -214,7 +220,8 @@ public class MobilityUploadDao extends AbstractUploadDao {
 			_logger.error("caught DataAccessException when running SQL '" + _insertMobilityModeOnlySql +"' with the following " +
 				"parameters: " + userId + ", " + mmodp.getDate() + ", " + mmodp.getEpochTime() + ", " + mmodp.getTimezone() + ", "
 				+ (mmodp.getLatitude().equals(Double.NaN) ? "null" : mmodp.getLatitude()) + ", " + 
-				(mmodp.getLongitude().equals(Double.NaN) ? "null" : mmodp.getLongitude()) + ", " + mmodp.getMode());
+				(mmodp.getLongitude().equals(Double.NaN) ? "null" : mmodp.getLongitude()) + ", " + mmodp.getAccuracy() + " ," + 
+				mmodp.getProvider() + " ," + mmodp.getMode());
 			
 		}
 	}

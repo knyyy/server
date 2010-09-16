@@ -13,7 +13,10 @@ public abstract class MetadataDataPacket implements DataPacket {
 	
 	private Double _latitude;
 	private Double _longitude;
-		
+	
+	private String _provider;
+	private Double _accuracy;
+	
 	public String getDate() {
 		return _date;
 	}
@@ -54,10 +57,27 @@ public abstract class MetadataDataPacket implements DataPacket {
 		_longitude = longitude;
 	}
 	
+	public String getProvider() {
+		return _provider;
+	}
+
+	public void setProvider(String provider) {
+		_provider = provider;
+	}
+
+	public Double getAccuracy() {
+		return _accuracy;
+	}
+
+	public void setAccuracy(Double accuracy) {
+		_accuracy = accuracy;
+	}
+
 	@Override
 	public String toString() {
-		return "MetadataDataPacket [_date=" + _date + ", _latitude=" + _latitude
-				+ ", _longitude=" + _longitude + ", _epochTime=" + _epochTime
-				+ ", _timezone=" + _timezone + "]";
+		return "MetadataDataPacket [_accuracy=" + _accuracy + ", _date="
+				+ _date + ", _epochTime=" + _epochTime + ", _latitude="
+				+ _latitude + ", _longitude=" + _longitude + ", _provider="
+				+ _provider + ", _timezone=" + _timezone + "]";
 	}
 }

@@ -25,7 +25,9 @@ public class MobilityModeFeaturesJsonMessageCreator implements JsonMessageCreato
 //        "subtype":"mode_features",
 //        "location": {
 //            "latitude":38.8977,
-//            "longitude":-77.0366
+//            "longitude":-77.0366,
+//            "accuracy":0.9283213,
+//            "provider":"GPS"
 //        },
 //        "features":{
 //            "mode":"still",
@@ -62,6 +64,8 @@ public class MobilityModeFeaturesJsonMessageCreator implements JsonMessageCreato
 			Map<String, Object> location = new HashMap<String, Object>();
 			location.put("latitude", latitude);
 			location.put("longitude", longitude);
+			location.put("accuracy", ValueCreator.randomPositiveFloat());
+			location.put("provider", ValueCreator.randomProvider());
 			map.put("location", location);
 			
 			Map<String, Object> features = new HashMap<String, Object>();

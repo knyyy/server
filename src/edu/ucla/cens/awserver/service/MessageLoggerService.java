@@ -135,7 +135,7 @@ public class MessageLoggerService implements Service {
 						jsonObject = new JSONObject(failedMessage);
 						// Dump out the request params
 						jsonObject.put("session_id", sessionId);
-						jsonObject.put("request_type", awRequest.getRequestType());
+//						jsonObject.put("request_type", awRequest.getRequestType());
 						jsonObject.put("user", awRequest.getUser().getUserName());
 						jsonObject.put("client", awRequest.getClient());
 						jsonObject.put("protocol_version",awRequest.getProtocolVersion());

@@ -172,6 +172,8 @@ CREATE TABLE mobility_mode_only_entry (
   phone_timezone varchar(32) NOT NULL,
   latitude double,
   longitude double,
+  accuracy double,
+  provider varchar(250),
   mode varchar(30) NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (user_id, epoch_millis), -- enforce no-duplicates rule at the table level
@@ -190,6 +192,8 @@ CREATE TABLE mobility_mode_features_entry (
   phone_timezone varchar(32) NOT NULL,
   latitude double,
   longitude double,
+  accuracy double,
+  provider varchar(250),
   mode varchar(30) NOT NULL,
   speed double NOT NULL,
   variance double NOT NULL,

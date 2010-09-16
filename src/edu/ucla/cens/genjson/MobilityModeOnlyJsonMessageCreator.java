@@ -24,11 +24,12 @@ public class MobilityModeOnlyJsonMessageCreator implements JsonMessageCreator {
 //	    "subtype":"mode_only",
 //	    "location": {
 //	        "latitude":38.8977,
-//	        "longitude":-77.0366
+//	        "longitude":-77.0366,
+//          "accuracy":0.9283213,
+//          "provider":"GPS"
 //	    },
 //	    "mode":"still" 
 //	}
-	
 	
 	/**
 	 * Returns a JSONArray containing <code>numberOfEntries</code> JSONObjects where each JSONObject is a mobility mode_only
@@ -57,6 +58,8 @@ public class MobilityModeOnlyJsonMessageCreator implements JsonMessageCreator {
 			Map<String, Object> location = new HashMap<String, Object>();
 			location.put("latitude", latitude);
 			location.put("longitude", longitude);
+			location.put("accuracy", ValueCreator.randomPositiveFloat());
+			location.put("provider", ValueCreator.randomProvider());
 			
 			map.put("location", location);
 			jsonArray.put(map);

@@ -14,6 +14,7 @@ public class ValueCreator {
 	private static String[] _tzs = {"EST", "CST", "MST", "PST"}; // American timezone hegemony ;)
 	// Favor still for testing
 	private static String[] _modes = {"still", "still", "still", "walk", "run", "bike", "drive"};
+	private static String[] _providers = {"null", "GPS", "network"};
 	
 	private ValueCreator() { };
 	
@@ -88,5 +89,13 @@ public class ValueCreator {
 	
 	public static int randomPositiveIntModulus(int modulus) {
 		return Math.abs(_random.nextInt() % modulus);
+	}
+	
+	public static float randomPositiveFloat() {
+		return Math.abs(_random.nextFloat());
+	}
+	
+	public static String randomProvider() {
+		return _providers[Math.abs(_random.nextInt() % 3)];
 	}
 }
