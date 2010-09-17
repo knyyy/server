@@ -56,6 +56,7 @@
         <ref bean="jsonMsgLongitudeValidator" />
         <ref bean="jsonMsgLocationAccuracyValidator" />
         <ref bean="jsonMsgLocationProviderValidator" />
+        <ref bean="jsonMsgSurveyIdValidator" />
       </list>
     </constructor-arg>
     <constructor-arg index="1"><ref bean="jsonMsgEmptyArrayAnnotator" /></constructor-arg>
@@ -78,5 +79,22 @@
       <ref bean="configurationCacheService" />
     </constructor-arg>
   </bean>
+  
+  <bean id="jsonMsgSurveyIdValidator" class="edu.ucla.cens.awserver.validator.survey.JsonMsgSurveyIdValidator">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+        <constructor-arg index="0">
+          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+            <property name="code" value="0605" />
+            <property name="text" value="missing or invalid survey_id in message" />
+          </bean>
+        </constructor-arg>  
+      </bean>
+    </constructor-arg>
+    <constructor-arg index="1">
+     <ref bean="configurationCacheService" />
+    </constructor-arg>
+  </bean>
+  
   
 </beans>
