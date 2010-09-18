@@ -1,8 +1,5 @@
 package edu.ucla.cens.awserver.validator.survey;
 
-import nu.xom.Document;
-import nu.xom.Nodes;
-
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.cache.CacheService;
@@ -47,18 +44,17 @@ public class JsonMsgSurveyIdValidator extends AbstractAnnotatingJsonObjectValida
 		}
 		
 		// validate against cache configuration
-		CampaignNameVersion cnv = new CampaignNameVersion(awRequest.getUser().getCurrentCampaignName(), awRequest.getCampaignVersion());
+		CampaignNameVersion cnv = new CampaignNameVersion(awRequest.getUser().getCurrentCampaignName(), 
+				                                          awRequest.getCampaignVersion());
+		
 		Configuration configuration = (Configuration) _cacheService.lookup(cnv);
 		
-		if(null == configuration) { // this is bad because it means that previous validation failed or simple wasn't configured to run
+		if(null == configuration) { // this is bad because it means that previous validation failed or didn't run
 			throw new IllegalStateException("missing configuration for campaign name-version pair name=" 
 				+ awRequest.getUser().getCurrentCampaignName() + " version=" + awRequest.getCampaignVersion());
 		}
 		
-		Document document = configuration.getXmlDocument();
-		Nodes nodes = document.getRootElement().query("//surveys/survey/id[text()='" + surveyId + "']");
-		
-		if(nodes.size() == 0) {
+		if(! configuration.surveyIdExists(surveyId)) {
 			getAnnotator().annotate(awRequest, "survey_id in message does not exist for configuration");
 			return false;
 		}

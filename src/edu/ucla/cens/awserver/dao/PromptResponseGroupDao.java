@@ -22,6 +22,7 @@ import edu.ucla.cens.awserver.domain.PromptType;
  * version_id and group_id have already been validated against the campaign. Note that the prompt_id passed as part of the upload
  * message is the prompt_id that is shared with the phone configuration, not that actual prompt id in the db. 
  * 
+ * @deprecated
  * @author selsky
  */
 public class PromptResponseGroupDao extends AbstractDao {

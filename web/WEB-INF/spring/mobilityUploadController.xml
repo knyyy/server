@@ -472,19 +472,6 @@
     <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
   </bean>
   
-  <bean id="jsonMsgPromptResponsesExistValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgPromptResponsesExistValidator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-        <constructor-arg index="0">
-          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-          	<property name="code" value="0602" />
-          	<property name="text" value="missing responses in prompt message" />
-          </bean>
-        </constructor-arg>  
-      </bean>
-    </constructor-arg>
-  </bean>
-  
   <bean id="jsonMsgPromptResponsesValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgPromptResponsesValidator">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">

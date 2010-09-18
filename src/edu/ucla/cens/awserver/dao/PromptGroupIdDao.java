@@ -12,6 +12,7 @@ import edu.ucla.cens.awserver.request.AwRequest;
  * multiple packets of prompts uniquely represented by a group_id. Note that the group_id sent by the phone is not the primary
  * key on the campaign_prompt_group table.
  * 
+ * @deprecated
  * @author selsky
  */
 public class PromptGroupIdDao extends AbstractDao {

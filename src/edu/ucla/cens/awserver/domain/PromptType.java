@@ -1,8 +1,6 @@
 package edu.ucla.cens.awserver.domain;
 
 /**
- * A representation of a row from the prompt_type table along with the prompt's phone config id.
- * 
  * @author selsky
  */
 public class PromptType {

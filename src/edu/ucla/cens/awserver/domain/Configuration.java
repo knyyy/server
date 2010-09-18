@@ -1,11 +1,7 @@
 package edu.ucla.cens.awserver.domain;
 
-import java.io.IOException;
-import java.io.StringReader;
-
-import nu.xom.Builder;
-import nu.xom.Document;
-import nu.xom.ParsingException;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Immutable bean-style wrapper for configuration properties.
@@ -15,36 +11,24 @@ import nu.xom.ParsingException;
 public class Configuration {
 	private String _campaignName;
 	private String _campaignVersion;
-	private Document _xmlDocument;
+	private Map<String, Survey> _surveyMap;
 	
-	public Configuration(String campaignName, String campaignVersion, String xml) {
+	public Configuration(String campaignName, String campaignVersion, Map<String, Survey> surveyMap) {
 		if(null == campaignName) {
 			throw new IllegalArgumentException("a campaignName is required");
 		}
 		if(null == campaignVersion) {
 			throw new IllegalArgumentException("a campaignVersion is required");
 		}
-		if(null == xml) {
-			throw new IllegalArgumentException("xml is required");
+		if(null == surveyMap) {
+			throw new IllegalArgumentException("a map of surveys is required");
 		}
 		
 		_campaignName = campaignName;
 		_campaignVersion = campaignVersion;
-		
-		Builder builder = new Builder();
-		
-		try {
-			
-			_xmlDocument = builder.build(new StringReader(xml));
-		} 
-		catch(IOException ioe) {
-			throw new IllegalStateException("could not read XML string", ioe);
-		}
-		catch(ParsingException pe) {
-			throw new IllegalStateException("could not parse XML string", pe);
-		}
+		_surveyMap = surveyMap; // TODO deep copy?
 	}
-
+	
 	public String getCampaignName() {
 		return _campaignName;
 	}
@@ -53,14 +37,18 @@ public class Configuration {
 		return _campaignVersion;
 	}
 
-	public Document getXmlDocument() {
-		return new Document(_xmlDocument); // return a defensive copy ensuring immutability
+	public Map<String, Survey> getSurveys() {
+		return Collections.unmodifiableMap(_surveyMap);
+	}
+	
+	public boolean surveyIdExists(String surveyId) {
+		return _surveyMap.containsKey(surveyId);
 	}
 
 	@Override
 	public String toString() {
 		return "Configuration [_campaignName=" + _campaignName
-				+ ", _campaignVersion=" + _campaignVersion + ", _xml=" + _xmlDocument
-				+ "]";
+				+ ", _campaignVersion=" + _campaignVersion + ", _surveyMap="
+				+ _surveyMap + "]";
 	}
 }
