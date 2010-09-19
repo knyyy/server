@@ -12,6 +12,8 @@ import edu.ucla.cens.awserver.util.JsonUtils;
 import edu.ucla.cens.awserver.util.StringUtils;
 import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
 import edu.ucla.cens.awserver.validator.json.AbstractAnnotatingJsonObjectValidator;
+import edu.ucla.cens.awserver.validator.prompt.PromptValidator;
+import edu.ucla.cens.awserver.validator.prompt.PromptValidatorCache;
 
 /**
  * Validator for the set of prompt responses in a survey. A survey is sent to the server as a JSON array of prompt or repeatable set
@@ -28,13 +30,19 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 	private static Logger _logger = Logger.getLogger(JsonMsgSurveyResponsesValidator.class);
 	private String _key = "responses";
 	private CacheService _cacheService;
+	private PromptValidatorCache _promptValidatorCache;
 		
-	public JsonMsgSurveyResponsesValidator(AwRequestAnnotator awRequestAnnotator, CacheService cacheService) {
+	public JsonMsgSurveyResponsesValidator(AwRequestAnnotator awRequestAnnotator, CacheService configurationCacheService, 
+			PromptValidatorCache pvCache) {
 		super(awRequestAnnotator);
-		if(null == cacheService) {
-			throw new IllegalArgumentException("a CacheService is required");
+		if(null == configurationCacheService) {
+			throw new IllegalArgumentException("a Configuration CacheService is required");
 		}
-		_cacheService = cacheService;
+		if(null == pvCache) {
+			throw new IllegalArgumentException("a PromptValidatorCache is required");
+		}
+		_cacheService = configurationCacheService;
+		_promptValidatorCache = pvCache;
 	}
 	
 	/**
@@ -130,6 +138,7 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 								return false;
 							}
 							
+							// TODO - the value may not be a string!
 							String value = JsonUtils.getStringFromJsonObject(o, "value");
 							if(null == value) {
 								getAnnotator().annotate(awRequest, "missing value at array index "+ k 
@@ -161,10 +170,10 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 									}
 									
 									
-								} else { // ok, now check the value against the prompt type
+								} else { // ok, now check the prompt responses
 									
 									String promptType = configuration.getPromptType(surveyId, repeatableSetId, promptId);
-									
+									PromptValidator pv = _promptValidatorCache.getValidatorFor(promptType);
 								}
 							}
 						}
