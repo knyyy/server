@@ -1,34 +1,29 @@
 package edu.ucla.cens.awserver.domain;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 /**
  * A minified immutable survey generated from configuration XML: only the properties necessary for data validation are present in  
- * this class (so, no messages, descriptions, etc). 
+ * this class (so, no message nodes, descriptions, UI elements, etc). 
  * 
  * @author selsky
  */
-public class Survey {
-	private String _surveyId;
-	private List<SurveyItem> _surveyItems; // prompts and repeatableSets
+public class Survey extends AbstractSurveyItem {
+	private Map<String, SurveyItem> _surveyItemMap; // prompts and repeatableSets
 	
-	public Survey(String surveyId, List<SurveyItem> surveyItems) {
-		_surveyId = surveyId;
-		_surveyItems = surveyItems; // TODO really need a deep copy here
+	public Survey(String surveyId, Map<String, SurveyItem> surveyMap) {
+		super(surveyId);
+		_surveyItemMap = surveyMap; // TODO really need a deep copy here, but so far the creator of this Map does not change it
 	}
 
-	public String getSurveyId() {
-		return _surveyId;
-	}
-
-	public List<SurveyItem> getSurveyItems() {
-		return Collections.unmodifiableList(_surveyItems);
+	public Map<String, SurveyItem> getSurveyItemMap() {
+		return Collections.unmodifiableMap(_surveyItemMap);
 	}
 
 	@Override
 	public String toString() {
-		return "Survey [_surveyId=" + _surveyId + ", _surveyItems="
-				+ _surveyItems + "]";
+		return "Survey [_surveyMap=" + _surveyItemMap + ", getId()=" + getId()
+				+ "]";
 	}
 }

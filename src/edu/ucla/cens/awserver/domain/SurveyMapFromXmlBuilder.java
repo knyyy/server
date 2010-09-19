@@ -2,9 +2,7 @@ package edu.ucla.cens.awserver.domain;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import nu.xom.Builder;
@@ -49,7 +47,8 @@ public class SurveyMapFromXmlBuilder implements SurveyMapBuilder {
 		Map<String, Survey> surveyMap = new HashMap<String, Survey>();
 		
 		for(int i = 0; i < numberOfSurveys; i++) {
-			List<SurveyItem> surveyItemList = new ArrayList<SurveyItem>();
+			Map<String, SurveyItem> surveyItemMap = new HashMap<String, SurveyItem>();
+			
 			String surveyId = surveyNodes.get(i).query("id").get(0).getValue();
 			
 			// first, grab the prompts
@@ -65,21 +64,24 @@ public class SurveyMapFromXmlBuilder implements SurveyMapBuilder {
 					String repeatableSetId = node.query("../id").get(0).getValue();
 					Nodes promptNodes = node.query("prompt");
 					int numberOfPrompts = promptNodes.size();
-					List<Prompt> promptList = new ArrayList<Prompt>(numberOfPrompts);
+					Map<String, Prompt> promptMap = new HashMap<String, Prompt>();
 					
 					for(int k = 0; k < numberOfPrompts; k++) {
-						promptList.add(getPromptFromNode(promptNodes.get(k)));
+						Prompt p = getPromptFromNode(promptNodes.get(k));
+						promptMap.put(p.getId(), p);
 					}
-					RepeatableSet rs = new RepeatableSet(repeatableSetId, promptList);
-					surveyItemList.add(rs);
+					
+					RepeatableSet rs = new RepeatableSet(repeatableSetId, promptMap);
+					surveyItemMap.put(repeatableSetId, rs);
 					
 				} else { // it's a single prompt
-			
-					surveyItemList.add(getPromptFromNode(nodes.get(j)));
+					
+					Prompt p = getPromptFromNode(nodes.get(j));
+					surveyItemMap.put(p.getId(), p);
 				}
 			}
 			
-			Survey survey = new Survey(surveyId, surveyItemList);
+			Survey survey = new Survey(surveyId, surveyItemMap);
 			surveyMap.put(surveyId, survey);
 			_logger.info(survey);
 			
@@ -94,7 +96,7 @@ public class SurveyMapFromXmlBuilder implements SurveyMapBuilder {
 	private Prompt getPromptFromNode(Node node) {
 		Nodes propNodes = node.query("properties/property");
 		int numberOfPropNodes = propNodes.size();
-		List<PromptProperty> ppList = new ArrayList<PromptProperty>(numberOfPropNodes);
+		Map<String , PromptProperty> ppMap = new HashMap<String, PromptProperty>();
 		
 		for(int i = 0; i < numberOfPropNodes; i++) {
 			Node propNode = propNodes.get(i);
@@ -103,7 +105,7 @@ public class SurveyMapFromXmlBuilder implements SurveyMapBuilder {
 			String value = valueNodeExists ? propNode.query("value").get(0).getValue() : null;
 			String label = propNode.query("label").get(0).getValue();
 			PromptProperty pp = new PromptProperty(key, value, label);
-			ppList.add(pp);
+			ppMap.put(key, pp);
 		}
 		
 		String id = node.query("id").get(0).getValue();
@@ -111,6 +113,6 @@ public class SurveyMapFromXmlBuilder implements SurveyMapBuilder {
 		String type = node.query("promptType").get(0).getValue();
 		boolean skippable = Boolean.valueOf(node.query("skippable").get(0).getValue());
 		
-		return new Prompt(id, displayType, type, ppList, skippable);
+		return new Prompt(id, displayType, type, ppMap, skippable);
 	}
 }

@@ -1,23 +1,28 @@
 package edu.ucla.cens.awserver.domain;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
+/**
+ * A repeatable set has an id and a Map of Prompts.
+ * 
+ * @author selsky
+ */
 public class RepeatableSet extends AbstractSurveyItem {
-	private List<Prompt> _prompts;
+	private Map<String, Prompt> _promptMap;
 	
-	public RepeatableSet(String id, List<Prompt> prompts) {
+	public RepeatableSet(String id, Map<String, Prompt> promptMap) {
 		super(id);
-		_prompts = prompts;
+		_promptMap = promptMap; 
 	}
 
-	public List<Prompt> getPrompts() {
-		return Collections.unmodifiableList(_prompts);
+	public Map<String, Prompt> getPromptMap() {
+		return Collections.unmodifiableMap(_promptMap);
 	}
 
 	@Override
 	public String toString() {
-		return "RepeatableSet [_prompts=" + _prompts + ", getId()=" + getId()
-				+ "]";
-	}
+		return "RepeatableSet [_promptMap=" + _promptMap + ", getId()="
+				+ getId() + "]";
+	}	
 }

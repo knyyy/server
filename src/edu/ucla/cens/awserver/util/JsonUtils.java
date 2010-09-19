@@ -171,6 +171,28 @@ public class JsonUtils {
 	}
 	
 	/**
+	 * @return the JSONArray value found in the JSONArray using the provided index. If no value is found, null is returned. 
+	 */
+	public static JSONArray getJsonArrayFromJsonArray(JSONArray array, int index) {
+		JSONArray a = null;
+		
+		try {
+			
+			a = array.getJSONArray(index); 
+			
+		} catch (JSONException jsone) {
+			
+			if(_logger.isDebugEnabled()) {
+				_logger.debug("failed attempt to retrieve index " + index + " from JSON array " + array);
+				_logger.debug(jsone);
+			}
+			
+		}
+		
+		return a;
+	}
+	
+	/**
 	 * @return the JSONObject value found in the JSONArray using the provided index. If no value is found, null is returned. 
 	 */
 	public static JSONObject getJsonObjectFromJsonArray(JSONArray array, int index) {

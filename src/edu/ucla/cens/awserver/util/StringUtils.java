@@ -31,6 +31,16 @@ public final class StringUtils {
 		
 	}
 	
+	/**
+	 * @return true if the String is the value "true" or "false"
+	 *         false otherwise
+	 */
+	public static boolean isBooleanString(String string) {
+		
+		return "true".equals(string) || "false".equals(string);
+		
+	}
+	
 //	/**
 //	 * Retrieves the subdomain from a URL String where the subdomain is defined as the text between the protocol (http://) and the
 //	 * first occurence of a dot (.) (so technically this method does not return the full subdomain). 

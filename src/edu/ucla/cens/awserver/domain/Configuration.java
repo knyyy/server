@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Immutable bean-style wrapper for configuration properties.
+ * Immutable bean-style wrapper for accessing and validating configuration properties.
  * 
  * @author selsky
  */
@@ -43,6 +43,35 @@ public class Configuration {
 	
 	public boolean surveyIdExists(String surveyId) {
 		return _surveyMap.containsKey(surveyId);
+	}
+	
+	public boolean repeatableSetExists(String surveyId, String repeatableSetId) {
+        if(! _surveyMap.get(surveyId).getSurveyItemMap().containsKey(repeatableSetId)) {
+        	return false;
+        } 
+		SurveyItem si = _surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId);
+        return si instanceof RepeatableSet;
+	}
+	
+	public boolean promptExists(String surveyId, String repeatableSetId, String promptId) {
+        return ((RepeatableSet)_surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId)).getPromptMap().containsKey(promptId);
+	}
+	
+	public boolean isPromptSkippable(String surveyId, String repeatableSetId, String promptId) {
+        return ((RepeatableSet)_surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId)).getPromptMap().get(promptId).isSkippable();
+	}
+	
+	public String getPromptType(String surveyId, String repeatableSetId, String promptId) {
+		return ((RepeatableSet)_surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId)).getPromptMap().get(promptId).getType();
+	}
+	
+	/**
+	 * Returns the number of prompts in the repeatable set inside the survey represented by survey id. Assumes that surveyId and
+	 * repeatableSetId are valid. 
+	 */
+	public int numberOfPromptsInRepeatableSet(String surveyId, String repeatableSetId) {
+		SurveyItem si = _surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId);
+        return ((RepeatableSet) si).getPromptMap().size();
 	}
 
 	@Override

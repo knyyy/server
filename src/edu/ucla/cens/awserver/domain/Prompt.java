@@ -1,7 +1,7 @@
 package edu.ucla.cens.awserver.domain;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 /**
  * A survey prompt configuration.
@@ -11,10 +11,10 @@ import java.util.List;
 public class Prompt extends AbstractSurveyItem {
 	private String _displayType;
 	private String _type;
-	private List<PromptProperty> _properties;
+	private Map<String, PromptProperty> _properties;
 	private boolean _skippable;
 
-	public Prompt(String id, String displayType, String type, List<PromptProperty> props, boolean skippable) {
+	public Prompt(String id, String displayType, String type, Map<String, PromptProperty> props, boolean skippable) {
 		super(id);
 		_displayType = displayType;
 		_type = type;
@@ -30,8 +30,8 @@ public class Prompt extends AbstractSurveyItem {
 		return _type;
 	}
 
-	public List<PromptProperty> getProperties() {
-		return Collections.unmodifiableList(_properties);
+	public Map<String, PromptProperty> getProperties() {
+		return Collections.unmodifiableMap(_properties);
 	}
 
 	public boolean isSkippable() {
