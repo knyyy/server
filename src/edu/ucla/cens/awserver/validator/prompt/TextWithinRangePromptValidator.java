@@ -10,7 +10,7 @@ import edu.ucla.cens.awserver.util.StringUtils;
 /**
  * @author selsky
  */
-public class TextWithinRangePromptValidator implements PromptValidator {
+public class TextWithinRangePromptValidator extends AbstractPromptValidator {
 	private static Logger _logger = Logger.getLogger(TextWithinRangePromptValidator.class);
 	
 	/**
@@ -18,6 +18,14 @@ public class TextWithinRangePromptValidator implements PromptValidator {
 	 */
 	@Override
 	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		if(isNotDisplayed(prompt, promptResponse)) {
+			return true;
+		}
+		
+		if(isSkipped(prompt, promptResponse)) {
+			return isValidSkipped(prompt, promptResponse);
+		}
+		
 		int min = Integer.parseInt(prompt.getProperties().get("min").getLabel());
 		int max = Integer.parseInt(prompt.getProperties().get("max").getLabel());
 		

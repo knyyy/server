@@ -77,6 +77,10 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 					return false;
 				}
 				
+				if(_logger.isDebugEnabled()) {
+					_logger.debug("beginning to validate a repeatableSet: " + repeatableSetId);
+				}
+				
 				// handle the repeatable set
 				// a repeatable set must have the properties: skipped, not_displayed, repeatable_set_id, and a responses array
 				// the repeatable_set must exist in the survey
@@ -153,12 +157,24 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 							String repeatableSetPromptId = JsonUtils.getStringFromJsonObject(promptResponseJsonObject, "prompt_id");
 							if(null == repeatableSetPromptId) {
 								getAnnotator().annotate(awRequest, "missing prompt_id in json object at array index "+ k 
-										+ "for repeatable set id "+ repeatableSetId);
+										+ " for repeatable set id "+ repeatableSetId);
 								return false;
 							}
-							
+							 
 							String promptType = configuration.getPromptType(surveyId, repeatableSetId, repeatableSetPromptId);
 							PromptValidator pv = _promptValidatorCache.getValidatorFor(promptType);
+							
+							if(_logger.isDebugEnabled()) {
+								_logger.debug("validating prompt " + repeatableSetPromptId + " in repeatableSet " + repeatableSetId);
+							}
+							
+							if(! pv.validate(
+								configuration.getPrompt(surveyId, repeatableSetId, repeatableSetPromptId), promptResponseJsonObject)
+							) {
+								getAnnotator().annotate(awRequest, "invalid value for prompt_id " + repeatableSetPromptId + " in " +
+									"json object at array index " + k + " for repeatable set id "+ repeatableSetId);
+								return false;
+							}
 							
 							
 //							// THIS WHOLE CHUNK NEEDS TO GO INTO EACH OF THE VALIDATORS

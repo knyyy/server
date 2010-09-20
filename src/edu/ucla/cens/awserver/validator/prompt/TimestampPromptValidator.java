@@ -13,7 +13,7 @@ import edu.ucla.cens.awserver.util.StringUtils;
 /**
  * @author selsky
  */
-public class TimestampPromptValidator implements PromptValidator {
+public class TimestampPromptValidator extends AbstractPromptValidator {
 	private static Logger _logger = Logger.getLogger(TimestampPromptValidator.class);
 	
 	/**
@@ -21,6 +21,14 @@ public class TimestampPromptValidator implements PromptValidator {
 	 */
 	@Override
 	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		if(isNotDisplayed(prompt, promptResponse)) {
+			return true;
+		}
+		
+		if(isSkipped(prompt, promptResponse)) {
+			return isValidSkipped(prompt, promptResponse);
+		}
+		
 		String timestamp = JsonUtils.getStringFromJsonObject(promptResponse, "value");
 		if(StringUtils.isEmptyOrWhitespaceOnly(timestamp)) {
 			if(_logger.isDebugEnabled()) {

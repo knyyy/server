@@ -23,6 +23,14 @@ public class MultiChoiceCustomPromptValidator extends AbstractCustomChoicePrompt
 	 */
 	@Override
 	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		if(isNotDisplayed(prompt, promptResponse)) {
+			return true;
+		}
+		
+		if(isSkipped(prompt, promptResponse)) {
+			return isValidSkipped(prompt, promptResponse);
+		} 
+		
 		JSONArray values = JsonUtils.getJsonArrayFromJsonObject(promptResponse, "value");
 		if(null == values) {
 			_logger.warn("Malformed multi_choice_custom message. Missing or malformed value for " + prompt.getId());
@@ -58,5 +66,4 @@ public class MultiChoiceCustomPromptValidator extends AbstractCustomChoicePrompt
 		
 		return true;
 	}
-
 }

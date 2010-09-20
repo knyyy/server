@@ -431,68 +431,8 @@
       </bean>
     </constructor-arg>
   </bean>
-  
-  <bean id="jsonMsgPromptVersionIdValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgPromptVersionIdValidator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-        <constructor-arg index="0">
-          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-          	<property name="code" value="0600" />
-          	<property name="text" value="invalid version_id in prompt message" />
-          </bean>
-        </constructor-arg>  
-      </bean>
-    </constructor-arg>
-    <constructor-arg index="1">
-      <ref bean="promptVersionIdDao" />
-    </constructor-arg>
-  </bean>
 
-  <bean id="promptVersionIdDao" class="edu.ucla.cens.awserver.dao.PromptVersionIdDao">
-    <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
-  </bean>
-
-  <bean id="jsonMsgPromptGroupIdValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgPromptGroupIdValidator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-        <constructor-arg index="0">
-          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-          	<property name="code" value="0601" />
-          	<property name="text" value="invalid group_id in prompt message" />
-          </bean>
-        </constructor-arg>  
-      </bean>
-    </constructor-arg>
-    <constructor-arg index="1">
-      <ref bean="promptGroupIdDao" />
-    </constructor-arg>
-  </bean>
-
-  <bean id="promptGroupIdDao" class="edu.ucla.cens.awserver.dao.PromptGroupIdDao">
-    <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
-  </bean>
-  
-  <bean id="jsonMsgPromptResponsesValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgPromptResponsesValidator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-        <constructor-arg index="0">
-          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-          	<property name="code" value="0603" />
-          	<property name="text" value="invalid prompt response" />
-          </bean>
-        </constructor-arg>  
-      </bean>
-    </constructor-arg>
-    <constructor-arg index="1">
-      <ref bean="promptResponseGroupDao" />
-    </constructor-arg>
-  </bean>
-
-  <bean id="promptResponseGroupDao" class="edu.ucla.cens.awserver.dao.PromptResponseGroupDao">
-    <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
-  </bean>
-  
-   <bean id="mobilityDataPacketBuilderService" class="edu.ucla.cens.awserver.service.MobilitySubtypeDataPacketBuilderService">
+  <bean id="mobilityDataPacketBuilderService" class="edu.ucla.cens.awserver.service.MobilitySubtypeDataPacketBuilderService">
     <constructor-arg index="0">
       <map>
         <entry>

@@ -14,7 +14,7 @@ import edu.ucla.cens.awserver.util.StringUtils;
 /**
  * @author selsky
  */
-public abstract class AbstractCustomChoicePromptValidator implements PromptValidator {
+public abstract class AbstractCustomChoicePromptValidator extends AbstractPromptValidator {
 	private static Logger _logger = Logger.getLogger(AbstractCustomChoicePromptValidator.class);
 	
 	/**

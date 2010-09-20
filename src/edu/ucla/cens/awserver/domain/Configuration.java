@@ -65,6 +65,10 @@ public class Configuration {
 		return ((RepeatableSet)_surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId)).getPromptMap().get(promptId).getType();
 	}
 	
+	public Prompt getPrompt(String surveyId, String repeatableSetId, String promptId) {
+		return ((RepeatableSet)_surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId)).getPromptMap().get(promptId); 
+	}
+	
 	/**
 	 * Returns the number of prompts in the repeatable set inside the survey represented by survey id. Assumes that surveyId and
 	 * repeatableSetId are valid. 

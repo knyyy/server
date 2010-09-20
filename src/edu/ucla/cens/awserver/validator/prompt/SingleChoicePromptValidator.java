@@ -12,7 +12,7 @@ import edu.ucla.cens.awserver.util.StringUtils;
 /**
  * @author selsky
  */
-public class SingleChoicePromptValidator implements PromptValidator {
+public class SingleChoicePromptValidator extends AbstractPromptValidator {
 	private static Logger _logger = Logger.getLogger(SingleChoicePromptValidator.class);
 	
 	/**
@@ -20,6 +20,14 @@ public class SingleChoicePromptValidator implements PromptValidator {
 	 */
 	@Override
 	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		if(isNotDisplayed(prompt, promptResponse)) {
+			return true;
+		}
+		
+		if(isSkipped(prompt, promptResponse)) {
+			return isValidSkipped(prompt, promptResponse);
+		}
+		
 		String value = JsonUtils.getStringFromJsonObject(promptResponse, "value");
 		if(StringUtils.isEmptyOrWhitespaceOnly(value)) {
 			if(_logger.isDebugEnabled()) {

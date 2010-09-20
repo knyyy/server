@@ -23,6 +23,14 @@ public class SingleChoiceCustomPromptValidator extends AbstractCustomChoicePromp
 	 */
 	@Override
 	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		if(isNotDisplayed(prompt, promptResponse)) {
+			return true;
+		}
+		
+		if(isSkipped(prompt, promptResponse)) {
+			return isValidSkipped(prompt, promptResponse);
+		}
+		
 		Integer value = JsonUtils.getIntegerFromJsonObject(promptResponse, "value");
 		if(null == value) {
 			if(_logger.isDebugEnabled()) {

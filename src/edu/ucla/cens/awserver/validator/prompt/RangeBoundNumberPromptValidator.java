@@ -9,7 +9,7 @@ import edu.ucla.cens.awserver.util.JsonUtils;
 /**
  * @author selsky
  */
-public class RangeBoundNumberPromptValidator implements PromptValidator {
+public class RangeBoundNumberPromptValidator extends AbstractPromptValidator {
 	private static Logger _logger = Logger.getLogger(RangeBoundNumberPromptValidator.class);
 	
 	/**
@@ -17,6 +17,14 @@ public class RangeBoundNumberPromptValidator implements PromptValidator {
 	 */
 	@Override
 	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		if(isNotDisplayed(prompt, promptResponse)) {
+			return true;
+		}
+		
+		if(isSkipped(prompt, promptResponse)) {
+			return isValidSkipped(prompt, promptResponse);
+		}
+		
 		int min = Integer.parseInt(prompt.getProperties().get("min").getLabel());
 		int max = Integer.parseInt(prompt.getProperties().get("max").getLabel());
 		Integer value = JsonUtils.getIntegerFromJsonObject(promptResponse, "value");

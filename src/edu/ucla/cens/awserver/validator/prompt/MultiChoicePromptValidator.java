@@ -12,7 +12,7 @@ import edu.ucla.cens.awserver.util.JsonUtils;
 /**
  * @author selsky
  */
-public class MultiChoicePromptValidator implements PromptValidator {
+public class MultiChoicePromptValidator extends AbstractPromptValidator {
 	private static Logger _logger = Logger.getLogger(MultiChoicePromptValidator.class);
 	
 	/**
@@ -20,6 +20,14 @@ public class MultiChoicePromptValidator implements PromptValidator {
 	 */
 	@Override
 	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		if(isNotDisplayed(prompt, promptResponse)) {
+			return true;
+		}
+		
+		if(isSkipped(prompt, promptResponse)) {
+			return isValidSkipped(prompt, promptResponse);
+		}
+		
 		JSONArray jsonArray = JsonUtils.getJsonArrayFromJsonObject(promptResponse, "value");
 		if(null == jsonArray) {
 			if(_logger.isDebugEnabled()) {

@@ -67,6 +67,7 @@
         <ref bean="jsonMsgLocationProviderValidator" />
         <ref bean="jsonMsgSurveyIdValidator" />
         <ref bean="jsonMsgSurveyResponsesExistValidator" />
+        <ref bean="jsonMsgSurveyResponsesValidator" />
       </list>
     </constructor-arg>
     <constructor-arg index="1"><ref bean="jsonMsgEmptyArrayAnnotator" /></constructor-arg>
@@ -132,6 +133,48 @@
     </constructor-arg>
     <constructor-arg index="1">
       <ref bean="configurationCacheService" />
+    </constructor-arg>
+    <constructor-arg index="2">
+      <ref bean="promptValidatorCache" />
+    </constructor-arg>
+  </bean>
+  
+  <bean id="promptValidatorCache" class="edu.ucla.cens.awserver.validator.prompt.PromptValidatorCache">
+    <constructor-arg index="0">
+      <map>
+        <entry>
+          <key><value>hours_before_now</value></key>
+          <bean class="edu.ucla.cens.awserver.validator.prompt.RangeBoundNumberPromptValidator" />
+        </entry>
+        <entry>
+          <key><value>number</value></key>
+          <bean class="edu.ucla.cens.awserver.validator.prompt.RangeBoundNumberPromptValidator" />
+        </entry>
+        <entry>
+          <key><value>timestamp</value></key>
+          <bean class="edu.ucla.cens.awserver.validator.prompt.TimestampPromptValidator" />
+        </entry>
+        <entry>
+          <key><value>text</value></key>
+          <bean class="edu.ucla.cens.awserver.validator.prompt.TextWithinRangePromptValidator" />
+        </entry>
+        <entry>
+          <key><value>multi_choice</value></key>
+          <bean class="edu.ucla.cens.awserver.validator.prompt.MultiChoicePromptValidator" />
+        </entry>
+        <entry>
+          <key><value>multi_choice_custom</value></key>
+          <bean class="edu.ucla.cens.awserver.validator.prompt.MultiChoiceCustomPromptValidator" />
+        </entry>
+        <entry>
+          <key><value>single_choice</value></key>
+          <bean class="edu.ucla.cens.awserver.validator.prompt.SingleChoicePromptValidator" />
+        </entry>
+        <entry>
+          <key><value>single_choice_custom</value></key>
+          <bean class="edu.ucla.cens.awserver.validator.prompt.SingleChoiceCustomPromptValidator" />
+        </entry>
+      </map>
     </constructor-arg>
   </bean>
   
