@@ -4,9 +4,9 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.Prompt;
-import edu.ucla.cens.awserver.domain.PromptResponse;
 import edu.ucla.cens.awserver.util.JsonUtils;
 
 /**
@@ -16,11 +16,17 @@ public class MultiChoicePromptValidator implements PromptValidator {
 	private static Logger _logger = Logger.getLogger(MultiChoicePromptValidator.class);
 	
 	/**
-	 * Validates that the value from the PromptResponse (a JSON array) contains valid keys from the Prompt.
+	 * Validates that the value from the promptResponse contains valid keys from the Prompt.
 	 */
 	@Override
-	public boolean validate(Prompt prompt, PromptResponse promptResponse) {
-		JSONArray jsonArray = (JSONArray) promptResponse.getValue();
+	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		JSONArray jsonArray = JsonUtils.getJsonArrayFromJsonObject(promptResponse, "value");
+		if(null == jsonArray) {
+			if(_logger.isDebugEnabled()) {
+				_logger.debug("unparseable or missing JSON array value for prompt id " + prompt.getId());
+			}
+		}
+		
 		Set<String> keySet = prompt.getProperties().keySet();
 		
 		for(int i = 0; i < jsonArray.length(); i++) {
@@ -28,7 +34,7 @@ public class MultiChoicePromptValidator implements PromptValidator {
 			if(! keySet.contains(selection)) { 
 				
 				if(_logger.isDebugEnabled()) {
-					_logger.debug("invalid multi_choice selection " + selection + ". prompt id: " + prompt.getId());
+					_logger.debug("unknown multi_choice selection [" + selection + "] for prompt id " + prompt.getId());
 				}
 				
 				return false;

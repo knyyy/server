@@ -3,9 +3,11 @@ package edu.ucla.cens.awserver.validator.prompt;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.Prompt;
-import edu.ucla.cens.awserver.domain.PromptResponse;
+import edu.ucla.cens.awserver.util.JsonUtils;
+import edu.ucla.cens.awserver.util.StringUtils;
 
 /**
  * @author selsky
@@ -16,21 +18,26 @@ public class UUIDPromptValidator implements PromptValidator {
 		= Pattern.compile("[a-fA-F0-9]{8}\\-[a-fA-F0-9]{4}\\-[a-fA-F0-9]{4}\\-[a-fA-F0-9]{4}\\-[a-fA-F0-9]{12}");
 	
 	/**
-	 * Ignores the Prompt parameter and validates that the value in the PromptResponse is a correctly formed UUID.
+	 * Validates that the value in the promptResponse is a correctly formed UUID.
 	 */
 	@Override
-	public boolean validate(Prompt prompt, PromptResponse promptResponse) {
-		// Example from UUID.randomUUID()
-		// afda1b74-4f23-4068-a50b-664e1c347264
-		
-		if(! _pattern.matcher((String) promptResponse.getValue()).matches()) {
+	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		String value = JsonUtils.getStringFromJsonObject(promptResponse, "value");
+		if(StringUtils.isEmptyOrWhitespaceOnly(value)) {
 			if(_logger.isDebugEnabled()) {
-				_logger.debug("invalid UUID for prompt " + prompt.getId() + ". value: " + promptResponse.getValue());
+				_logger.debug("Missing UUID value for prompt " + prompt.getId());
 			}
 			return false;
 		}
 		
-		return false;
+		if(! _pattern.matcher(value).matches()) {
+			if(_logger.isDebugEnabled()) {
+				_logger.debug("invalid UUID for prompt " + prompt.getId() + ". value: " + value);
+			}
+			return false;
+		}
+		
+		return true;
 	}
 	
 //	public static void main(String args[]) {

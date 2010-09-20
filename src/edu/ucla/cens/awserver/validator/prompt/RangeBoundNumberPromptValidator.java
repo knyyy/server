@@ -1,9 +1,10 @@
 package edu.ucla.cens.awserver.validator.prompt;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.Prompt;
-import edu.ucla.cens.awserver.domain.PromptResponse;
+import edu.ucla.cens.awserver.util.JsonUtils;
 
 /**
  * @author selsky
@@ -12,26 +13,19 @@ public class RangeBoundNumberPromptValidator implements PromptValidator {
 	private static Logger _logger = Logger.getLogger(RangeBoundNumberPromptValidator.class);
 	
 	/**
-	 * Validates that the value in the PromptResponse is within the bounds set by the Prompt.
+	 * Validates that the value in the promptResponse is within the bounds set by the Prompt.
 	 */
 	@Override
-	public boolean validate(Prompt prompt, PromptResponse promptResponse) {
+	public boolean validate(Prompt prompt, JSONObject promptResponse) {
 		int min = Integer.parseInt(prompt.getProperties().get("min").getLabel());
 		int max = Integer.parseInt(prompt.getProperties().get("max").getLabel());
-		String value = (String) promptResponse.getValue();
-		int v = 0;
-		
-		try {
-			
-			v = Integer.parseInt(value);
-			
-		} catch (NumberFormatException nfe) {
-			
-			_logger.debug("unparseable range-bound number value: " + value);
+		Integer value = JsonUtils.getIntegerFromJsonObject(promptResponse, "value");
+		if(null == value) {
+			if(_logger.isDebugEnabled()) {
+				_logger.debug("unparseable or missing range-bound number value for prompt id " + prompt.getId());
+			}
 			return false;
 		}
-		
-		return v >= min && v <= max;
+		return value >= min && value <= max;
 	}
-
 }

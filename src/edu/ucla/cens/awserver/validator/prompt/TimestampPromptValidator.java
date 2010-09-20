@@ -4,9 +4,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.Prompt;
-import edu.ucla.cens.awserver.domain.PromptResponse;
+import edu.ucla.cens.awserver.util.JsonUtils;
+import edu.ucla.cens.awserver.util.StringUtils;
 
 /**
  * @author selsky
@@ -15,24 +17,37 @@ public class TimestampPromptValidator implements PromptValidator {
 	private static Logger _logger = Logger.getLogger(TimestampPromptValidator.class);
 	
 	/**
-	 * Validates that the PromptResponse contains a timestamp of the form yyyy-MM-ddThh:mm:ss.
+	 * Validates that the value in the promptResponse contains a timestamp of the form yyyy-MM-ddThh:mm:ss.
 	 */
 	@Override
-	public boolean validate(Prompt prompt, PromptResponse promptResponse) {
+	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		String timestamp = JsonUtils.getStringFromJsonObject(promptResponse, "value");
+		if(StringUtils.isEmptyOrWhitespaceOnly(timestamp)) {
+			if(_logger.isDebugEnabled()) {
+				_logger.debug("Missing or empty value for prompt " + prompt.getId());
+			}
+			return false;
+		}
+		
 		SimpleDateFormat tsFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // the DateFormat classes are not threadsafe
+		                                                                           // so they must be created for each run of this 
+		                                                                           // method
 		tsFormat.setLenient(false);
-		String timestamp = (String) promptResponse.getValue();
+		
 		try {
 			
 			tsFormat.parse(timestamp);
 			
 		} catch (ParseException pe) {
 			
-			_logger.info("unparseable timestamp " + timestamp + " for prompt id " + prompt.getId());
+			if(_logger.isDebugEnabled()) {
+				_logger.debug("unparseable timestamp " + timestamp + " for prompt id " + prompt.getId());
+			}
+			
 			return false;
 		}
 		
-		return false;
+		return true;
 	}
 
 }

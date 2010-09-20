@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.Prompt;
-import edu.ucla.cens.awserver.domain.PromptResponse;
 import edu.ucla.cens.awserver.util.JsonUtils;
 
 /**
@@ -17,28 +16,22 @@ public class MultiChoiceCustomPromptValidator extends AbstractCustomChoicePrompt
 	private static Logger _logger = Logger.getLogger(MultiChoiceCustomPromptValidator.class);
 	
 	/**
-	 * Validates that the PromptResponse contains values (a JSONArray) that match the response's custom_choices. For custom prompts, 
-	 * the PromptResponse contains both the prompt's configuration (custom_choices) and the associated values the user chose. In 
-	 * addition to validating the values a user choice, the configuration must also be validated.
+	 * Validates that the promptResponse contains values (a JSONArray) that match the response's custom_choices. For 
+	 * multi_choice_custom prompts, the PromptResponse contains both the prompt's configuration (custom_choices) and the associated
+	 * values the user chose. In addition to validating the values a user chose, the configuration based on the user's custom 
+	 * choices must also be validated (valid choice_ids and choice_values).
 	 */
 	@Override
-	public boolean validate(Prompt prompt, PromptResponse promptResponse) {
-		if(! (promptResponse.getValue() instanceof JSONObject)) {
-			_logger.warn("Malformed multi_choice_custom message. Expected a " + prompt.getId() + " response"
-				+ " (PromptResponse.getValue()) to return a JSONObject and it returned " + promptResponse.getValue().getClass());
-			return false;
-		}
-		
-		JSONObject object = (JSONObject) promptResponse.getValue();
-		JSONArray values = JsonUtils.getJsonArrayFromJsonObject(object, "value");
+	public boolean validate(Prompt prompt, JSONObject promptResponse) {
+		JSONArray values = JsonUtils.getJsonArrayFromJsonObject(promptResponse, "value");
 		if(null == values) {
-			_logger.warn("Malformed multi_choice_custom message. Missing value for response for " + prompt.getId());
+			_logger.warn("Malformed multi_choice_custom message. Missing or malformed value for " + prompt.getId());
 			return false;
 		}
 		
-		JSONArray choices = JsonUtils.getJsonArrayFromJsonObject(object, "custom_choices");
+		JSONArray choices = JsonUtils.getJsonArrayFromJsonObject(promptResponse, "custom_choices");
 		if(null == choices) {
-			_logger.warn("Malformed multi_choice_custom message. Missing custom_choices for response for " + prompt.getId());
+			_logger.warn("Malformed multi_choice_custom message. Missing or malformed custom_choices for " + prompt.getId());
 			return false;
 		}
 		
