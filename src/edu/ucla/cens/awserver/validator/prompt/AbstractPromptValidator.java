@@ -1,5 +1,6 @@
 package edu.ucla.cens.awserver.validator.prompt;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.Prompt;
@@ -9,6 +10,7 @@ import edu.ucla.cens.awserver.util.JsonUtils;
  * @author selsky
  */
 public abstract class AbstractPromptValidator implements PromptValidator {
+	private static Logger _logger = Logger.getLogger(AbstractPromptValidator.class);
 	
 	/**
 	 * Returns true if the promptResponse contains the value NOT_DISPLAYED. NOT_DISPLAYED is considered to be a valid prompt
@@ -17,7 +19,7 @@ public abstract class AbstractPromptValidator implements PromptValidator {
 	 */
 	protected boolean isNotDisplayed(Prompt prompt, JSONObject promptResponse) {
 		String value = JsonUtils.getStringFromJsonObject(promptResponse, "value");
-		if(null == value) {
+		if(null == value) { // not a string, it must've been displayed
 			return false;
 		}
 		return "NOT_DISPLAYED".equals(value);
@@ -29,11 +31,19 @@ public abstract class AbstractPromptValidator implements PromptValidator {
 	protected boolean isValidSkipped(Prompt prompt, JSONObject promptResponse) {
 		String value = JsonUtils.getStringFromJsonObject(promptResponse, "value");
 		
-		if(null == value) {
+		if(null == value) { // not a string, therefore not skipped
 			return true;
 		}
 		
-		return "SKIPPED".equals(value) && prompt.isSkippable();
+		if("SKIPPED".equals(value) && prompt.isSkippable()) {
+			return true;
+		}
+		
+		if(_logger.isDebugEnabled()) {
+			_logger.debug("SKIPPED found, but prompt " + prompt.getId() + " is not skippable");
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -42,7 +52,7 @@ public abstract class AbstractPromptValidator implements PromptValidator {
 	protected boolean isSkipped(Prompt prompt, JSONObject promptResponse) {
 		String value = JsonUtils.getStringFromJsonObject(promptResponse, "value");
 		
-		if(null == value) {
+		if(null == value) { // not a string, therefore not skipped
 			return false;
 		}
 		

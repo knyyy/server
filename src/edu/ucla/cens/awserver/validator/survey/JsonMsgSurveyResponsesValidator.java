@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import edu.ucla.cens.awserver.cache.CacheService;
 import edu.ucla.cens.awserver.domain.CampaignNameVersion;
 import edu.ucla.cens.awserver.domain.Configuration;
+import edu.ucla.cens.awserver.domain.Prompt;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.util.JsonUtils;
 import edu.ucla.cens.awserver.util.StringUtils;
@@ -48,6 +49,9 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 	/**
 	 * Validates each prompt response in a survey upload. Assumes the provided JSONObject contains one survey.
 	 * 
+	 * TODO this method needs to be refactored because it does too much. In particular, the repeatable_set validation could be
+	 * moved elsewhere. There are too many places where it returns.
+	 * 
 	 * @return true if each response is conformant with its configuration
 	 * @return false otherwise
 	 */
@@ -65,11 +69,10 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 			
 			// determine whether it is a repeatable set or a prompt response
 			String promptId = JsonUtils.getStringFromJsonObject(response, "prompt_id");
-			String repeatableSetId = null;
 			
-			if(null == promptId) {
+			if(null == promptId) { // check to see if there is a repeatable_set
 				
-				repeatableSetId = JsonUtils.getStringFromJsonObject(response, "repeatable_set_id");
+				String repeatableSetId = JsonUtils.getStringFromJsonObject(response, "repeatable_set_id");
 				
 				if(null == repeatableSetId) { // the response is malformed
 					getAnnotator().annotate(awRequest, "malformed response: missing prompt_id and repeatable_set_id: "
@@ -90,6 +93,8 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 					return false;
 				}
 				
+				// skipped here does not mean that the repeatable_set itself was skipped. it just means that the user clicked
+				// "skip" (or some variant on skip) when presented with the continunation screen for the repeatable_set
 				String skipped = JsonUtils.getStringFromJsonObject(response, "skipped");
 				
 				if(StringUtils.isEmptyOrWhitespaceOnly(skipped) || ! StringUtils.isBooleanString(skipped)) {
@@ -123,7 +128,6 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 						+ repeatableSetId);
 					return false;
 				}
-				
 				
 				if(! Boolean.valueOf(notDisplayed)) { // only validate if the repeatable set was displayed
 				
@@ -160,7 +164,15 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 										+ " for repeatable set id "+ repeatableSetId);
 								return false;
 							}
-							 
+							
+							// make sure the prompt exists in the configuration
+							if(! configuration.promptExists(surveyId, repeatableSetId, repeatableSetPromptId)) {
+								getAnnotator().annotate(awRequest, "unknown prompt in json object at array index "+ k 
+										+ " for repeatable set id "+ repeatableSetId);
+								return false;
+							}
+							
+							Prompt prompt = configuration.getPrompt(surveyId, repeatableSetId, repeatableSetPromptId);
 							String promptType = configuration.getPromptType(surveyId, repeatableSetId, repeatableSetPromptId);
 							PromptValidator pv = _promptValidatorCache.getValidatorFor(promptType);
 							
@@ -168,64 +180,34 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 								_logger.debug("validating prompt " + repeatableSetPromptId + " in repeatableSet " + repeatableSetId);
 							}
 							
-							if(! pv.validate(
-								configuration.getPrompt(surveyId, repeatableSetId, repeatableSetPromptId), promptResponseJsonObject)
-							) {
+							if(! pv.validate(prompt, promptResponseJsonObject)) {
 								getAnnotator().annotate(awRequest, "invalid value for prompt_id " + repeatableSetPromptId + " in " +
 									"json object at array index " + k + " for repeatable set id "+ repeatableSetId);
 								return false;
 							}
-							
-							
-//							// THIS WHOLE CHUNK NEEDS TO GO INTO EACH OF THE VALIDATORS
-//							
-//							// TODO - the value might not be a string!
-//							String value = JsonUtils.getStringFromJsonObject(promptResponseJsonObject, "value");
-//							if(null == value) {
-//								getAnnotator().annotate(awRequest, "missing value at array index "+ k 
-//									+ "for repeatable set id "+ repeatableSetId);
-//								return false;
-//							}
-//							
-//							if(! "NOT_DISPLAYED".equals(value)) { // this validation does not validate conditions so NOT_DISPLAYED
-//								                                  // is allowed for all prompts
-//								String pId = JsonUtils.getStringFromJsonObject(promptResponseJsonObject, "prompt_id");
-//								if(null == pId) {
-//									getAnnotator().annotate(awRequest, "missing prompt_id at array index "+ k 
-//										+ "for repeatable set id "+ repeatableSetId);
-//									return false;
-//								}
-//								
-//								if(! configuration.promptExists(surveyId, repeatableSetId, pId)) {
-//									getAnnotator().annotate(awRequest, "unknown prompt_id at array index "+ k 
-//										+ "for repeatable set id "+ repeatableSetId);
-//									return false;
-//								}
-//								
-//								if("SKIPPED".equals(value)) {
-//									
-//									if(! configuration.isPromptSkippable(surveyId, repeatableSetId, pId)) {
-//										getAnnotator().annotate(awRequest, "invalid SKIPPED value for prompt " + pId 
-//											+ " at array index "+ k + "for repeatable set id "+ repeatableSetId);
-//										return false;
-//									}
-//									
-//									
-//								} else { // ok, now check the prompt response
-//									
-//									
-//								}
-//							}
-//							
-//							// THIS WHOLE CHUNK NEEDS TO GO INTO THE VALIDATORS
 						}
 					}
 				}
 				
-			} else {
+			} else { // Just a single prompt response
 				
-				// Just a single prompt response
+				if(! configuration.promptExists(surveyId, promptId)) {
+					getAnnotator().annotate(awRequest, "unknown prompt for survey_id, prompt_id [" + surveyId + ", " + promptId + "]");
+					return false;
+				}
 				
+				String promptType = configuration.getPromptType(surveyId, promptId);
+				PromptValidator pv = _promptValidatorCache.getValidatorFor(promptType);
+				
+				if(_logger.isDebugEnabled()) {
+					_logger.debug("validating prompt " + promptId);
+				}
+				
+				if(! pv.validate(configuration.getPrompt(surveyId, promptId), response)) {
+					getAnnotator().annotate(awRequest, "invalid value for prompt_id " + promptId + " in " +
+						"json object at responses array index " + i);
+					return false;
+				}
 			}
 		}
 		

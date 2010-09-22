@@ -28,6 +28,9 @@ public class RangeBoundNumberPromptValidator extends AbstractPromptValidator {
 		int min = Integer.parseInt(prompt.getProperties().get("min").getLabel());
 		int max = Integer.parseInt(prompt.getProperties().get("max").getLabel());
 		Integer value = JsonUtils.getIntegerFromJsonObject(promptResponse, "value");
+		
+		_logger.info("found value " + value);
+		
 		if(null == value) {
 			if(_logger.isDebugEnabled()) {
 				_logger.debug("unparseable or missing range-bound number value for prompt id " + prompt.getId());

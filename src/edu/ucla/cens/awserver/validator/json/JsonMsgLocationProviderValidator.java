@@ -23,7 +23,7 @@ public class JsonMsgLocationProviderValidator extends AbstractAnnotatingJsonObje
 	}
 	
 	/**
-	 * @return true if the value returned from the AwRequest for the key "date" exists and is of the form yyyy-MM-dd hh:mm:ss.
+	 * @return true if the value returned from the jsonObject for the key "provider" exists and is not empty or null
 	 * @return false otherwise
 	 */
 	public boolean validate(AwRequest awRequest, JSONObject jsonObject) {

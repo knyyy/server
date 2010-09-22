@@ -52,19 +52,35 @@ public class Configuration {
 		SurveyItem si = _surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId);
         return si instanceof RepeatableSet;
 	}
+
+	public boolean promptExists(String surveyId, String promptId) {
+        return _surveyMap.get(surveyId).getSurveyItemMap().containsKey(promptId);
+	}
 	
 	public boolean promptExists(String surveyId, String repeatableSetId, String promptId) {
         return ((RepeatableSet)_surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId)).getPromptMap().containsKey(promptId);
 	}
 	
+	public boolean isPromptSkippable(String surveyId, String promptId) {
+        return ((Prompt) _surveyMap.get(surveyId).getSurveyItemMap().get(promptId)).isSkippable();
+	}
+	
 	public boolean isPromptSkippable(String surveyId, String repeatableSetId, String promptId) {
         return ((RepeatableSet)_surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId)).getPromptMap().get(promptId).isSkippable();
 	}
-	
+
+	public String getPromptType(String surveyId, String promptId) {
+		return ((Prompt)_surveyMap.get(surveyId).getSurveyItemMap().get(promptId)).getType();
+	}
+
 	public String getPromptType(String surveyId, String repeatableSetId, String promptId) {
 		return ((RepeatableSet)_surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId)).getPromptMap().get(promptId).getType();
 	}
-	
+
+	public Prompt getPrompt(String surveyId, String promptId) {
+		return ((Prompt)_surveyMap.get(surveyId).getSurveyItemMap().get(promptId)); 
+	}
+
 	public Prompt getPrompt(String surveyId, String repeatableSetId, String promptId) {
 		return ((RepeatableSet)_surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId)).getPromptMap().get(promptId); 
 	}
