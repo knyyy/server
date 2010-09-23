@@ -22,9 +22,10 @@ public class UploadService implements Service {
 		if(null == daoMap || daoMap.isEmpty()) {
 			throw new IllegalArgumentException("a non-null Map of DAOs is required");			
 		}
-		if(null == daoMap.get("prompt")) {
-			throw new IllegalArgumentException("no DAO found for prompt");
-		}
+//		
+//		if(null == daoMap.get("prompt")) {
+//			throw new IllegalArgumentException("no DAO found for prompt");
+//		}
 		if(null == daoMap.get("mobility")) {
 			throw new IllegalArgumentException("no DAO found for mobility");
 		}

@@ -181,8 +181,9 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 							}
 							
 							if(! pv.validate(prompt, promptResponseJsonObject)) {
-								getAnnotator().annotate(awRequest, "invalid value for prompt_id " + repeatableSetPromptId + " in " +
-									"json object at array index " + k + " for repeatable set id "+ repeatableSetId);
+								getAnnotator().annotate(awRequest, "invalid value for prompt_id " + repeatableSetPromptId + " in "
+									+ "json object at responses array index " + k + " for repeatable set id "+ repeatableSetId 
+									+ " in survey " + surveyId);
 								return false;
 							}
 						}
@@ -205,7 +206,7 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 				
 				if(! pv.validate(configuration.getPrompt(surveyId, promptId), response)) {
 					getAnnotator().annotate(awRequest, "invalid value for prompt_id " + promptId + " in " +
-						"json object at responses array index " + i);
+						"json object at responses array index " + i + " for survey " + surveyId);
 					return false;
 				}
 			}

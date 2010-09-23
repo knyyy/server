@@ -28,9 +28,10 @@
         <ref bean="jsonMessageSyntaxValidationService" />
         <ref bean="surveyMessageContentValidationService" />
         <!-- convert JSON into DataPackets -->
+        <ref bean="surveyDataPacketBuilderService" />
+        <ref bean="surveyResponsesDataPacketBuilderService" />
         <!-- persist DataPackets into db -->
         <!--
-        <ref bean="dataPacketBuilderService" />
         <ref bean="uploadService" />
         -->
       </list>
@@ -175,6 +176,18 @@
           <bean class="edu.ucla.cens.awserver.validator.prompt.SingleChoiceCustomPromptValidator" />
         </entry>
       </map>
+    </constructor-arg>
+  </bean>
+  
+  <bean id="surveyDataPacketBuilderService" class="edu.ucla.cens.awserver.service.SurveyDataPacketBuilderService">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.domain.SurveyDataPacketBuilder" />
+    </constructor-arg>
+  </bean>
+  
+  <bean id="surveyResponsesDataPacketBuilderService" class="edu.ucla.cens.awserver.service.SurveyDataPacketBuilderService">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.domain.SurveyResponsesDataPacketBuilder" />
     </constructor-arg>
   </bean>
   

@@ -71,9 +71,13 @@ import edu.ucla.cens.awserver.domain.User;
 	 String getJsonDataAsString();
 	 void setJsonDataAsString(String jsonDataAsString);
 	
+	 // A DataPacket is a single mobility record or a single prompt response
 	 List<DataPacket> getDataPackets();
 	 void setDataPackets(List<DataPacket> dataPackets);
 	
+	 List<String> getSurveys();
+	 void setSurveys(List<String> surveys);
+	 
 	 int getCurrentMessageIndex();
 	 void setCurrentMessageIndex(int currentMessageIndex);
 	

@@ -38,7 +38,7 @@ public class MultiChoicePromptValidator extends AbstractPromptValidator {
 		Set<String> keySet = prompt.getProperties().keySet();
 		
 		for(int i = 0; i < jsonArray.length(); i++) {
-			String selection = JsonUtils.getStringFromJsonArray(jsonArray, i); //TODO will the JSON lib auto-convert ints to strings?
+			String selection = JsonUtils.getStringFromJsonArray(jsonArray, i); // the json.org lib autoconverts ints to strings
 			if(! keySet.contains(selection)) { 
 				
 				if(_logger.isDebugEnabled()) {

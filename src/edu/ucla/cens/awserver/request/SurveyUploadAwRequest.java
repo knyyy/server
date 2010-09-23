@@ -33,6 +33,7 @@ public class SurveyUploadAwRequest extends ResultListAwRequest {
 	
 	private JSONArray _jsonDataAsJsonArray; // The input data array converted to an internal JSON representation
 	private List<DataPacket> _dataPackets;  // JSON data converted into an internal representation
+	private List<String> _surveys;  // JSON survey responses converted to strings
 	
 	/**
 	 * Default no-arg constructor.	
@@ -42,100 +43,108 @@ public class SurveyUploadAwRequest extends ResultListAwRequest {
 		_currentPromptId = -1;
 	}
 	
-	public List<Integer> getDuplicateIndexList() {
-		return _duplicateIndexList;
-	}
-	
-	public void setDuplicateIndexList(List<Integer> duplicateIndexList) {
-		_duplicateIndexList = duplicateIndexList;
-	}
-	
-	public Map<Integer, List<Integer>> getDuplicatePromptResponseMap() {
-		return _duplicatePromptResponseMap;
-	}
-	
-	public void setDuplicatePromptResponseMap(Map<Integer, List<Integer>> duplicatePromptResponseMap) {
-		_duplicatePromptResponseMap = duplicatePromptResponseMap;
-	}
-	
-	public long getStartTime() {
-		return _startTime;
-	}
-	
-	public void setStartTime(long startTime) {
-		_startTime = startTime;
-	}
-	
-	public String getSessionId() {
-		return _sessionId;
-	}
-	
-	public void setSessionId(String sessionId) {
-		_sessionId = sessionId;
+	public String getCampaignVersion() {
+		return _campaignVersion;
 	}
 	
 	public String getClient() {
 		return _client;
 	}
 	
-	public void setClient(String client) {
-		_client = client;
-	}
-	
-	public String getJsonDataAsString() {
-		return _jsonDataAsString;
-	}
-	
-	public void setJsonDataAsString(String jsonDataAsString) {
-		_jsonDataAsString = jsonDataAsString;
-	}
-	
-	public List<DataPacket> getDataPackets() {
-		return _dataPackets;
-	}
-	
-	public void setDataPackets(List<DataPacket> dataPackets) {
-		_dataPackets = dataPackets;
-	}
-	
 	public int getCurrentMessageIndex() {
 		return _currentMessageIndex;
-	}
-	
-	public void setCurrentMessageIndex(int currentMessageIndex) {
-		_currentMessageIndex = currentMessageIndex;
 	}
 	
 	public int getCurrentPromptId() {
 		return _currentPromptId;
 	}
 	
-	public void setCurrentPromptId(int currentPromptId) {
-		_currentPromptId = currentPromptId;
+	public List<DataPacket> getDataPackets() {
+		return _dataPackets;
+	}
+	
+	public List<Integer> getDuplicateIndexList() {
+		return _duplicateIndexList;
+	}
+	
+	public Map<Integer, List<Integer>> getDuplicatePromptResponseMap() {
+		return _duplicatePromptResponseMap;
 	}
 	
 	public JSONArray getJsonDataAsJsonArray() {
 		return _jsonDataAsJsonArray;
 	}
 	
-	public void setJsonDataAsJsonArray(JSONArray jsonDataAsJsonArray) {
-		_jsonDataAsJsonArray = jsonDataAsJsonArray;
+	public String getJsonDataAsString() {
+		return _jsonDataAsString;
 	}
 	
 	public List<?> getResultList() {
 		return _resultList;
 	}
 	
-	public void setResultList(List<?> resultList) {
-		_resultList = resultList;
+	public String getSessionId() {
+		return _sessionId;
 	}
 	
-	public String getCampaignVersion() {
-		return _campaignVersion;
+	public long getStartTime() {
+		return _startTime;
+	}
+	
+	public List<String> getSurveys() {
+		return _surveys;
 	}
 	
 	public void setCampaignVersion(String campaignVersion) {
 		_campaignVersion = campaignVersion;
+	}
+	
+	public void setClient(String client) {
+		_client = client;
+	}
+	
+	public void setCurrentMessageIndex(int currentMessageIndex) {
+		_currentMessageIndex = currentMessageIndex;
+	}
+	
+	public void setCurrentPromptId(int currentPromptId) {
+		_currentPromptId = currentPromptId;
+	}
+	
+	public void setDataPackets(List<DataPacket> dataPackets) {
+		_dataPackets = dataPackets;
+	}
+	
+	public void setDuplicateIndexList(List<Integer> duplicateIndexList) {
+		_duplicateIndexList = duplicateIndexList;
+	}
+	
+	public void setDuplicatePromptResponseMap(Map<Integer, List<Integer>> duplicatePromptResponseMap) {
+		_duplicatePromptResponseMap = duplicatePromptResponseMap;
+	}
+	
+	public void setJsonDataAsJsonArray(JSONArray jsonDataAsJsonArray) {
+		_jsonDataAsJsonArray = jsonDataAsJsonArray;
+	}
+	
+	public void setJsonDataAsString(String jsonDataAsString) {
+		_jsonDataAsString = jsonDataAsString;
+	}
+	
+	public void setResultList(List<?> resultList) {
+		_resultList = resultList;
+	}
+	
+	public void setSessionId(String sessionId) {
+		_sessionId = sessionId;
+	}
+	
+	public void setStartTime(long startTime) {
+		_startTime = startTime;
+	}
+	
+	public void setSurveys(List<String> surveys) {
+		_surveys = surveys;
 	}
 
 	@Override
@@ -150,7 +159,7 @@ public class SurveyUploadAwRequest extends ResultListAwRequest {
 				+ _jsonDataAsJsonArray + ", _jsonDataAsString="
 				+ _jsonDataAsString + ", _resultList=" + _resultList
 				+ ", _sessionId=" + _sessionId + ", _startTime=" + _startTime
-				+ "]";
+				+ ", _surveys=" + _surveys + "]";
 	}
 }
 

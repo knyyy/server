@@ -39,7 +39,7 @@ public abstract class AbstractDataPacketBuilder implements DataPacketBuilder {
 	}
 	
 	private Double checkForDoubleNaN(JSONObject source, String key) {
-		// latitude and longtidue may be sent with the string value "Double.NaN"
+		// latitude and longitude may be sent with the string value "Double.NaN"
 		Double value = JsonUtils.getDoubleFromJsonObject(source, key);
 		
 		return null == value? Double.NaN : value;

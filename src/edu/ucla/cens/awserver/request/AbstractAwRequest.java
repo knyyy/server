@@ -89,6 +89,10 @@ public abstract class AbstractAwRequest implements AwRequest {
 	public List<DataPacket> getDataPackets() {
 		throw new UnsupportedOperationException("it is illegal to invoke getDataPackets() on this instance");
 	}
+	
+	public List<String> getSurveys() {
+		throw new UnsupportedOperationException("it is illegal to invoke getSurveys() on this instance");
+	}
 
 	public List<Integer> getDuplicateIndexList() {
 		throw new UnsupportedOperationException("it is illegal to invoke getDuplicateIndexList() on this instance");
@@ -185,6 +189,10 @@ public abstract class AbstractAwRequest implements AwRequest {
 	public void setDataPackets(List<DataPacket> dataPackets) {
 		throw new UnsupportedOperationException("it is illegal to invoke setDataPackets() on this instance");		
 	}
+	
+	public void setSurveys(List<String> surveys) {
+		throw new UnsupportedOperationException("it is illegal to invoke setSurveys() on this instance");		
+	}
 
 	public void setDuplicateIndexList(List<Integer> duplicateIndexList) {
 		throw new UnsupportedOperationException("it is illegal to invoke setDuplicateIndexList() on this instance");
@@ -253,5 +261,4 @@ public abstract class AbstractAwRequest implements AwRequest {
 	public void setCampaignVersion(String campaignVersion) {
 		throw new UnsupportedOperationException("it is illegal to invoke setCampaignVersion() on this instance");
 	}
-
 }

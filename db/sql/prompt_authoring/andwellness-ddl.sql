@@ -107,6 +107,11 @@ CREATE TABLE survey_response (
   phone_timezone varchar(32) NOT NULL,
   latitude double,
   longitude double,
+  accuracy double,
+  provider varchar(250),
+  
+  repeatable_set_id varchar(250) NOT NULL, -- defined by a repeatable set id from the campaign_configuration.xml at the XPath //repeatableSetId
+  survey_id varchar(250) NOT NULL,  -- defined by a survey id from the campaign_configuration.xml at the XPath //surveyId
   json text NOT NULL, -- the max length for text is 21845 UTF-8 chars
   
   PRIMARY KEY (id),
@@ -138,7 +143,7 @@ CREATE TABLE prompt_response (
   survey_response_id integer unsigned NOT NULL,
   prompt_type_id tinyint unsigned NOT NULL,
   
-  prompt_id varchar(250) NOT NULL,  -- defined by the prompt id from the survey XML //promptId
+  prompt_id varchar(250) NOT NULL,  -- defined by a prompt id from the campaign_configuration.xml at the XPath //promptId
   response text NOT NULL,   -- the data format is defined by the prompt type, most likely it will be JSON or a UUID (for images)
    
   PRIMARY KEY (id),

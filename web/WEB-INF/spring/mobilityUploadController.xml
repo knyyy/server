@@ -446,7 +446,7 @@
         <!-- 
         <entry>
           <key><value>prompt</value></key>
-          <bean class="edu.ucla.cens.awserver.domain.PromptDataPacketBuilder"></bean>
+          <bean class="edu.ucla.cens.awserver.domain.SurveyDataPacketBuilder"></bean>
         </entry>
         -->
       </map>
@@ -462,12 +462,14 @@
             <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
           </bean>
         </entry>
+        <!--
         <entry>
           <key><value>prompt</value></key>
           <bean class="edu.ucla.cens.awserver.dao.PromptUploadDao">
             <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
           </bean>
         </entry>
+        -->
       </map>
     </constructor-arg>
   </bean>
