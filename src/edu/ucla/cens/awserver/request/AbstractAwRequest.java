@@ -7,6 +7,7 @@ import org.json.JSONArray;
 
 import edu.ucla.cens.awserver.domain.DataPacket;
 import edu.ucla.cens.awserver.domain.PromptType;
+import edu.ucla.cens.awserver.domain.SurveyDataPacket;
 import edu.ucla.cens.awserver.domain.User;
 
 /**
@@ -90,9 +91,9 @@ public abstract class AbstractAwRequest implements AwRequest {
 		throw new UnsupportedOperationException("it is illegal to invoke getDataPackets() on this instance");
 	}
 	
-	public List<String> getSurveys() {
-		throw new UnsupportedOperationException("it is illegal to invoke getSurveys() on this instance");
-	}
+//	public List<SurveyDataPacket> getSurveys() {
+//		throw new UnsupportedOperationException("it is illegal to invoke getSurveys() on this instance");
+//	}
 
 	public List<Integer> getDuplicateIndexList() {
 		throw new UnsupportedOperationException("it is illegal to invoke getDuplicateIndexList() on this instance");
@@ -126,9 +127,9 @@ public abstract class AbstractAwRequest implements AwRequest {
 		throw new UnsupportedOperationException("it is illegal to invoke getPromptIdArray() on this instance");
 	}
 
-	public List<PromptType> getPromptTypeRestrictions() {
-		throw new UnsupportedOperationException("it is illegal to invoke getPromptTypeRestrictions() on this instance");
-	}
+//	public List<PromptType> getPromptTypeRestrictions() {
+//		throw new UnsupportedOperationException("it is illegal to invoke getPromptTypeRestrictions() on this instance");
+//	}
 
 	public String getProtocolVersion() {
 		throw new UnsupportedOperationException("it is illegal to invoke getProtocolVersion() on this instance");
@@ -190,7 +191,7 @@ public abstract class AbstractAwRequest implements AwRequest {
 		throw new UnsupportedOperationException("it is illegal to invoke setDataPackets() on this instance");		
 	}
 	
-	public void setSurveys(List<String> surveys) {
+	public void setSurveys(List<SurveyDataPacket> surveys) {
 		throw new UnsupportedOperationException("it is illegal to invoke setSurveys() on this instance");		
 	}
 
@@ -226,9 +227,9 @@ public abstract class AbstractAwRequest implements AwRequest {
 		throw new UnsupportedOperationException("it is illegal to invoke setPromptIdArray() on this instance");
 	}
 
-	public void setPromptTypeRestrictions(List<PromptType> promptTypeRestrictions) {
-		throw new UnsupportedOperationException("it is illegal to invoke setPromptTypeRestrictions() on this instance");
-	}
+//	public void setPromptTypeRestrictions(List<PromptType> promptTypeRestrictions) {
+//		throw new UnsupportedOperationException("it is illegal to invoke setPromptTypeRestrictions() on this instance");
+//	}
 
 	public void setProtocolVersion(String protocolVersion) {
 		throw new UnsupportedOperationException("it is illegal to invoke setProtocolVersion() on this instance");

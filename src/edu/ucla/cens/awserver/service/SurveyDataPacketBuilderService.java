@@ -2,14 +2,13 @@ package edu.ucla.cens.awserver.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 
-import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.domain.DataPacket;
 import edu.ucla.cens.awserver.domain.DataPacketBuilder;
+import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.util.JsonUtils;
 
 /**
@@ -40,7 +39,7 @@ public class SurveyDataPacketBuilderService implements Service {
 		List<DataPacket> dataPackets = new ArrayList<DataPacket>(length);
 		 
 		for(int i = 0; i < length; i++) {
-			dataPackets.add(_builder.createDataPacketFrom(JsonUtils.getJsonObjectFromJsonArray(jsonArray, i)));
+			dataPackets.add(_builder.createDataPacketFrom(JsonUtils.getJsonObjectFromJsonArray(jsonArray, i), awRequest));
 		}
 		
 		awRequest.setDataPackets(dataPackets);

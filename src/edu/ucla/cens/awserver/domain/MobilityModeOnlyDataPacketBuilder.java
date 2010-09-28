@@ -2,6 +2,7 @@ package edu.ucla.cens.awserver.domain;
 
 import org.json.JSONObject;
 
+import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.util.JsonUtils;
 
 /**
@@ -26,7 +27,7 @@ public class MobilityModeOnlyDataPacketBuilder extends AbstractDataPacketBuilder
      *
 	 * @throws IllegalArgumentException of the source object is not an instance of JSONObject
 	 */
-	public MetadataDataPacket createDataPacketFrom(JSONObject source) {
+	public MetadataDataPacket createDataPacketFrom(JSONObject source, AwRequest awRequest) {
 		MobilityModeOnlyDataPacket packet = new MobilityModeOnlyDataPacket();
 	
 		createCommonFields(source, packet);

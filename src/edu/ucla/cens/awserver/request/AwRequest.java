@@ -7,6 +7,7 @@ import org.json.JSONArray;
 
 import edu.ucla.cens.awserver.domain.DataPacket;
 import edu.ucla.cens.awserver.domain.PromptType;
+import edu.ucla.cens.awserver.domain.SurveyDataPacket;
 import edu.ucla.cens.awserver.domain.User;
 
 /**
@@ -44,8 +45,8 @@ import edu.ucla.cens.awserver.domain.User;
 	 int getCampaignPromptGroupId();
 	 void setCampaignPromptGroupId(int campaignPromptGroupId);
 	
-	 List<PromptType> getPromptTypeRestrictions();
-	 void setPromptTypeRestrictions(List<PromptType> promptTypeRestrictions);
+//	 List<PromptType> getPromptTypeRestrictions();
+//	 void setPromptTypeRestrictions(List<PromptType> promptTypeRestrictions);
 	
 	 Map<Integer, List<Integer>> getDuplicatePromptResponseMap();
 	 void setDuplicatePromptResponseMap(Map<Integer, List<Integer>> duplicatePromptResponseMap);
@@ -71,12 +72,12 @@ import edu.ucla.cens.awserver.domain.User;
 	 String getJsonDataAsString();
 	 void setJsonDataAsString(String jsonDataAsString);
 	
-	 // A DataPacket is a single mobility record or a single prompt response
+	 // A DataPacket is a single mobility record or a single survey response
 	 List<DataPacket> getDataPackets();
 	 void setDataPackets(List<DataPacket> dataPackets);
 	
-	 List<String> getSurveys();
-	 void setSurveys(List<String> surveys);
+//	 List<SurveyDataPacket> getSurveys();
+//	 void setSurveys(List<SurveyDataPacket> surveys);
 	 
 	 int getCurrentMessageIndex();
 	 void setCurrentMessageIndex(int currentMessageIndex);

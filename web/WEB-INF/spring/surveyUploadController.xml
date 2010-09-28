@@ -29,11 +29,9 @@
         <ref bean="surveyMessageContentValidationService" />
         <!-- convert JSON into DataPackets -->
         <ref bean="surveyDataPacketBuilderService" />
-        <ref bean="surveyResponsesDataPacketBuilderService" />
         <!-- persist DataPackets into db -->
-        <!--
-        <ref bean="uploadService" />
-        -->
+        <ref bean="surveyDataStorageService" />
+        
       </list>
     </constructor-arg>
     <property name="validators">
@@ -181,13 +179,25 @@
   
   <bean id="surveyDataPacketBuilderService" class="edu.ucla.cens.awserver.service.SurveyDataPacketBuilderService">
     <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.domain.SurveyDataPacketBuilder" />
+      <bean class="edu.ucla.cens.awserver.domain.SurveyDataPacketBuilder">
+        <constructor-arg index="0">
+          <ref bean="configurationCacheService" />
+        </constructor-arg>
+      </bean>
     </constructor-arg>
-  </bean>
+  </bean><!--
   
   <bean id="surveyResponsesDataPacketBuilderService" class="edu.ucla.cens.awserver.service.SurveyDataPacketBuilderService">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.domain.SurveyResponsesDataPacketBuilder" />
+    </constructor-arg>
+  </bean>
+  
+   --><bean id="surveyDataStorageService" class="edu.ucla.cens.awserver.service.DaoService" >
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.dao.SurveyUploadDao">
+        <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
+      </bean>
     </constructor-arg>
   </bean>
   

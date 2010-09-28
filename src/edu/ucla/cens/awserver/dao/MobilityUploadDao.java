@@ -60,6 +60,8 @@ public class MobilityUploadDao extends AbstractUploadDao {
 		int userId = awRequest.getUser().getId();
 		int index = -1;
 				
+		// TODO need a transaction here
+		
 		for(DataPacket dataPacket : dataPackets) {
 			
 			boolean isModeFeatures = false;

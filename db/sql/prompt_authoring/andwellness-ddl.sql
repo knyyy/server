@@ -110,13 +110,12 @@ CREATE TABLE survey_response (
   accuracy double,
   provider varchar(250),
   
-  repeatable_set_id varchar(250) NOT NULL, -- defined by a repeatable set id from the campaign_configuration.xml at the XPath //repeatableSetId
-  survey_id varchar(250) NOT NULL,  -- defined by a survey id from the campaign_configuration.xml at the XPath //surveyId
+  survey_id varchar(250) NOT NULL,  -- a survey id as defined in a configuration at the XPath //surveyId
   json text NOT NULL, -- the max length for text is 21845 UTF-8 chars
   
   PRIMARY KEY (id),
   INDEX (user_id, campaign_configuration_id),
-  UNIQUE (user_id, campaign_configuration_id, epoch_millis), -- handle duplicate survey uploads
+  UNIQUE (user_id, survey_id, epoch_millis), -- handle duplicate survey uploads
   
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,    
   CONSTRAINT FOREIGN KEY (campaign_configuration_id) REFERENCES campaign_configuration (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -126,11 +125,11 @@ CREATE TABLE survey_response (
 -- Prompt types. Types are strings to be used as hints in determining 
 -- how to process prompt response data. 
 -- --------------------------------------------------------------------
-CREATE TABLE prompt_type (
-    id tinyint unsigned NOT NULL auto_increment,
-    type varchar(50) NOT NULL,
-    PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- CREATE TABLE prompt_type (
+--    id tinyint unsigned NOT NULL auto_increment,
+--     type varchar(50) NOT NULL,
+--    PRIMARY KEY (id)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
 -- Stores individual prompt responses for a user in a campaign. Both
@@ -141,17 +140,18 @@ CREATE TABLE prompt_response (
   id integer unsigned NOT NULL auto_increment,
   user_id smallint(6) unsigned NOT NULL,
   survey_response_id integer unsigned NOT NULL,
-  prompt_type_id tinyint unsigned NOT NULL,
   
-  prompt_id varchar(250) NOT NULL,  -- defined by a prompt id from the campaign_configuration.xml at the XPath //promptId
-  response text NOT NULL,   -- the data format is defined by the prompt type, most likely it will be JSON or a UUID (for images)
+  prompt_id varchar(250) NOT NULL,  -- a prompt id as defined in a configuration at the XPath //promptId
+  prompt_type varchar(250) NOT NULL, -- a prompt type as defined in a configuration at the XPath //promptType
+  repeatable_set_id varchar(250), -- a repeatable set id as defined in a configuration at the XPath //repeatableSetId
+  response text NOT NULL,   -- the data format is defined by the prompt type: a string or a JSON string
    
   PRIMARY KEY (id),
   INDEX (user_id, survey_response_id),
+  -- uniqueness of survey uploads is handled by the survey_response table
   
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT FOREIGN KEY (survey_response_id) REFERENCES survey_response (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT FOREIGN KEY (prompt_type_id) REFERENCES prompt_type (id) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT FOREIGN KEY (survey_response_id) REFERENCES survey_response (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------

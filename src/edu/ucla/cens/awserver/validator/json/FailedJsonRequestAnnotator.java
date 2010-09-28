@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.ErrorResponse;
 import edu.ucla.cens.awserver.request.AwRequest;
-import edu.ucla.cens.awserver.request.SensorUploadAwRequest;
+import edu.ucla.cens.awserver.request.SurveyUploadAwRequest;
 import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
 
 /**
@@ -68,7 +68,7 @@ public class FailedJsonRequestAnnotator implements AwRequestAnnotator {
 			errorJsonObject.put("code", _errorResponse.getCode());
 			errorJsonObject.put("text", _errorResponse.getText());
 			
-			if(awRequest instanceof SensorUploadAwRequest) { // hackeroo!
+			if(awRequest instanceof SurveyUploadAwRequest) { // hackeroo! // TODO fix this
 			
 				if(-1 != awRequest.getCurrentMessageIndex()) {
 					errorJsonObject.put("at_record_number", awRequest.getCurrentMessageIndex());

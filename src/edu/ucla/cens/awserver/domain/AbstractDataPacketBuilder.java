@@ -12,7 +12,8 @@ import edu.ucla.cens.awserver.util.JsonUtils;
 public abstract class AbstractDataPacketBuilder implements DataPacketBuilder {
 	
 	/**
-	 * Sets the values for the fields common to all packets: date, time (millis since epoch), timezone, latitude, longitude.  
+	 * Sets the values for the fields common to all packets: date, time (millis since epoch), timezone, latitude, longitude, 
+	 * accuracy, provider.
 	 */
 	public void createCommonFields(JSONObject source, MetadataDataPacket packet) {
 		String date = JsonUtils.getStringFromJsonObject(source, "date");
@@ -23,12 +24,6 @@ public abstract class AbstractDataPacketBuilder implements DataPacketBuilder {
 		Double longitude = checkForDoubleNaN(location, "longitude");
 		Double accuracy = JsonUtils.getDoubleFromJsonObject(location, "accuracy");
 		String provider = JsonUtils.getStringFromJsonObject(location, "provider");
-		
-//		String stringUtcDate = DateUtils.convertDateToUtc(date, timezone);
-//		long utcTime = DateUtils.convertTimeToUtc(time, timezone);
-//		packet.setDate(stringUtcDate);
-//		packet.setEpochTime(utcTime);
-		
 		packet.setDate(date);
 		packet.setEpochTime(time);
 		packet.setTimezone(timezone);

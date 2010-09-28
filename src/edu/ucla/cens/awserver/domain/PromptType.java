@@ -1,36 +1,32 @@
 package edu.ucla.cens.awserver.domain;
 
 /**
+ * Represents a row from the prompt_type table.
+ * 
  * @author selsky
  */
 public class PromptType {
-
+	private int _id;
 	private String _type;
-	private String _restriction;
-	private int _promptConfigId; // not the primary key for the prompt
 	
-	public int getPromptConfigId() {
-		return _promptConfigId;
+	public int getId() {
+		return _id;
 	}
-	public void setPromptConfigId(int promptConfigId) {
-		_promptConfigId = promptConfigId;
+	
+	public void setId(int id) {
+		_id = id;
 	}
+	
 	public String getType() {
 		return _type;
 	}
+	
 	public void setType(String type) {
 		_type = type;
 	}
-	public String getRestriction() {
-		return _restriction;
-	}
-	public void setRestriction(String restriction) {
-		_restriction = restriction;
-	}
+
 	@Override
 	public String toString() {
-		return "PromptType [_promptConfigId=" + _promptConfigId
-				+ ", _restriction=" + _restriction + ", _type=" + _type + "]";
+		return "PromptType [_id=" + _id + ", _type=" + _type + "]";
 	}
-	
 }

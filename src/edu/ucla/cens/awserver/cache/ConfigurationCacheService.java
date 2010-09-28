@@ -31,7 +31,8 @@ public class ConfigurationCacheService extends AbstractCacheService {
 	 * Loads all campaign configurations into a cache for in-memory querying.
 	 */
 	private void init() {
-		List<Configuration> configurations = (List<Configuration>) _dao.execute();
+		@SuppressWarnings("unchecked")
+		List<Configuration> configurations = (List<Configuration>) _dao.execute(); 
 		
 		if(configurations.size() < 1) {
 			throw new IllegalStateException("cannot startup with zero configurations");

@@ -24,7 +24,7 @@
         <ref bean="jsonMessageSyntaxValidationService" />
         <ref bean="mobilityMessageContentValidationService" />
         <ref bean="mobilityDataPacketBuilderService" />
-        <ref bean="uploadService" />
+        <ref bean="mobilityDataStorageService" />
       </list>
     </constructor-arg>
     <property name="validators">
@@ -453,15 +453,12 @@
     </constructor-arg>   
   </bean>
   
-  <bean id="uploadService" class="edu.ucla.cens.awserver.service.UploadService" >
+  <bean id="mobilityDataStorageService" class="edu.ucla.cens.awserver.service.DaoService" >
   	<constructor-arg index="0">
-      <map>
-        <entry>
-          <key><value>mobility</value></key>
-          <bean class="edu.ucla.cens.awserver.dao.MobilityUploadDao">
-            <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
-          </bean>
-        </entry>
+      <bean class="edu.ucla.cens.awserver.dao.MobilityUploadDao">
+        <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
+      </bean>
+
         <!--
         <entry>
           <key><value>prompt</value></key>
@@ -469,8 +466,8 @@
             <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
           </bean>
         </entry>
-        -->
       </map>
+      -->
     </constructor-arg>
   </bean>
   

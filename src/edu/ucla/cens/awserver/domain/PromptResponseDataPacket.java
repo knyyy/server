@@ -3,7 +3,8 @@ package edu.ucla.cens.awserver.domain;
 public class PromptResponseDataPacket implements DataPacket {
 	private String _promptId;   
 	private String _repeatableSetId; 
-	private String _value; 
+	private String _value;
+	private String _type;
 	
 	public PromptResponseDataPacket() { }
 	
@@ -31,10 +32,12 @@ public class PromptResponseDataPacket implements DataPacket {
 		_value = value;
 	}
 
-	@Override
-	public String toString() {
-		return "PromptResponseDataPacket [_promptId=" + _promptId
-				+ ", _repeatableSetId=" + _repeatableSetId + ", _value="
-				+ _value + "]";
+	public String getType() {
+		return _type;
 	}
+
+	public void setType(String type) {
+		_type = type;
+	}
+		
 }

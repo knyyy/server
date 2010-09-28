@@ -32,8 +32,7 @@ public class SurveyUploadAwRequest extends ResultListAwRequest {
 	private int _currentPromptId;     // used for logging errors for invalid prompts
 	
 	private JSONArray _jsonDataAsJsonArray; // The input data array converted to an internal JSON representation
-	private List<DataPacket> _dataPackets;  // JSON data converted into an internal representation
-	private List<String> _surveys;  // JSON survey responses converted to strings
+	private List<DataPacket> _dataPackets;  // Surveys for insertion into database
 	
 	/**
 	 * Default no-arg constructor.	
@@ -91,10 +90,6 @@ public class SurveyUploadAwRequest extends ResultListAwRequest {
 		return _startTime;
 	}
 	
-	public List<String> getSurveys() {
-		return _surveys;
-	}
-	
 	public void setCampaignVersion(String campaignVersion) {
 		_campaignVersion = campaignVersion;
 	}
@@ -143,9 +138,6 @@ public class SurveyUploadAwRequest extends ResultListAwRequest {
 		_startTime = startTime;
 	}
 	
-	public void setSurveys(List<String> surveys) {
-		_surveys = surveys;
-	}
 
 	@Override
 	public String toString() {
@@ -159,7 +151,7 @@ public class SurveyUploadAwRequest extends ResultListAwRequest {
 				+ _jsonDataAsJsonArray + ", _jsonDataAsString="
 				+ _jsonDataAsString + ", _resultList=" + _resultList
 				+ ", _sessionId=" + _sessionId + ", _startTime=" + _startTime
-				+ ", _surveys=" + _surveys + "]";
+				+ "]";
 	}
 }
 

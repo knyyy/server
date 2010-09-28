@@ -70,7 +70,7 @@ public class DataPacketBuilderService implements Service {
 //			} 
 			
 			DataPacket dataPacket = 
-				_builderMap.get(builderName).createDataPacketFrom(JsonUtils.getJsonObjectFromJsonArray(jsonArray, i));
+				_builderMap.get(builderName).createDataPacketFrom(JsonUtils.getJsonObjectFromJsonArray(jsonArray, i), awRequest);
 			
 			
 //			if(_logger.isDebugEnabled()) {
