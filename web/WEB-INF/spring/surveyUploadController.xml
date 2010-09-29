@@ -173,6 +173,10 @@
           <key><value>single_choice_custom</value></key>
           <bean class="edu.ucla.cens.awserver.validator.prompt.SingleChoiceCustomPromptValidator" />
         </entry>
+        <entry>
+          <key><value>photo</value></key>
+          <bean class="edu.ucla.cens.awserver.validator.prompt.UUIDPromptValidator" />
+        </entry>
       </map>
     </constructor-arg>
   </bean>

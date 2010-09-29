@@ -39,5 +39,11 @@ public class PromptResponseDataPacket implements DataPacket {
 	public void setType(String type) {
 		_type = type;
 	}
-		
+
+	@Override
+	public String toString() {
+		return "PromptResponseDataPacket [_promptId=" + _promptId
+				+ ", _repeatableSetId=" + _repeatableSetId + ", _type=" + _type
+				+ ", _value=" + _value + "]";
+	}
 }
