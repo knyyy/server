@@ -44,11 +44,14 @@
              validation performed in the servlet world -->
       </list>
     </property>
-    <!--
     <property name="postProcessingService">
-      <ref bean="messageLoggerService" />
+      <!-- log upload stats, the upload itself, any failed upload info, and duplicates to the filesystem -->  
+      <bean id="messageLoggerService" class="edu.ucla.cens.awserver.service.MessageLoggerService">
+        <constructor-arg index="0">
+          <value>survey</value>
+        </constructor-arg>
+      </bean>
     </property>
-    -->
     <property name="featureName"><value>survey upload</value></property>
   </bean>
   
@@ -189,15 +192,9 @@
         </constructor-arg>
       </bean>
     </constructor-arg>
-  </bean><!--
-  
-  <bean id="surveyResponsesDataPacketBuilderService" class="edu.ucla.cens.awserver.service.SurveyDataPacketBuilderService">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.domain.SurveyResponsesDataPacketBuilder" />
-    </constructor-arg>
   </bean>
   
-   --><bean id="surveyDataStorageService" class="edu.ucla.cens.awserver.service.DaoService" >
+  <bean id="surveyDataStorageService" class="edu.ucla.cens.awserver.service.DaoService" >
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.dao.SurveyUploadDao">
         <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>

@@ -171,7 +171,7 @@ public class SurveyDataPacketBuilder extends AbstractDataPacketBuilder {
 			
 		} else {
 			String value = JsonUtils.getStringFromJsonObject(response, "value");
-			_logger.info("single value =" + value);
+			// _logger.info("single value =" + value);
 			
 			dataPacket.setValue(stripQuotes(value, promptType));
 		}

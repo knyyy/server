@@ -74,9 +74,9 @@ public class FailedJsonRequestAnnotator implements AwRequestAnnotator {
 					errorJsonObject.put("at_record_number", awRequest.getCurrentMessageIndex());
 				}
 				
-				if(-1 != awRequest.getCurrentPromptId()) { // a prompt upload is being handled.
-					errorJsonObject.put("at_prompt_id", awRequest.getCurrentPromptId());
-				}
+//				if(-1 != awRequest.getCurrentPromptId()) { // a prompt upload is being handled.
+//					errorJsonObject.put("at_prompt_id", awRequest.getCurrentPromptId());
+//				}
 			}
 			
 			errorJsonArray.put(errorJsonObject);

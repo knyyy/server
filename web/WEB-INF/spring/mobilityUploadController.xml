@@ -36,7 +36,12 @@
       </list>
     </property>
     <property name="postProcessingService">
-      <ref bean="messageLoggerService" />
+      <!-- log upload stats, the upload itself, any failed upload info, and duplicates to the filesystem -->  
+      <bean id="messageLoggerService" class="edu.ucla.cens.awserver.service.MessageLoggerService">
+        <constructor-arg index="0">
+          <value>mobility</value>
+        </constructor-arg>
+      </bean>
     </property>
     <property name="featureName"><value>mobility upload</value></property>
   </bean>
@@ -99,9 +104,6 @@
       </bean>
     </constructor-arg>   
   </bean>
- 	
-  <!-- Log request data to the file system -->	
-  <bean id="messageLoggerService" class="edu.ucla.cens.awserver.service.MessageLoggerService" />
   
   <!-- Validate JSON content according to app business rules -->
   <bean id="mobilityMessageContentValidationService" class="edu.ucla.cens.awserver.service.JsonMessageContentValidationService">
@@ -443,12 +445,6 @@
           <key><value>mobility-mode_features</value></key>
           <bean class="edu.ucla.cens.awserver.domain.MobilityModeFeaturesDataPacketBuilder"></bean>
         </entry>
-        <!-- 
-        <entry>
-          <key><value>prompt</value></key>
-          <bean class="edu.ucla.cens.awserver.domain.SurveyDataPacketBuilder"></bean>
-        </entry>
-        -->
       </map>
     </constructor-arg>   
   </bean>
@@ -458,16 +454,6 @@
       <bean class="edu.ucla.cens.awserver.dao.MobilityUploadDao">
         <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
       </bean>
-
-        <!--
-        <entry>
-          <key><value>prompt</value></key>
-          <bean class="edu.ucla.cens.awserver.dao.PromptUploadDao">
-            <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
-          </bean>
-        </entry>
-      </map>
-      -->
     </constructor-arg>
   </bean>
   

@@ -1,13 +1,10 @@
 package edu.ucla.cens.awserver.request;
 
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
 
 import edu.ucla.cens.awserver.domain.DataPacket;
-import edu.ucla.cens.awserver.domain.PromptType;
-import edu.ucla.cens.awserver.domain.SurveyDataPacket;
 import edu.ucla.cens.awserver.domain.User;
 
 /**
@@ -42,17 +39,17 @@ import edu.ucla.cens.awserver.domain.User;
 	 List<Integer> getDuplicateIndexList();
 	 void setDuplicateIndexList(List<Integer> duplicateIndexList);
 	
-	 int getCampaignPromptGroupId();
-	 void setCampaignPromptGroupId(int campaignPromptGroupId);
+//	 int getCampaignPromptGroupId();
+//	 void setCampaignPromptGroupId(int campaignPromptGroupId);
 	
 //	 List<PromptType> getPromptTypeRestrictions();
 //	 void setPromptTypeRestrictions(List<PromptType> promptTypeRestrictions);
 	
-	 Map<Integer, List<Integer>> getDuplicatePromptResponseMap();
-	 void setDuplicatePromptResponseMap(Map<Integer, List<Integer>> duplicatePromptResponseMap);
+//	 Map<Integer, List<Integer>> getDuplicatePromptResponseMap();
+//	 void setDuplicatePromptResponseMap(Map<Integer, List<Integer>> duplicatePromptResponseMap);
 	
-	 int getCampaignPromptVersionId();
-	 void setCampaignPromptVersionId(int campaignPromptVersionId);
+//	 int getCampaignPromptVersionId();
+//	 void setCampaignPromptVersionId(int campaignPromptVersionId);
 	
 	 long getStartTime();
 	 void setStartTime(long startTime);
@@ -60,14 +57,14 @@ import edu.ucla.cens.awserver.domain.User;
 	 String getSessionId();
 	 void setSessionId(String sessionId);
 	
-	 String getRequestType();
-	 void setRequestType(String requestType);
+//	 String getRequestType();
+//	 void setRequestType(String requestType);
 	
 	 String getClient();
 	 void setClient(String client);
 	
-	 String getProtocolVersion();
-	 void setProtocolVersion(String protocolVersion);
+//	 String getProtocolVersion();
+//	 void setProtocolVersion(String protocolVersion);
 	
 	 String getJsonDataAsString();
 	 void setJsonDataAsString(String jsonDataAsString);
@@ -82,20 +79,20 @@ import edu.ucla.cens.awserver.domain.User;
 	 int getCurrentMessageIndex();
 	 void setCurrentMessageIndex(int currentMessageIndex);
 	
-	 int getCurrentPromptId();
-	 void setCurrentPromptId(int currentPromptId);
+//	 int getCurrentPromptId();
+//	 void setCurrentPromptId(int currentPromptId);
 	
 	 JSONArray getJsonDataAsJsonArray();
 	 void setJsonDataAsJsonArray(JSONArray jsonDataAsJsonArray);
 	
-	 String getGroupId();
-	 void setGroupId(String groupId);
-	
-	 int[] getPromptIdArray();
-	 void setPromptIdArray(int[] promptIdArray);
-	
-	 String getVersionId();
-	 void setVersionId(String versionId);
+//	 String getGroupId();
+//	 void setGroupId(String groupId);
+//	
+//	 int[] getPromptIdArray();
+//	 void setPromptIdArray(int[] promptIdArray);
+//	
+//	 String getVersionId();
+//	 void setVersionId(String versionId);
 	
 	 User getUser();
 	 void setUser(User user);
@@ -108,4 +105,7 @@ import edu.ucla.cens.awserver.domain.User;
 	 
 	 String getCampaignVersion();
 	 void setCampaignVersion(String campaignVersion);
+	 
+//	 List<DuplicateSurveyUpload> getDuplicateSurveyUploads();
+//	 void setDuplicateSurveyUploads(List<DuplicateSurveyUpload> duplicates);
 }
