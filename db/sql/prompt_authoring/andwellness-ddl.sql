@@ -102,7 +102,7 @@ CREATE TABLE survey_response (
   user_id smallint(6) unsigned NOT NULL,
   campaign_configuration_id smallint(4) unsigned NOT NULL,
   
-  time_stamp timestamp NOT NULL,
+  msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL, 
   phone_timezone varchar(32) NOT NULL,
   latitude double,
@@ -112,6 +112,8 @@ CREATE TABLE survey_response (
   
   survey_id varchar(250) NOT NULL,  -- a survey id as defined in a configuration at the XPath //surveyId
   json text NOT NULL, -- the max length for text is 21845 UTF-8 chars
+  
+  audit_timestamp timestamp default current_timestamp on update current_timestamp,
   
   PRIMARY KEY (id),
   INDEX (user_id, campaign_configuration_id),
@@ -144,6 +146,7 @@ CREATE TABLE prompt_response (
   prompt_id varchar(250) NOT NULL,  -- a prompt id as defined in a configuration at the XPath //promptId
   prompt_type varchar(250) NOT NULL, -- a prompt type as defined in a configuration at the XPath //promptType
   repeatable_set_id varchar(250), -- a repeatable set id as defined in a configuration at the XPath //repeatableSetId
+  repeatable_set_iteration tinyint unsigned,
   response text NOT NULL,   -- the data format is defined by the prompt type: a string or a JSON string
    
   PRIMARY KEY (id),
@@ -172,7 +175,7 @@ CREATE TABLE url_based_resource (
 CREATE TABLE mobility_mode_only_entry (
   id bigint unsigned NOT NULL auto_increment,
   user_id smallint(6) unsigned NOT NULL,
-  time_stamp timestamp NOT NULL,
+  msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL,
   phone_timezone varchar(32) NOT NULL,
   latitude double,
@@ -180,6 +183,7 @@ CREATE TABLE mobility_mode_only_entry (
   accuracy double,
   provider varchar(250),
   mode varchar(30) NOT NULL,
+  audit_timestamp timestamp default current_timestamp on update current_timestamp,
   PRIMARY KEY (id),
   UNIQUE (user_id, epoch_millis), -- enforce no-duplicates rule at the table level
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -192,7 +196,7 @@ CREATE TABLE mobility_mode_only_entry (
 CREATE TABLE mobility_mode_features_entry (
   id integer unsigned NOT NULL auto_increment,
   user_id smallint(6) unsigned NOT NULL,
-  time_stamp timestamp NOT NULL,
+  msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL,
   phone_timezone varchar(32) NOT NULL,
   latitude double,
@@ -206,6 +210,7 @@ CREATE TABLE mobility_mode_features_entry (
   fft varchar(300) NOT NULL, -- A comma separated list of 10 FFT floating-point values. The reason the array is not unpacked  
                              -- into separate columns is because the data will not be used outside of a debugging scenario.
                              -- It is simply stored the way it is sent by the phone (as a JSON array). 
+  audit_timestamp timestamp default current_timestamp on update current_timestamp,
   PRIMARY KEY (id),
   UNIQUE INDEX (user_id, epoch_millis),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -218,7 +223,7 @@ CREATE TABLE mobility_mode_features_entry (
 CREATE TABLE mobility_entry_five_min_summary (
   id integer unsigned NOT NULL auto_increment,
   user_id smallint(6) unsigned NOT NULL,
-  time_stamp timestamp NOT NULL,
+  msg_timestamp datetime NOT NULL,
   phone_timezone varchar(32) NOT NULL,
   mode varchar(30) NOT NULL,
   PRIMARY KEY (id),

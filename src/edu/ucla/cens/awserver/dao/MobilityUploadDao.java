@@ -28,11 +28,11 @@ public class MobilityUploadDao extends AbstractUploadDao {
 	private static Logger _logger = Logger.getLogger(MobilityUploadDao.class);
 
 	private final String _insertMobilityModeOnlySql = "insert into mobility_mode_only_entry" +
-	                                                  " (user_id, time_stamp, epoch_millis, phone_timezone, latitude," +
+	                                                  " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude," +
 	                                                  " longitude, accuracy, provider, mode) values (?,?,?,?,?,?,?,?,?) ";
 
 	private final String _insertMobilityModeFeaturesSql = "insert into mobility_mode_features_entry" +
-			                                              " (user_id, time_stamp, epoch_millis, phone_timezone, latitude," +
+			                                              " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude," +
 			                                              " longitude, accuracy, provider, mode, speed, variance, average, fft)" +
 			                                              " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	

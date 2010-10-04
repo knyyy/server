@@ -34,14 +34,14 @@ public class SurveyUploadDao extends AbstractUploadDao {
 	private final String _selectCampaignConfigId = "select id from campaign_configuration where campaign_id = ? and version = ?";
 	
 	private final String _insertSurveyResponse = "insert into survey_response" +
-								           		 " (user_id, campaign_configuration_id, time_stamp, epoch_millis, phone_timezone," +
+								           		 " (user_id, campaign_configuration_id, msg_timestamp, epoch_millis, phone_timezone," +
 									 	         " latitude, longitude, accuracy, provider, survey_id, json) " +
 										         " values (?,?,?,?,?,?,?,?,?,?,?)";
 	
 	private final String _insertPromptResponse = "insert into prompt_response" +
-	                                             " (user_id, survey_response_id, repeatable_set_id, prompt_type, prompt_id," +
-	                                             " response)" +
-	                                             " values (?,?,?,?,?,?)";
+	                                             " (user_id, survey_response_id, repeatable_set_id, repeatable_set_iteration," +
+	                                             " prompt_type, prompt_id, response)" +
+	                                             " values (?,?,?,?,?,?,?)";
 	
 	public SurveyUploadDao(DataSource dataSource) {
 		super(dataSource);
@@ -151,9 +151,14 @@ public class SurveyUploadDao extends AbstractUploadDao {
 								ps.setInt(1, userId);
 								ps.setInt(2, surveyResponseId.intValue());
 								ps.setString(3, prdp.getRepeatableSetId());
-								ps.setString(4, prdp.getType());
-								ps.setString(5, prdp.getPromptId());
-								ps.setString(6, prdp.getValue());
+								if(null != prdp.getRepeatableSetIteration()) {
+									ps.setInt(4, prdp.getRepeatableSetIteration());
+								} else {
+									ps.setNull(4, java.sql.Types.NULL);
+								}
+								ps.setString(5, prdp.getType());
+								ps.setString(6, prdp.getPromptId());
+								ps.setString(7, prdp.getValue());
 								
 								return ps;
 							}

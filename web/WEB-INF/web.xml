@@ -186,36 +186,6 @@
     <url-pattern>/app/login</url-pattern>
   </servlet-mapping>
   
-  <!--  Sensor Upload - soon to be inactive and replaced with separate endpoints for each upload type -->
-  <!--
-  <servlet>
-    <description>
-      processes data uploads from a sensor (phone) 
-    </description>
-    <servlet-name>SensorUploadServlet</servlet-name>
-    <servlet-class>edu.ucla.cens.awserver.jee.servlet.SensorUploadServlet</servlet-class>
-  -->  
-    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
-          The param-value elements are Spring bean ids. -->  
-  <!--  
-    <init-param>
-      <param-name>awRequestCreatorName</param-name>
-      <param-value>sensorUploadAwRequestCreator</param-value>
-    </init-param>
-    
-    <init-param>
-      <param-name>controllerName</param-name>
-      <param-value>sensorUploadController</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>SensorUploadServlet</servlet-name>
-    <url-pattern>/app/sensor/upload</url-pattern>
-  </servlet-mapping>
-  -->
-  
   <!--  Mobility Data Upload -->
   <servlet>
     <description>
@@ -273,7 +243,34 @@
     <servlet-name>SurveyUploadServlet</servlet-name>
     <url-pattern>/app/u/survey</url-pattern>
   </servlet-mapping>
-   
+  
+  <!--  Media Data Upload: images 
+  <servlet>
+    <description>
+      processes media data uploads from a client 
+    </description>
+    <servlet-name>MediaUploadServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>mediaUploadAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>mediaUploadController</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>successOrFailResponseWriter</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>MediaUploadServlet</servlet-name>
+    <url-pattern>/app/u/media</url-pattern>
+  </servlet-mapping>
+   -->
   <!--  
       Stateless Authentication  
   -->
@@ -309,35 +306,6 @@
     <servlet-name>StatelessAuthServlet</servlet-name>
     <url-pattern>/app/auth</url-pattern>
   </servlet-mapping>
-  
-  <!-- refactor into each type of upload
-  <servlet>
-    <description>
-      Processes mobility data uploads from a phone. 
-    </description>
-    <servlet-name>SensorUploadServlet</servlet-name>
-    <servlet-class>edu.ucla.cens.awserver.jee.servlet.SensorUploadServlet</servlet-class>
-  -->
-    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
-          The param-value elements are Spring bean ids. -->  
-  <!--  
-    <init-param>
-      <param-name>awRequestCreatorName</param-name>
-      <param-value>sensorUploadAwRequestCreator</param-value>
-    </init-param>
-    
-    <init-param>
-      <param-name>controllerName</param-name>
-      <param-value>sensorUploadController</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>SensorUploadServlet</servlet-name>
-    <url-pattern>/app/sensor/upload</url-pattern>
-  </servlet-mapping>
-  -->
   
   <!--  Handle EMA Queries  -->
   <servlet>

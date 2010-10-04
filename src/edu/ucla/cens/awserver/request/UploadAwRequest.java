@@ -7,11 +7,11 @@ import org.json.JSONArray;
 import edu.ucla.cens.awserver.domain.DataPacket;
 
 /**
- * Represents state for survey uploads.
+ * Represents state for uploads of JSON data.
  * 
  * @author selsky
  */
-public class MobilityUploadAwRequest extends ResultListAwRequest {
+public class UploadAwRequest extends ResultListAwRequest {
 	// Input state //
 	private String _client;
 	private String _sessionId;
@@ -27,7 +27,7 @@ public class MobilityUploadAwRequest extends ResultListAwRequest {
 	/**
 	 * Default no-arg constructor.	
 	 */
-	public MobilityUploadAwRequest() {
+	public UploadAwRequest() {
 		_currentMessageIndex = -1;
 	}
 	
@@ -97,13 +97,14 @@ public class MobilityUploadAwRequest extends ResultListAwRequest {
 
 	@Override
 	public String toString() {
-		return "MobilityUploadAwRequest [_client=" + _client
+		return "UploadAwRequest [_client=" + _client
 				+ ", _currentMessageIndex=" + _currentMessageIndex
 				+ ", _dataPackets=" + _dataPackets + ", _duplicateIndexList="
 				+ _duplicateIndexList + ", _jsonDataAsJsonArray="
 				+ _jsonDataAsJsonArray + ", _jsonDataAsString="
 				+ _jsonDataAsString + ", _sessionId=" + _sessionId
-				+ ", _startTime=" + _startTime + "]";
+				+ ", _startTime=" + _startTime + ", toString()="
+				+ super.toString() + "]";
 	}	
 }
 

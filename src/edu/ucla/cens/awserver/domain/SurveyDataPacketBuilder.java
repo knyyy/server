@@ -72,6 +72,7 @@ public class SurveyDataPacketBuilder extends AbstractDataPacketBuilder {
 						
 						promptResponseDataPacket.setPromptId(promptId);
 						promptResponseDataPacket.setRepeatableSetId(repeatableSetId);
+						promptResponseDataPacket.setRepeatableSetIteration(j);
 						
 						Configuration configuration = (Configuration) _configurationCacheService.lookup(
 							new CampaignNameVersion(awRequest.getUser().getCurrentCampaignName(), awRequest.getCampaignVersion())

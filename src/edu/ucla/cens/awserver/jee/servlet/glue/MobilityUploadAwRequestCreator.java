@@ -9,7 +9,7 @@ import org.apache.log4j.NDC;
 
 import edu.ucla.cens.awserver.domain.UserImpl;
 import edu.ucla.cens.awserver.request.AwRequest;
-import edu.ucla.cens.awserver.request.MobilityUploadAwRequest;
+import edu.ucla.cens.awserver.request.UploadAwRequest;
 
 /**
  * Transformer for creating an AwRequest for the upload feature.
@@ -56,7 +56,7 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 		user.setPassword(password);
 		user.setCurrentCampaignId(campaignId);
 		
-		AwRequest awRequest = new MobilityUploadAwRequest();
+		AwRequest awRequest = new UploadAwRequest();
 
 		awRequest.setStartTime(System.currentTimeMillis());
 		awRequest.setSessionId(sessionId);
