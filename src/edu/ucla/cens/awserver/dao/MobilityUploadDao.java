@@ -176,8 +176,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 	}
 	
 	/**
-	 * The insert is auto_committed, or rather nothing is done in this method to commit the insert so if auto_commit is ever
-	 * turned off in the db, this code has to change.  
+	 * Insert a row into mobility_mode_only_entry. 
 	 */
 	private int insertMobilityModeOnly(final MobilityModeOnlyDataPacket dataPacket, final int userId) { 
 		
@@ -211,10 +210,9 @@ public class MobilityUploadDao extends AbstractUploadDao {
 			}
 		); 
 	}
-
+	
 	/**
-	 * The insert is auto_committed, or rather nothing is done in this method to commit the insert so if auto_commit is ever
-	 * turned off in the db, this code has to change.  
+	 * Insert a row into mobility_mode_features_entry. 
 	 */
 	private int insertMobilityModeFeatures(final MobilityModeFeaturesDataPacket dataPacket, final int userId) {
 		
