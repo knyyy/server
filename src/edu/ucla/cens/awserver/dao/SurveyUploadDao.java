@@ -54,9 +54,14 @@ public class SurveyUploadDao extends AbstractUploadDao {
 	
 	/**
 	 * Inserts surveys and prompts into the survey_response and prompt_response tables. Expects the surveys to be in the form of
-	 * DataPackets where each survey contains a list of prompt response DataPackets.
+	 * DataPackets where each survey contains a list of prompt response DataPackets. The entire survey upload is treated as one
+	 * transaction. Savepoints are used to gracefully skip over duplicate survey uploads.
 	 * 
 	 * TODO this method is too big and needs to be refactored
+	 * 
+     * @throws DataAccessException if any Spring TransactionException or DataAccessException (except for a 
+	 *         DataIntegrityViolationException denoting duplicates) occurs 
+	 * @throws IllegalArgumentException if a List of DataPackets is not present as an attribute on the AwRequest	 
 	 */
 	@Override
 	public void execute(AwRequest awRequest) {
@@ -83,6 +88,9 @@ public class SurveyUploadDao extends AbstractUploadDao {
 		
 		// Prep for insert
 		List<DataPacket> surveys = awRequest.getDataPackets(); // each survey is JSON stored as a String
+		if(null == surveys) {
+			throw new IllegalArgumentException("missing survey DataPackets in AwRequest");
+		}
 		final int userId = awRequest.getUser().getId();
 		int numberOfSurveys = surveys.size();
 		int surveyIndex = 0;
@@ -205,7 +213,8 @@ public class SurveyUploadDao extends AbstractUploadDao {
 					// before this DAO runs so there is either missing validation or somehow an auto_incremented key
 					// has been duplicated
 					
-					logError(currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
+					_logger.error("caught DataAccessException", dive);
+					logErrorDetails(currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
 					rollback(transactionManager, status, currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
 					throw new DataAccessException(dive);
 				}
@@ -213,7 +222,8 @@ public class SurveyUploadDao extends AbstractUploadDao {
 			} catch (org.springframework.dao.DataAccessException dae) { // some other database problem happened that prevented
 				                                                        // the SQL from completing normally
 				
-				logError(currentPromptResponseDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
+				_logger.error("caught DataAccessException", dae);
+				logErrorDetails(currentPromptResponseDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
 				rollback(transactionManager, status, currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
 				throw new DataAccessException(dae);
 			}
@@ -227,7 +237,7 @@ public class SurveyUploadDao extends AbstractUploadDao {
 			
 			_logger.error("failed to commit survey upload transaction, attempting to rollback", te);
 			rollback(transactionManager, status, currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
-			logError(currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
+			logErrorDetails(currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
 			throw new DataAccessException(te);
 		}
 	}
@@ -240,24 +250,24 @@ public class SurveyUploadDao extends AbstractUploadDao {
 		
 		try {
 			
-			_logger.info("rolling back a failed survey upload transaction");
+			_logger.error("rolling back a failed survey upload transaction");
 			transactionManager.rollback(transactionStatus);
 			
 		} catch (TransactionException te) {
 			
 			_logger.error("failed to rollback survey upload transaction", te);
-			logError(dp, userId, campaignConfigurationId, surveyResponseId);
+			logErrorDetails(dp, userId, campaignConfigurationId, surveyResponseId);
 			throw new DataAccessException(te);
 		}
 	}
 	
-	private void logError(DataPacket dp, int userId, int campaignConfigurationId, int surveyResponseId) {
+	private void logErrorDetails(DataPacket dp, int userId, int campaignConfigurationId, int surveyResponseId) {
 
 		if(dp instanceof SurveyDataPacket) {
 			
 			SurveyDataPacket sdp = (SurveyDataPacket) dp;
 			
-			_logger.error("caught DataAccessException when running SQL '" + _insertSurveyResponse + "' with the following "
+			_logger.error("an error occurred when atempting to run this SQL '" + _insertSurveyResponse + "' with the following "
 				+ "parameters: " + userId + ", " + campaignConfigurationId + ", " + sdp.getDate() + " , " + sdp.getEpochTime()
 				+  ", " + sdp.getTimezone() + ", " + sdp.getLatitude() + ", " + sdp.getLongitude() + ", " + sdp.getAccuracy() 
 				+ ", " + sdp.getProvider() + ", " + sdp.getSurveyId() + sdp.getSurvey());
@@ -266,7 +276,7 @@ public class SurveyUploadDao extends AbstractUploadDao {
 			
 			PromptResponseDataPacket prdp = (PromptResponseDataPacket) dp;
 			
-			_logger.error("caught DataAccessException when running SQL '" + _insertPromptResponse + "' with the following "
+			_logger.error("an error occurred when atempting to run this SQL '" + _insertPromptResponse + "' with the following "
 				+ "parameters: " + userId + ", " + surveyResponseId + ", " + prdp.getRepeatableSetId() + ", " + prdp.getType() 
 				+ ", " + prdp.getPromptId() + ", " + prdp.getValue());
 		}

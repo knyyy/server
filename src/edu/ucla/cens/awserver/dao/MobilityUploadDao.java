@@ -16,7 +16,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import edu.ucla.cens.awserver.domain.DataPacket;
@@ -26,7 +25,7 @@ import edu.ucla.cens.awserver.request.AwRequest;
 
 
 /**
- * DAO for handling persistence of uploaded mobility mode_only data. 
+ * DAO for handling persistence of uploaded mobility data. 
  * 
  * @author selsky
  */
@@ -49,9 +48,11 @@ public class MobilityUploadDao extends AbstractUploadDao {
 	/**
 	 * Attempts to insert mobility DataPackets into the db. If any duplicates are found, they are simply logged. For mobility
 	 * uploads, it is possible to receive both types (mode_only and mode_features) within one set of messages, so this method 
-	 * handles them both.
+	 * handles them both. The entire batch of uploads is handled in one transaction. If duplicate rows are found in the db, a 
+	 * savepoint is used to gracefully skip over them during the transaction.
 	 * 
-	 * @throws DataAccessException if any errors other than a duplicate record occur
+	 * @throws DataAccessException if any Spring TransactionException or DataAccessException (except for a 
+	 *         DataIntegrityViolationException denoting duplicates) occurs 
 	 * @throws IllegalArgumentException if a List of DataPackets is not present as an attribute on the AwRequest
 	 */
 	public void execute(AwRequest awRequest) {
@@ -77,8 +78,6 @@ public class MobilityUploadDao extends AbstractUploadDao {
 		// Use a savepoint to handle nested rollbacks if duplicates are found
 		Object savepoint = status.createSavepoint();
 		
-		boolean isModeFeatures = false;
-		
 		try { // handle TransactionExceptions
 			
 			try { // handle DataAccessExceptions
@@ -93,8 +92,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					if(dataPacket instanceof MobilityModeFeaturesDataPacket) { // the order of these instanceofs is important because
 						                                                       // a MobilityModeFeaturesDataPacket is a 
 						                                                       // MobilityModeOnlyDataPacket -- need to check for the 
-						                                                       // superclass first -- maybe move away from instanceof?
-						isModeFeatures = true;
+						                                                       // superclass first
 						numberOfRowsUpdated = insertMobilityModeFeatures((MobilityModeFeaturesDataPacket)dataPacket, userId);
 						
 					} else if (dataPacket instanceof MobilityModeOnlyDataPacket){
@@ -108,7 +106,8 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					
 					if(1 != numberOfRowsUpdated) {
 						throw new DataAccessException("inserted multiple rows even though one row was intended. sql: " 
-								+  (isModeFeatures ? _insertMobilityModeFeaturesSql : _insertMobilityModeOnlySql)); 
+								+  ((dataPacket instanceof MobilityModeFeaturesDataPacket) 
+										? _insertMobilityModeFeaturesSql : _insertMobilityModeOnlySql)); 
 					}
 					
 					savepoint = status.createSavepoint();
@@ -130,18 +129,19 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					// before this DAO runs so there is either missing validation or somehow an auto_incremented key
 					// has been duplicated
 					
-					logError(isModeFeatures, currentDataPacket, userId);
-					rollback(transactionManager, status, isModeFeatures, currentDataPacket, userId);
+					_logger.error("caught DataAccessException", dive);
+					logErrorDetails(currentDataPacket, userId);
+					rollback(transactionManager, status, currentDataPacket, userId);
 					throw new DataAccessException(dive);
 				}
 				
 			} catch (org.springframework.dao.DataAccessException dae) { // some other database problem happened that prevented
 				                                                        // the SQL from completing normally
 				
-				logError(isModeFeatures, currentDataPacket, userId);
-				rollback(transactionManager, status, isModeFeatures, currentDataPacket, userId);
+				_logger.error("caught DataAccessException", dae);
+				logErrorDetails(currentDataPacket, userId);
+				rollback(transactionManager, status, currentDataPacket, userId);
 				throw new DataAccessException(dae);
-				
 			}
 		
 			transactionManager.commit(status);
@@ -150,8 +150,8 @@ public class MobilityUploadDao extends AbstractUploadDao {
 		} catch (TransactionException te) { 
 			
 			_logger.error("failed to commit mobility upload transaction, attempting to rollback", te);
-			rollback(transactionManager, status, isModeFeatures, currentDataPacket, userId);
-			logError(isModeFeatures, currentDataPacket, userId);
+			logErrorDetails(currentDataPacket, userId);
+			rollback(transactionManager, status, currentDataPacket, userId);
 			throw new DataAccessException(te);
 		}
 	}
@@ -160,17 +160,17 @@ public class MobilityUploadDao extends AbstractUploadDao {
 	 * Attempts to rollback a transaction. 
 	 */
 	private void rollback(PlatformTransactionManager transactionManager, TransactionStatus transactionStatus, 
-			boolean isModeFeatures, DataPacket dataPacket, int userId) {
+			DataPacket dataPacket, int userId) {
 		
 		try {
 			
-			_logger.info("rolling back a failed mobility upload transaction");
+			_logger.error("rolling back a failed mobility upload transaction");
 			transactionManager.rollback(transactionStatus);
 			
 		} catch (TransactionException te) {
 			
 			_logger.error("failed to rollback mobility upload transaction", te);
-			logError(isModeFeatures, dataPacket, userId);
+			logErrorDetails(dataPacket, userId);
 			throw new DataAccessException(te);
 		}
 	}
@@ -252,13 +252,13 @@ public class MobilityUploadDao extends AbstractUploadDao {
 		);
 	}
 	
-	private void logError(boolean isModeFeatures, DataPacket dataPacket, int userId) {
+	private void logErrorDetails(DataPacket dataPacket, int userId) {
 		
-		if(isModeFeatures) {
+		if(dataPacket instanceof MobilityModeFeaturesDataPacket) {
 			
 			MobilityModeFeaturesDataPacket mmfdp = (MobilityModeFeaturesDataPacket) dataPacket;
 			
-			_logger.error("caught DataAccessException when running SQL '" + _insertMobilityModeFeaturesSql + "' with the following" +
+			_logger.error("an error occurred when atempting to run this SQL '" + _insertMobilityModeFeaturesSql + "' with the following" +
 				" parameters: " + userId + ", " + Timestamp.valueOf(mmfdp.getDate()) + ", " + mmfdp.getEpochTime() + ", " +
 				mmfdp.getTimezone() + ", " + (mmfdp.getLatitude().equals(Double.NaN) ? "null" : mmfdp.getLatitude()) +  ", " + 
 			    (mmfdp.getLongitude().equals(Double.NaN) ? "null" : mmfdp.getLongitude()) + ", " + mmfdp.getAccuracy() + ", " +
@@ -269,7 +269,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 			
 			MobilityModeOnlyDataPacket mmodp = (MobilityModeOnlyDataPacket) dataPacket;
 
-			_logger.error("caught DataAccessException when running SQL '" + _insertMobilityModeOnlySql +"' with the following " +
+			_logger.error("an error occurred when atempting to run this SQL '" + _insertMobilityModeOnlySql +"' with the following " +
 				"parameters: " + userId + ", " + mmodp.getDate() + ", " + mmodp.getEpochTime() + ", " + mmodp.getTimezone() + ", "
 				+ (mmodp.getLatitude().equals(Double.NaN) ? "null" : mmodp.getLatitude()) + ", " + 
 				(mmodp.getLongitude().equals(Double.NaN) ? "null" : mmodp.getLongitude()) + ", " + mmodp.getAccuracy() + " ," + 
