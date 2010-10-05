@@ -12,11 +12,17 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.domain.DataPacket;
 import edu.ucla.cens.awserver.domain.MobilityModeFeaturesDataPacket;
 import edu.ucla.cens.awserver.domain.MobilityModeOnlyDataPacket;
+import edu.ucla.cens.awserver.request.AwRequest;
 
 
 /**
@@ -59,46 +65,64 @@ public class MobilityUploadDao extends AbstractUploadDao {
 		
 		int userId = awRequest.getUser().getId();
 		int index = -1;
-				
-		// TODO need a transaction here
+		DataPacket currentDataPacket = null;
 		
-		for(DataPacket dataPacket : dataPackets) {
+		// Wrap this upload in a transaction 
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setName("mobility upload");
+		
+		PlatformTransactionManager transactionManager = new DataSourceTransactionManager(getDataSource());
+		TransactionStatus status = transactionManager.getTransaction(def); // begin transaction
+		
+		// Use a savepoint to handle nested rollbacks if duplicates are found
+		Object savepoint = status.createSavepoint();
+		
+		boolean isModeFeatures = false;
+		
+		try { // handle TransactionExceptions
 			
-			boolean isModeFeatures = false;
-			
-			try {
-				index++;
-				int numberOfRowsUpdated = 0;
+			try { // handle DataAccessExceptions
 				
-				if(dataPacket instanceof MobilityModeFeaturesDataPacket) { // the order of these instanceofs is important because
-					                                                       // a MobilityModeFeaturesDataPacket is a 
-					                                                       // MobilityModeOnlyDataPacket -- need to check for the 
-					                                                       // superclass first -- maybe move away from instanceof?
-					isModeFeatures = true;
-					numberOfRowsUpdated = insertMobilityModeFeatures((MobilityModeFeaturesDataPacket)dataPacket, userId);
+				for(DataPacket dataPacket : dataPackets) {
+						
+					currentDataPacket = dataPacket;
 					
-				} else if (dataPacket instanceof MobilityModeOnlyDataPacket){
+					index++;
+					int numberOfRowsUpdated = 0;
 					
-					numberOfRowsUpdated = insertMobilityModeOnly((MobilityModeOnlyDataPacket)dataPacket, userId);
+					if(dataPacket instanceof MobilityModeFeaturesDataPacket) { // the order of these instanceofs is important because
+						                                                       // a MobilityModeFeaturesDataPacket is a 
+						                                                       // MobilityModeOnlyDataPacket -- need to check for the 
+						                                                       // superclass first -- maybe move away from instanceof?
+						isModeFeatures = true;
+						numberOfRowsUpdated = insertMobilityModeFeatures((MobilityModeFeaturesDataPacket)dataPacket, userId);
+						
+					} else if (dataPacket instanceof MobilityModeOnlyDataPacket){
+						
+						numberOfRowsUpdated = insertMobilityModeOnly((MobilityModeOnlyDataPacket)dataPacket, userId);
+						
+					} else { // this is a logical error because this class should never be called with non-mobility packets
+						
+						throw new IllegalArgumentException("invalid data packet found: " + dataPacket.getClass());
+					}
 					
-				} else { // this is a logical error because this class should never be called with non-mobility packets
+					if(1 != numberOfRowsUpdated) {
+						throw new DataAccessException("inserted multiple rows even though one row was intended. sql: " 
+								+  (isModeFeatures ? _insertMobilityModeFeaturesSql : _insertMobilityModeOnlySql)); 
+					}
 					
-					throw new IllegalArgumentException("invalid data packet found: " + dataPacket.getClass());
+					savepoint = status.createSavepoint();
 				}
 				
-				if(1 != numberOfRowsUpdated) {
-					throw new DataAccessException("inserted multiple rows even though one row was intended. sql: " 
-							+  (isModeFeatures ? _insertMobilityModeFeaturesSql : _insertMobilityModeOnlySql)); 
-				}
-			
 			} catch (DataIntegrityViolationException dive) { 
-				
+					
 				if(isDuplicate(dive)) {
 					
 					if(_logger.isDebugEnabled()) {
 						_logger.info("found a duplicate mobility message");
 					}
 					handleDuplicate(awRequest, index);
+					status.rollbackToSavepoint(savepoint);
 					
 				} else {
 				
@@ -106,21 +130,49 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					// before this DAO runs so there is either missing validation or somehow an auto_incremented key
 					// has been duplicated
 					
-					logError(isModeFeatures, dataPacket, userId);
+					logError(isModeFeatures, currentDataPacket, userId);
+					rollback(transactionManager, status, isModeFeatures, currentDataPacket, userId);
 					throw new DataAccessException(dive);
 				}
 				
 			} catch (org.springframework.dao.DataAccessException dae) { // some other database problem happened that prevented
 				                                                        // the SQL from completing normally
 				
-				
-				logError(isModeFeatures, dataPacket, userId);
+				logError(isModeFeatures, currentDataPacket, userId);
+				rollback(transactionManager, status, isModeFeatures, currentDataPacket, userId);
 				throw new DataAccessException(dae);
 				
 			}
-		}
 		
-		_logger.info("completed mobility message persistence");
+			transactionManager.commit(status);
+			_logger.info("completed mobility message persistence");	
+		
+		} catch (TransactionException te) { 
+			
+			_logger.error("failed to commit mobility upload transaction, attempting to rollback", te);
+			rollback(transactionManager, status, isModeFeatures, currentDataPacket, userId);
+			logError(isModeFeatures, currentDataPacket, userId);
+			throw new DataAccessException(te);
+		}
+	}
+	
+	/**
+	 * Attempts to rollback a transaction. 
+	 */
+	private void rollback(PlatformTransactionManager transactionManager, TransactionStatus transactionStatus, 
+			boolean isModeFeatures, DataPacket dataPacket, int userId) {
+		
+		try {
+			
+			_logger.info("rolling back a failed mobility upload transaction");
+			transactionManager.rollback(transactionStatus);
+			
+		} catch (TransactionException te) {
+			
+			_logger.error("failed to rollback mobility upload transaction", te);
+			logError(isModeFeatures, dataPacket, userId);
+			throw new DataAccessException(te);
+		}
 	}
 	
 	/**

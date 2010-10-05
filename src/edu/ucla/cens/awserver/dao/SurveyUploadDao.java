@@ -14,8 +14,13 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import edu.ucla.cens.awserver.domain.DataPacket;
 import edu.ucla.cens.awserver.domain.PromptResponseDataPacket;
@@ -23,8 +28,8 @@ import edu.ucla.cens.awserver.domain.SurveyDataPacket;
 import edu.ucla.cens.awserver.request.AwRequest;
 
 /**
- * Persist surveys to the db: entire surveys are persisted as JSON. For individual prompt response persistence, see
- * SurveyResponsesUploadDao.
+ * Persist surveys to the db: entire surveys are persisted as JSON in the survey_response table and each prompt response from a 
+ * survey is persisted to its own row in the prompt_response table.
  * 
  * @author selsky
  */
@@ -49,14 +54,15 @@ public class SurveyUploadDao extends AbstractUploadDao {
 	
 	/**
 	 * Inserts surveys and prompts into the survey_response and prompt_response tables. Expects the surveys to be in the form of
-	 * DataPackets where each survey contains a list of prompt response DataPackets as well.
+	 * DataPackets where each survey contains a list of prompt response DataPackets.
 	 * 
-	 * TODO the inserts in this method must be made transactional
+	 * TODO this method is too big and needs to be refactored
 	 */
 	@Override
 	public void execute(AwRequest awRequest) {
 		final int campaignConfigurationId;
 		
+		// Get the campaign_configuration.id for linking a survey_response to the correct configuration
 		try {
 			campaignConfigurationId = getJdbcTemplate().queryForInt(
 				_selectCampaignConfigId, 
@@ -70,135 +76,184 @@ public class SurveyUploadDao extends AbstractUploadDao {
 			throw new DataAccessException(irsdae);
 		}
 		catch(org.springframework.dao.DataAccessException dae) {
-			_logger.error(dae.getMessage(), dae);
+		
+			_logger.error("error running SQL: " + _selectCampaignConfigId, dae);
 			throw new DataAccessException(dae); 
 		}
 		
-		// TODO need a transaction here !
-		
+		// Prep for insert
 		List<DataPacket> surveys = awRequest.getDataPackets(); // each survey is JSON stored as a String
 		final int userId = awRequest.getUser().getId();
 		int numberOfSurveys = surveys.size();
 		int surveyIndex = 0;
-		boolean persistingSurvey = false;
+		
+		// The following variables are used in logging messages when errors occur
 		SurveyDataPacket currentSurveyDataPacket = null;
 		PromptResponseDataPacket currentPromptResponseDataPacket = null;
 		int currentSurveyResponseId = -1;
 		
-		try {
-			for(; surveyIndex < numberOfSurveys; surveyIndex++) {
+		// Wrap all of the inserts in a transaction 
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setName("survey upload");
+		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(getDataSource());
+		TransactionStatus status = transactionManager.getTransaction(def); // begin transaction
+		
+		// Use a savepoint to handle nested rollbacks if duplicates are found
+		Object savepoint = status.createSavepoint();
+		
+		try { // handle TransactionExceptions
+			
+			try { // handle DataAccessExceptions
 				
-				final SurveyDataPacket surveyDataPacket = (SurveyDataPacket) surveys.get(surveyIndex);
-				currentSurveyDataPacket = surveyDataPacket; // this is annoying, but the currentSurveyDataPacket is used for 
-				                                            // logging purposes outside of the try/catch because the locally final 
-				                                            // surveyDataPacket cannot be defined as final outside of the loop's 
-				                                            // scope. this "current" variable strategy is used below as well for the
-				                                            // same reason.
-				
-				KeyHolder idKeyHolder = new GeneratedKeyHolder();
-				persistingSurvey = true;
-				
-				// First, insert the survey
-				
-				getJdbcTemplate().update(
-					new PreparedStatementCreator() {
-						public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-							PreparedStatement ps 
-								= connection.prepareStatement(_insertSurveyResponse, Statement.RETURN_GENERATED_KEYS);
-							ps.setInt(1, userId);
-							ps.setInt(2, campaignConfigurationId);
-							ps.setTimestamp(3, Timestamp.valueOf(surveyDataPacket.getDate()));
-							ps.setLong(4, surveyDataPacket.getEpochTime());
-							ps.setString(5, surveyDataPacket.getTimezone());
-							if(surveyDataPacket.getLatitude().isNaN()) {
-								ps.setNull(6, Types.DOUBLE);
-							} else {
-								ps.setDouble(6, surveyDataPacket.getLatitude());
-							}
-							if(surveyDataPacket.getLongitude().isNaN()) { 
-								ps.setNull(7, Types.DOUBLE);
-							} else {
-								ps.setDouble(7, surveyDataPacket.getLongitude());
-							}
-							ps.setDouble(8, surveyDataPacket.getAccuracy());
-							ps.setString(9, surveyDataPacket.getProvider());
-							ps.setString(10, surveyDataPacket.getSurveyId());
-							ps.setString(11, surveyDataPacket.getSurvey());
-							
-							return ps;
-						}
-					},
-					idKeyHolder
-				);
-				
-				final Number surveyResponseId = idKeyHolder.getKey(); // the primary key on the survey_response table for the 
-				                                                      // just-inserted survey
-				currentSurveyResponseId = surveyResponseId.intValue();
-				
-				// Now insert each prompt response from the survey
-				
-				List<PromptResponseDataPacket> promptResponseDataPackets = surveyDataPacket.getResponses();
-				for(int i = 0; i < promptResponseDataPackets.size(); i++) {
-					persistingSurvey = false;
-					final PromptResponseDataPacket prdp = promptResponseDataPackets.get(i);	
-					currentPromptResponseDataPacket = prdp;
+				for(; surveyIndex < numberOfSurveys; surveyIndex++) {
+					
+					final SurveyDataPacket surveyDataPacket = (SurveyDataPacket) surveys.get(surveyIndex);
+					currentSurveyDataPacket = surveyDataPacket; // this is annoying, but the currentSurveyDataPacket is used for 
+					                                            // logging purposes outside of the try/catch because the locally final 
+					                                            // surveyDataPacket cannot be defined as final outside of the loop's 
+					                                            // scope. this "current" variable strategy is also used below for the
+					                                            // same reason.
+					
+					KeyHolder idKeyHolder = new GeneratedKeyHolder();
+					
+					// First, insert the survey
 					
 					getJdbcTemplate().update(
 						new PreparedStatementCreator() {
 							public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
 								PreparedStatement ps 
-									= connection.prepareStatement(_insertPromptResponse);
+									= connection.prepareStatement(_insertSurveyResponse, Statement.RETURN_GENERATED_KEYS);
 								ps.setInt(1, userId);
-								ps.setInt(2, surveyResponseId.intValue());
-								ps.setString(3, prdp.getRepeatableSetId());
-								if(null != prdp.getRepeatableSetIteration()) {
-									ps.setInt(4, prdp.getRepeatableSetIteration());
+								ps.setInt(2, campaignConfigurationId);
+								ps.setTimestamp(3, Timestamp.valueOf(surveyDataPacket.getDate()));
+								ps.setLong(4, surveyDataPacket.getEpochTime());
+								ps.setString(5, surveyDataPacket.getTimezone());
+								if(surveyDataPacket.getLatitude().isNaN()) {
+									ps.setNull(6, Types.DOUBLE);
 								} else {
-									ps.setNull(4, java.sql.Types.NULL);
+									ps.setDouble(6, surveyDataPacket.getLatitude());
 								}
-								ps.setString(5, prdp.getType());
-								ps.setString(6, prdp.getPromptId());
-								ps.setString(7, prdp.getValue());
+								if(surveyDataPacket.getLongitude().isNaN()) { 
+									ps.setNull(7, Types.DOUBLE);
+								} else {
+									ps.setDouble(7, surveyDataPacket.getLongitude());
+								}
+								ps.setDouble(8, surveyDataPacket.getAccuracy());
+								ps.setString(9, surveyDataPacket.getProvider());
+								ps.setString(10, surveyDataPacket.getSurveyId());
+								ps.setString(11, surveyDataPacket.getSurvey());
 								
 								return ps;
 							}
-						}
+						},
+						idKeyHolder
 					);
+					
+					savepoint = status.createSavepoint();
+					
+					final Number surveyResponseId = idKeyHolder.getKey(); // the primary key on the survey_response table for the 
+					                                                      // just-inserted survey
+					currentSurveyResponseId = surveyResponseId.intValue();
+					
+					// Now insert each prompt response from the survey
+					
+					List<PromptResponseDataPacket> promptResponseDataPackets = surveyDataPacket.getResponses();
+					
+					for(int i = 0; i < promptResponseDataPackets.size(); i++) {
+						final PromptResponseDataPacket prdp = promptResponseDataPackets.get(i);	
+						currentPromptResponseDataPacket = prdp;
+						
+						getJdbcTemplate().update(
+							new PreparedStatementCreator() {
+								public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+									PreparedStatement ps 
+										= connection.prepareStatement(_insertPromptResponse);
+									ps.setInt(1, userId);
+									ps.setInt(2, surveyResponseId.intValue());
+									ps.setString(3, prdp.getRepeatableSetId());
+									if(null != prdp.getRepeatableSetIteration()) {
+										ps.setInt(4, prdp.getRepeatableSetIteration());
+									} else {
+										ps.setNull(4, java.sql.Types.NULL);
+									}
+									ps.setString(5, prdp.getType());
+									ps.setString(6, prdp.getPromptId());
+									ps.setString(7, prdp.getValue());
+									
+									return ps;
+								}
+							}
+						);
+					}
 				}
+				
+			} catch (DataIntegrityViolationException dive) { // a unique index exists only on the survey_response table
+				
+				if(isDuplicate(dive)) {
+					
+					if(_logger.isDebugEnabled()) {
+						_logger.info("found a duplicate survey upload message");
+					}
+					
+					handleDuplicate(awRequest, surveyIndex);
+					_logger.info("rolling back to savepoint because a duplicate was found");
+					status.rollbackToSavepoint(savepoint);
+					
+				} else {
+				
+					// some other integrity violation occurred - bad!! All of the data to be inserted must be validated
+					// before this DAO runs so there is either missing validation or somehow an auto_incremented key
+					// has been duplicated
+					
+					logError(currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
+					rollback(transactionManager, status, currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
+					throw new DataAccessException(dive);
+				}
+					
+			} catch (org.springframework.dao.DataAccessException dae) { // some other database problem happened that prevented
+				                                                        // the SQL from completing normally
+				
+				logError(currentPromptResponseDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
+				rollback(transactionManager, status, currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
+				throw new DataAccessException(dae);
 			}
 			
-		} catch (DataIntegrityViolationException dive) { // a unique index exists only on the survey_response table 
-				
-			if(isDuplicate(dive)) {
-				
-				if(_logger.isDebugEnabled()) {
-					_logger.info("found a duplicate survey upload message");
-				}
-				
-				// handleDuplicate(awRequest, surveyIndex, currentSurveyDataPacket, userId);
-				handleDuplicate(awRequest, surveyIndex);
-				
-			} else {
+			// Finally, commit the transaction
+			transactionManager.commit(status);
+			_logger.info("completed survey message persistence");
+		} 
+		
+		catch (TransactionException te) { 
 			
-				// some other integrity violation occurred - bad!! All of the data to be inserted must be validated
-				// before this DAO runs so there is either missing validation or somehow an auto_incremented key
-				// has been duplicated
-				
-				logError(persistingSurvey, currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
-				throw new DataAccessException(dive);
-			}
-				
-		} catch (org.springframework.dao.DataAccessException dae) { // some other database problem happened that prevented
-			                                                        // the SQL from completing normally
-			
-			logError(persistingSurvey, currentPromptResponseDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
-			throw new DataAccessException(dae);
+			_logger.error("failed to commit survey upload transaction, attempting to rollback", te);
+			rollback(transactionManager, status, currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
+			logError(currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId);
+			throw new DataAccessException(te);
 		}
 	}
 	
-	private void logError(boolean persistingSurvey, DataPacket dp, int userId, int campaignConfigurationId, int surveyResponseId) {
+	/**
+	 * Attempts to rollback a transaction. 
+	 */
+	private void rollback(PlatformTransactionManager transactionManager, TransactionStatus transactionStatus, 
+			DataPacket dp, int userId, int campaignConfigurationId, int surveyResponseId) {
+		
+		try {
+			
+			_logger.info("rolling back a failed survey upload transaction");
+			transactionManager.rollback(transactionStatus);
+			
+		} catch (TransactionException te) {
+			
+			_logger.error("failed to rollback survey upload transaction", te);
+			logError(dp, userId, campaignConfigurationId, surveyResponseId);
+			throw new DataAccessException(te);
+		}
+	}
+	
+	private void logError(DataPacket dp, int userId, int campaignConfigurationId, int surveyResponseId) {
 
-		if(persistingSurvey) {
+		if(dp instanceof SurveyDataPacket) {
 			
 			SurveyDataPacket sdp = (SurveyDataPacket) dp;
 			
@@ -216,16 +271,4 @@ public class SurveyUploadDao extends AbstractUploadDao {
 				+ ", " + prdp.getPromptId() + ", " + prdp.getValue());
 		}
 	}
-	
-//	private void handleDuplicate(AwRequest awRequest, int surveyIndex, SurveyDataPacket surveyDataPacket, int userId) {
-//		handleDuplicate(awRequest, surveyIndex);
-//		
-//		List<DuplicateSurveyUpload> dupes = awRequest.getDuplicateSurveyUploads();
-//		if(null == dupes) {
-//			dupes = new ArrayList<DuplicateSurveyUpload>();
-//			awRequest.setDuplicateSurveyUploads(dupes);
-//		}
-//		
-//		dupes.add(new DuplicateSurveyUpload(userId, surveyDataPacket.getEpochTime(), surveyDataPacket.getSurveyId()));
-//	}
 }
