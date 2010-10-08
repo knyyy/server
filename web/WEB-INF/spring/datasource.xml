@@ -4,10 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="properties" ref="dbProps"/>
-  </bean>
-
   <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
     <property name="driverClassName" value="${db.driver}"/>
     <property name="url" value="${db.jdbcurl}"/>

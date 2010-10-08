@@ -17,7 +17,6 @@ import edu.ucla.cens.awserver.request.UploadAwRequest;
  * @author selsky
  */
 public class MobilityUploadAwRequestCreator implements AwRequestCreator {
-//	private static Logger _logger = Logger.getLogger(SensorUploadAwRequestCreator.class);
 	
 	/**
 	 * Default no-arg constructor. Simply creates an instance of this class.
@@ -27,15 +26,15 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 	}
 	
 	/**
-	 *  Pulls the u (userName), c (campaign), ci (client), and d (json data) parameters out of the HttpServletRequest and places
-	 *  them in a new AwRequest.
+	 *  Pulls the u (userName), p (password), c (campaign), ci (client), and d (json data) parameters out of the HttpServletRequest
+	 *  and places them in a new AwRequest.
 	 */
 	public AwRequest createFrom(HttpServletRequest request) {
 		String sessionId = request.getSession(false).getId(); // for upload logging to connect app logs to upload logs
 		
 		String userName = request.getParameter("u");
 		String campaignId = request.getParameter("c");
-		String password = request.getParameter("p");
+		String password = request.getParameter("p"); 
 		String ci = request.getParameter("ci");
 		String jsonData = null; 
 		try {

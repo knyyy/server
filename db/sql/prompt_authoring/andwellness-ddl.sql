@@ -149,6 +149,8 @@ CREATE TABLE prompt_response (
   repeatable_set_iteration tinyint unsigned,
   response text NOT NULL,   -- the data format is defined by the prompt type: a string or a JSON string
    
+  audit_timestamp timestamp default current_timestamp on update current_timestamp,
+  
   PRIMARY KEY (id),
   INDEX (user_id, survey_response_id),
   -- uniqueness of survey uploads is handled by the survey_response table
@@ -158,14 +160,19 @@ CREATE TABLE prompt_response (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
--- Points a UUID to a URL-based resource (such as an image) 
+-- Points a UUID to a URL of a media resource (such as an image). Most
+-- media resources are bound to a prompt_response, but they are 
+-- bound asynchronously so there is no explicit link between the two tables.
 -- --------------------------------------------------------------------
 CREATE TABLE url_based_resource (
     id  integer unsigned NOT NULL auto_increment,
-    uuid char (36) NOT NULL,
+    user_id smallint(6) unsigned NOT NULL, 
+    uuid char (36) NOT NULL, -- joined with prompt_response.response to retrieve survey context for an item
     url text,
+    audit_timestamp timestamp default current_timestamp on update current_timestamp,
     UNIQUE (uuid), -- disallow duplicates and index on UUID
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------

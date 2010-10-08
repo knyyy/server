@@ -126,6 +126,18 @@ public abstract class AbstractAwRequest implements AwRequest {
 		throw new UnsupportedOperationException("it is illegal to invoke getClient() on this instance");
 	}
 
+	public byte[] getMedia() {
+		throw new UnsupportedOperationException("it is illegal to invoke getMedia() on this instance");
+	}
+	
+	public String getMediaId() {
+		throw new UnsupportedOperationException("it is illegal to invoke getMediaId() on this instance");
+	}
+	
+	public String getMediaType() {
+		throw new UnsupportedOperationException("it is illegal to invoke getMediaType() on this instance");
+	}
+	
 	public int[] getPromptIdArray() {
 		throw new UnsupportedOperationException("it is illegal to invoke getPromptIdArray() on this instance");
 	}
@@ -228,6 +240,18 @@ public abstract class AbstractAwRequest implements AwRequest {
 
 	public void setClient(String client) {
 		throw new UnsupportedOperationException("it is illegal to invoke setClient() on this instance");
+	}
+
+	public void setMedia(byte[] media) {
+		throw new UnsupportedOperationException("it is illegal to invoke setMedia() on this instance");
+	}
+
+	public void setMediaId(String id) {
+		throw new UnsupportedOperationException("it is illegal to invoke setMediaId() on this instance");
+	}
+
+	public void setMediaType(String id) {
+		throw new UnsupportedOperationException("it is illegal to invoke setMediaType() on this instance");
 	}
 
 //	public void setPromptIdArray(int[] promptIdArray) {

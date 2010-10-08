@@ -1,0 +1,58 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+  <!--  
+     Spring ApplicationContext configuration for media data upload (jpeg images for now, but video, audio, text, in the future)  
+  -->
+  
+  <!-- Servlet-to-AW hooks -->
+  <!-- pre-validate -->
+  <bean id="mediaUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MediaUploadValidator" />
+  <!-- create AwRequest from data in the HttpServletRequest -->
+  <bean id="mediaUploadAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.MediaUploadAwRequestCreator" />
+  <!-- generate output - see successOrFailResponseWriter in mobilityUploadController.xml -->
+  
+  <!-- Controller - main workflow -->
+  <bean id="mediaUploadController" class="edu.ucla.cens.awserver.controller.ControllerImpl">
+    <constructor-arg index="0">
+    <!-- service the upload request -->
+      <list>
+        <ref bean="uploadAuthenticationService" />
+        <ref bean="imageUploadDaoService" />
+      </list>
+    </constructor-arg>
+    <property name="validators">
+      <list>
+        <ref bean="uploadUserNameValidator" />
+        <ref bean="hashedPasswordValidator" />
+        <!-- TODO need to check that there is a valid jpeg in awRequest.getMedia() --> 
+        
+        <!-- any validator that simply checked for a empty string has been removed because it was redundant with 
+             validation performed in the servlet world -->
+      </list>
+    </property>
+    <!-- <property name="postProcessingService"> -->
+      <!-- log upload stats, the upload itself, any failed upload info, and duplicates to the filesystem -->  
+     <!-- <bean id="messageLoggerService" class="edu.ucla.cens.awserver.service.MessageLoggerService">
+        <constructor-arg index="0">
+          <value>media</value>
+        </constructor-arg>
+      </bean>
+    </property> -->
+    <property name="featureName"><value>media upload</value></property>
+  </bean>
+  
+  <bean id="imageUploadDaoService" class="edu.ucla.cens.awserver.service.DaoService">
+    <constructor-arg index="0"><ref bean="imageUploadDao" /></constructor-arg>
+  </bean> 
+  
+  <!-- for now the mediaUploadDao only works with jpeg images -->
+  <bean id ="imageUploadDao" class="edu.ucla.cens.awserver.dao.UrlBasedResourceDao">
+    <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
+    <constructor-arg index="1" value="${system.imageDir}"/>
+    <constructor-arg index="2" value=".jpg" />
+  </bean>
+  
+</beans>

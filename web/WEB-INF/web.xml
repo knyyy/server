@@ -112,6 +112,11 @@
     <servlet-name>default</servlet-name>
     <url-pattern>*.gif</url-pattern>
   </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.jpg</url-pattern>
+  </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>default</servlet-name>
@@ -233,6 +238,10 @@
       <param-value>surveyUploadController</param-value>
     </init-param>
     <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>surveyUploadHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
       <param-name>responseWriterName</param-name>
       <param-value>successOrFailResponseWriter</param-value>
     </init-param>
@@ -244,7 +253,7 @@
     <url-pattern>/app/u/survey</url-pattern>
   </servlet-mapping>
   
-  <!--  Media Data Upload: images 
+  <!--  Media Data Upload -->
   <servlet>
     <description>
       processes media data uploads from a client 
@@ -260,6 +269,10 @@
       <param-value>mediaUploadController</param-value>
     </init-param>
     <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>mediaUploadHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
       <param-name>responseWriterName</param-name>
       <param-value>successOrFailResponseWriter</param-value>
     </init-param>
@@ -270,7 +283,7 @@
     <servlet-name>MediaUploadServlet</servlet-name>
     <url-pattern>/app/u/media</url-pattern>
   </servlet-mapping>
-   -->
+   
   <!--  
       Stateless Authentication  
   -->

@@ -108,4 +108,13 @@ import edu.ucla.cens.awserver.domain.User;
 	 
 //	 List<DuplicateSurveyUpload> getDuplicateSurveyUploads();
 //	 void setDuplicateSurveyUploads(List<DuplicateSurveyUpload> duplicates);
+	 
+	 String getMediaId();
+	 void setMediaId(String id);
+	 
+	 byte[] getMedia();
+	 void setMedia(byte[] media);
+	 
+	 String getMediaType();
+	 void setMediaType(String id);
 }

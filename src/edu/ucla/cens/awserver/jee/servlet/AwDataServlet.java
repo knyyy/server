@@ -96,16 +96,28 @@ public class AwDataServlet extends AbstractAwHttpServlet {
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException { // allow Tomcat to handle Servlet and IO Exceptions
 		
-		// Top-level security validation (if configured with a validator)
-		if(null != _httpServletRequestValidator && ! _httpServletRequestValidator.validate(request)) {
+		AwRequest awRequest = null;
+		
+		try {
 			
-			response.sendError(HttpServletResponse.SC_NOT_FOUND); // if some entity is doing strange stuff, just respond with a 404
-			                                                      // in order not to give away too much about how the app works
+			// Top-level security validation (if configured with a validator)
+			if(null != _httpServletRequestValidator && ! _httpServletRequestValidator.validate(request)) {
+				
+				response.sendError(HttpServletResponse.SC_NOT_FOUND); // if some entity is doing strange stuff, just respond with a 404
+				                                                      // in order not to give away too much about how the app works
+				return;
+			}
+			
+			// Map data from the inbound request to our internal format
+			awRequest = _awRequestCreator.createFrom(request);
+			
+		} catch(IllegalStateException ise) {
+			
+			_logger.error("caught IllegalStateException", ise);
+			response.sendError(HttpServletResponse.SC_NOT_FOUND); // return a 404 in order to avoid giant stack traces returned to
+			                                                      // the client in the case of throwing a ServletException
 			return;
 		}
-		
-		// Map data from the inbound request to our internal format
-		AwRequest awRequest = _awRequestCreator.createFrom(request);
 		
 		try {
 			
@@ -113,6 +125,8 @@ public class AwDataServlet extends AbstractAwHttpServlet {
 			_controller.execute(awRequest);
 			
 		} catch (ControllerException ce) {
+			
+			_logger.error("caught ControllerException", ce);
 			
 			if(! awRequest.isFailedRequest()) { // this is bad because it means an error occurred and the code didn't mark up 
 				                                // the awRequest correctly
