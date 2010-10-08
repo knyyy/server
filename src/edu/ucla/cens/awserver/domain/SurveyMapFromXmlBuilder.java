@@ -83,7 +83,8 @@ public class SurveyMapFromXmlBuilder implements SurveyMapBuilder {
 			
 			Survey survey = new Survey(surveyId, surveyItemMap);
 			surveyMap.put(surveyId, survey);
-			_logger.info(survey);
+			// TODO make this a debug prop
+			// _logger.info(survey);
 			
 		}
 		

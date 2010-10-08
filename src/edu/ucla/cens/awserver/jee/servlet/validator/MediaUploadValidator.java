@@ -29,8 +29,14 @@ import edu.ucla.cens.awserver.request.MediaUploadAwRequest;
 public class MediaUploadValidator extends AbstractHttpServletRequestValidator {
 	private static Logger _logger = Logger.getLogger(MediaUploadValidator.class);
 	private Set<String> _parameterSet;
+	private DiskFileItemFactory _diskFileItemFactory;
 	
-	public MediaUploadValidator() {
+	public MediaUploadValidator(DiskFileItemFactory diskFileItemFactory) {
+		if(null == diskFileItemFactory) {
+			throw new IllegalArgumentException("a DiskFileItemFactory is required");
+		}
+		_diskFileItemFactory = diskFileItemFactory;
+		
 		_parameterSet = new TreeSet<String>();
 		_parameterSet.addAll(Arrays.asList(new String[]{"c","ci","i","p","u"}));
 	}
@@ -42,11 +48,8 @@ public class MediaUploadValidator extends AbstractHttpServletRequestValidator {
 	@Override
 	public boolean validate(HttpServletRequest request) {
 		
-		// Create a factory for disk-based file items
-		FileItemFactory factory = new DiskFileItemFactory();
-
 		// Create a new file upload handler
-		ServletFileUpload upload = new ServletFileUpload(factory);
+		ServletFileUpload upload = new ServletFileUpload(_diskFileItemFactory);
 		upload.setHeaderEncoding("UTF-8");
 		
 		List uploadedItems = null;
@@ -76,7 +79,7 @@ public class MediaUploadValidator extends AbstractHttpServletRequestValidator {
 		for(int i = 0; i < numberOfUploadedItems; i++) {
 			FileItem fi = (FileItem) uploadedItems.get(i);
 			
-			if(fi.isFormField()) { _logger.debug("found form field");
+			if(fi.isFormField()) {
 				String name = fi.getFieldName();
 				if(! _parameterSet.contains(name)) {
 					
@@ -117,19 +120,18 @@ public class MediaUploadValidator extends AbstractHttpServletRequestValidator {
 						return false;
 					}
 					
-					_logger.debug("'" + fi.getString() + "'");
+					// _logger.debug("'" + fi.getString() + "'");
 					
 					String tmp = null;
 					try {
+					
 						tmp = URLDecoder.decode(fi.getString("UTF-8"), "UTF-8");
-						_logger.debug("'" + tmp + "'");
+					
 					} catch(UnsupportedEncodingException uee) {
 						
 						_logger.error(uee.getMessage());
 					}
 					
-					
-					// user.setPassword(fi.getString());
 					user.setPassword(tmp);
 				}
 				
@@ -144,7 +146,6 @@ public class MediaUploadValidator extends AbstractHttpServletRequestValidator {
 				}
 				
 			} else { // it's an attached file 
-				_logger.debug("not a form field");
 				
 				// The media data is not checked because its length is so variable and potentially huge.
 				// The default setting for Tomcat is to disallow requests that are greater than 2MB, which may have to change in the future

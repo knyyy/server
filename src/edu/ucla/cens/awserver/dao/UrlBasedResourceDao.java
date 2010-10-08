@@ -99,6 +99,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 				if(! f.createNewFile()) { // bad!! This means the file already exists, but there was no row for it in 
 					                      // url_based_resource
 					rollback(transactionManager, status);
+					f = null;
 					throw new DataAccessException("file already exists: " + url); 
 				}
 				

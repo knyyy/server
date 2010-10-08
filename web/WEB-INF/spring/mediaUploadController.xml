@@ -9,7 +9,9 @@
   
   <!-- Servlet-to-AW hooks -->
   <!-- pre-validate -->
-  <bean id="mediaUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MediaUploadValidator" />
+  <bean id="mediaUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MediaUploadValidator">
+    <constructor-arg index="0"><ref bean="diskItemFileFactory" /></constructor-arg>
+  </bean>
   <!-- create AwRequest from data in the HttpServletRequest -->
   <bean id="mediaUploadAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.MediaUploadAwRequestCreator" />
   <!-- generate output - see successOrFailResponseWriter in mobilityUploadController.xml -->
