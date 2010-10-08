@@ -73,8 +73,8 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 		PlatformTransactionManager transactionManager = new DataSourceTransactionManager(getDataSource());
 		TransactionStatus status = transactionManager.getTransaction(def); // begin transaction
 		
-		// Use a savepoint to handle nested rollbacks if duplicates are found
-		Object savepoint = status.createSavepoint();
+		// a Savepoint could be used here, but since there is only one row to be inserted a 
+		// regular rollback() will do the trick.
 		
 		try {
 			
@@ -112,6 +112,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 				while(total < length) {
 					int amountToWrite = writeLen < (length - total) ? writeLen : (length - total);
 					outputStream.write(bytes, offset, amountToWrite);
+					offset += amountToWrite;
 					total += writeLen;
 				}
 				
@@ -125,8 +126,9 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 					if(_logger.isDebugEnabled()) {
 						_logger.info("found a duplicate media upload message. uuid: " + uuid);
 					}
+					
 					handleDuplicate(awRequest, 1); // 1 is passed here because there is only one media resource uploaded at a time
-					status.rollbackToSavepoint(savepoint);
+					rollback(transactionManager, status);
 					
 				} else {
 				
