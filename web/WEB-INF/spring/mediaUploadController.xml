@@ -11,6 +11,8 @@
   <!-- pre-validate -->
   <bean id="mediaUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MediaUploadValidator">
     <constructor-arg index="0"><ref bean="diskItemFileFactory" /></constructor-arg>
+    <!-- The maximum size in bytes of a request's file attachment -->
+    <constructor-arg index="1"><value>2097152</value></constructor-arg>
   </bean>
   <!-- create AwRequest from data in the HttpServletRequest -->
   <bean id="mediaUploadAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.MediaUploadAwRequestCreator" />

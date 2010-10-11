@@ -29,12 +29,14 @@ public class MediaUploadValidator extends AbstractHttpServletRequestValidator {
 	private static Logger _logger = Logger.getLogger(MediaUploadValidator.class);
 	private Set<String> _parameterSet;
 	private DiskFileItemFactory _diskFileItemFactory;
+	private int _fileSizeMax;
 	
-	public MediaUploadValidator(DiskFileItemFactory diskFileItemFactory) {
+	public MediaUploadValidator(DiskFileItemFactory diskFileItemFactory, int fileSizeMax) {
 		if(null == diskFileItemFactory) {
 			throw new IllegalArgumentException("a DiskFileItemFactory is required");
 		}
 		_diskFileItemFactory = diskFileItemFactory;
+		_fileSizeMax = fileSizeMax;
 		
 		_parameterSet = new TreeSet<String>();
 		_parameterSet.addAll(Arrays.asList(new String[]{"c","ci","i","p","u"}));
@@ -50,8 +52,9 @@ public class MediaUploadValidator extends AbstractHttpServletRequestValidator {
 		// Create a new file upload handler
 		ServletFileUpload upload = new ServletFileUpload(_diskFileItemFactory);
 		upload.setHeaderEncoding("UTF-8");
+		upload.setFileSizeMax(_fileSizeMax);
 		
-		List uploadedItems = null;
+		List<?> uploadedItems = null;
 		
 		// Parse the request
 		try {
