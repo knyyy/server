@@ -13,7 +13,7 @@ public abstract class AbstractDataPacketBuilder implements DataPacketBuilder {
 	
 	/**
 	 * Sets the values for the fields common to all packets: date, time (millis since epoch), timezone, latitude, longitude, 
-	 * accuracy, provider.
+	 * accuracy, provider, client.
 	 */
 	public void createCommonFields(JSONObject source, MetadataDataPacket packet) {
 		String date = JsonUtils.getStringFromJsonObject(source, "date");

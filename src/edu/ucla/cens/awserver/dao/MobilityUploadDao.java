@@ -32,14 +32,15 @@ import edu.ucla.cens.awserver.request.AwRequest;
 public class MobilityUploadDao extends AbstractUploadDao {
 	private static Logger _logger = Logger.getLogger(MobilityUploadDao.class);
 
-	private final String _insertMobilityModeOnlySql = "insert into mobility_mode_only_entry" +
-	                                                  " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude," +
-	                                                  " longitude, accuracy, provider, mode) values (?,?,?,?,?,?,?,?,?) ";
+	private final String _insertMobilityModeOnlySql =   "insert into mobility_mode_only_entry"
+	                                                  + " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude,"
+	                                                  + " longitude, accuracy, provider, mode, client) values (?,?,?,?,?,?,?,?,?,?)";
 
-	private final String _insertMobilityModeFeaturesSql = "insert into mobility_mode_features_entry" +
-			                                              " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude," +
-			                                              " longitude, accuracy, provider, mode, speed, variance, average, fft)" +
-			                                              " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+	private final String _insertMobilityModeFeaturesSql =   "insert into mobility_mode_features_entry"
+			                                              + " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude," 
+			                                              + " longitude, accuracy, provider, mode, speed, variance, average, fft,"
+			                                              + " client)"
+			                                              + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	public MobilityUploadDao(DataSource datasource) {
 		super(datasource);
@@ -65,6 +66,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 		}
 		
 		int userId = awRequest.getUser().getId();
+		String client = awRequest.getClient();
 		int index = -1;
 		DataPacket currentDataPacket = null;
 		
@@ -93,11 +95,11 @@ public class MobilityUploadDao extends AbstractUploadDao {
 						                                                       // a MobilityModeFeaturesDataPacket is a 
 						                                                       // MobilityModeOnlyDataPacket -- need to check for the 
 						                                                       // superclass first
-						numberOfRowsUpdated = insertMobilityModeFeatures((MobilityModeFeaturesDataPacket)dataPacket, userId);
+						numberOfRowsUpdated = insertMobilityModeFeatures((MobilityModeFeaturesDataPacket)dataPacket, userId, client);
 						
 					} else if (dataPacket instanceof MobilityModeOnlyDataPacket){
 						
-						numberOfRowsUpdated = insertMobilityModeOnly((MobilityModeOnlyDataPacket)dataPacket, userId);
+						numberOfRowsUpdated = insertMobilityModeOnly((MobilityModeOnlyDataPacket)dataPacket, userId, client);
 						
 					} else { // this is a logical error because this class should never be called with non-mobility packets
 						
@@ -130,8 +132,8 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					// has been duplicated
 					
 					_logger.error("caught DataAccessException", dive);
-					logErrorDetails(currentDataPacket, userId);
-					rollback(transactionManager, status, currentDataPacket, userId);
+					logErrorDetails(currentDataPacket, userId, client);
+					rollback(transactionManager, status, currentDataPacket, userId, client);
 					throw new DataAccessException(dive);
 				}
 				
@@ -139,8 +141,8 @@ public class MobilityUploadDao extends AbstractUploadDao {
 				                                                        // the SQL from completing normally
 				
 				_logger.error("caught DataAccessException", dae);
-				logErrorDetails(currentDataPacket, userId);
-				rollback(transactionManager, status, currentDataPacket, userId);
+				logErrorDetails(currentDataPacket, userId, client);
+				rollback(transactionManager, status, currentDataPacket, userId, client);
 				throw new DataAccessException(dae);
 			}
 		
@@ -150,8 +152,8 @@ public class MobilityUploadDao extends AbstractUploadDao {
 		} catch (TransactionException te) { 
 			
 			_logger.error("failed to commit mobility upload transaction, attempting to rollback", te);
-			logErrorDetails(currentDataPacket, userId);
-			rollback(transactionManager, status, currentDataPacket, userId);
+			logErrorDetails(currentDataPacket, userId, client);
+			rollback(transactionManager, status, currentDataPacket, userId, client);
 			throw new DataAccessException(te);
 		}
 	}
@@ -160,7 +162,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 	 * Attempts to rollback a transaction. 
 	 */
 	private void rollback(PlatformTransactionManager transactionManager, TransactionStatus transactionStatus, 
-			DataPacket dataPacket, int userId) {
+			DataPacket dataPacket, int userId, String client) {
 		
 		try {
 			
@@ -170,7 +172,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 		} catch (TransactionException te) {
 			
 			_logger.error("failed to rollback mobility upload transaction", te);
-			logErrorDetails(dataPacket, userId);
+			logErrorDetails(dataPacket, userId, client);
 			throw new DataAccessException(te);
 		}
 	}
@@ -178,7 +180,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 	/**
 	 * Insert a row into mobility_mode_only_entry. 
 	 */
-	private int insertMobilityModeOnly(final MobilityModeOnlyDataPacket dataPacket, final int userId) { 
+	private int insertMobilityModeOnly(final MobilityModeOnlyDataPacket dataPacket, final int userId, final String client) { 
 		
 		return getJdbcTemplate().update( 
 			new PreparedStatementCreator() {
@@ -204,6 +206,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					ps.setDouble(7, dataPacket.getAccuracy());
 					ps.setString(8, dataPacket.getProvider());
 					ps.setString(9, dataPacket.getMode());
+					ps.setString(10, client);
 					
 					return ps;
 				}
@@ -214,7 +217,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 	/**
 	 * Insert a row into mobility_mode_features_entry. 
 	 */
-	private int insertMobilityModeFeatures(final MobilityModeFeaturesDataPacket dataPacket, final int userId) {
+	private int insertMobilityModeFeatures(final MobilityModeFeaturesDataPacket dataPacket, final int userId, final String client) {
 		
 		return getJdbcTemplate().update( 
 			new PreparedStatementCreator() {
@@ -245,6 +248,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					ps.setDouble(11, dataPacket.getVariance());
 					ps.setDouble(12, dataPacket.getAverage());
 					ps.setString(13, dataPacket.getFftArray());
+					ps.setString(14, client);
 											
 					return ps;
 				}
@@ -252,7 +256,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 		);
 	}
 	
-	private void logErrorDetails(DataPacket dataPacket, int userId) {
+	private void logErrorDetails(DataPacket dataPacket, int userId, String client) {
 		
 		if(dataPacket instanceof MobilityModeFeaturesDataPacket) {
 			
@@ -263,7 +267,8 @@ public class MobilityUploadDao extends AbstractUploadDao {
 				mmfdp.getTimezone() + ", " + (mmfdp.getLatitude().equals(Double.NaN) ? "null" : mmfdp.getLatitude()) +  ", " + 
 			    (mmfdp.getLongitude().equals(Double.NaN) ? "null" : mmfdp.getLongitude()) + ", " + mmfdp.getAccuracy() + ", " +
 			    mmfdp.getProvider() + ", " +  mmfdp.getMode() + ", " + 
-			    mmfdp.getSpeed() + ", " + mmfdp.getVariance() + ", " + mmfdp.getAverage() + ", " + mmfdp.getFftArray());
+			    mmfdp.getSpeed() + ", " + mmfdp.getVariance() + ", " + mmfdp.getAverage() + ", " + mmfdp.getFftArray() + ", " +
+			    client);
 			 
 		} else {
 			
@@ -273,8 +278,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 				"parameters: " + userId + ", " + mmodp.getDate() + ", " + mmodp.getEpochTime() + ", " + mmodp.getTimezone() + ", "
 				+ (mmodp.getLatitude().equals(Double.NaN) ? "null" : mmodp.getLatitude()) + ", " + 
 				(mmodp.getLongitude().equals(Double.NaN) ? "null" : mmodp.getLongitude()) + ", " + mmodp.getAccuracy() + " ," + 
-				mmodp.getProvider() + " ," + mmodp.getMode());
-			
+				mmodp.getProvider() + " ," + mmodp.getMode() + ", " + client);
 		}
 	}
 }

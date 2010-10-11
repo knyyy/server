@@ -34,7 +34,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 	private static Logger _logger = Logger.getLogger(UrlBasedResourceDao.class);
 	private String _fileSystemLoc;
 	private String _fileSuffix;
-	private static final String _insertSql = "insert into url_based_resource (user_id, uuid, url) values (?,?,?)";
+	private static final String _insertSql = "insert into url_based_resource (user_id, uuid, url, client) values (?,?,?,?)";
 	
 	public UrlBasedResourceDao(DataSource dataSource, String fileSystemLoc, String fileSuffix) {
 		super(dataSource);
@@ -60,6 +60,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 		}
 		
 		final int userId = awRequest.getUser().getId();
+		final String client = awRequest.getClient();
 		final String uuid = awRequest.getMediaId();
 		final String url = "file://" + _fileSystemLoc + "/" + uuid + _fileSuffix; 
 		if(_logger.isDebugEnabled()) {
@@ -88,6 +89,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 							ps.setInt(1, userId);
 							ps.setString(2, uuid);
 							ps.setString(3, url);
+							ps.setString(4, client);
 							return ps;
 						}
 					}

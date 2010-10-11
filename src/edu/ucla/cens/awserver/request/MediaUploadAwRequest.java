@@ -5,7 +5,7 @@ import java.util.List;
 
 
 /**
- * Represents state for uploads of binary media data.
+ * Represents state for uploads of media data.
  * 
  * @author selsky
  */

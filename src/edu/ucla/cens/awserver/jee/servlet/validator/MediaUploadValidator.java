@@ -10,7 +10,6 @@ import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -22,7 +21,7 @@ import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.MediaUploadAwRequest;
 
 /**
- * Validates a multipart/form-data POST for media upload using the Apache Commons library. 
+ * Validates a multipart/form-data POST for media upload using the Apache Commons library.
  * 
  * @author selsky
  */

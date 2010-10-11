@@ -102,6 +102,8 @@ CREATE TABLE survey_response (
   user_id smallint(6) unsigned NOT NULL,
   campaign_configuration_id smallint(4) unsigned NOT NULL,
   
+  client varchar(250) NOT NULL,
+  
   msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL, 
   phone_timezone varchar(32) NOT NULL,
@@ -117,6 +119,7 @@ CREATE TABLE survey_response (
   
   PRIMARY KEY (id),
   INDEX (user_id, campaign_configuration_id),
+  INDEX (user_id, msg_timestamp),
   UNIQUE (user_id, survey_id, epoch_millis), -- handle duplicate survey uploads
   
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,    
@@ -167,9 +170,13 @@ CREATE TABLE prompt_response (
 CREATE TABLE url_based_resource (
     id  integer unsigned NOT NULL auto_increment,
     user_id smallint(6) unsigned NOT NULL, 
+    
+    client varchar(250) NOT NULL,
+    
     uuid char (36) NOT NULL, -- joined with prompt_response.response to retrieve survey context for an item
     url text,
     audit_timestamp timestamp default current_timestamp on update current_timestamp,
+    
     UNIQUE (uuid), -- disallow duplicates and index on UUID
     PRIMARY KEY (id),
     CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -182,6 +189,9 @@ CREATE TABLE url_based_resource (
 CREATE TABLE mobility_mode_only_entry (
   id bigint unsigned NOT NULL auto_increment,
   user_id smallint(6) unsigned NOT NULL,
+  
+  client varchar(250) NOT NULL,
+  
   msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL,
   phone_timezone varchar(32) NOT NULL,
@@ -190,9 +200,13 @@ CREATE TABLE mobility_mode_only_entry (
   accuracy double,
   provider varchar(250),
   mode varchar(30) NOT NULL,
+  
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
+  
   PRIMARY KEY (id),
+  INDEX (user_id, msg_timestamp),
   UNIQUE (user_id, epoch_millis), -- enforce no-duplicates rule at the table level
+  
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -203,6 +217,9 @@ CREATE TABLE mobility_mode_only_entry (
 CREATE TABLE mobility_mode_features_entry (
   id integer unsigned NOT NULL auto_increment,
   user_id smallint(6) unsigned NOT NULL,
+  
+  client varchar(250) NOT NULL,
+  
   msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL,
   phone_timezone varchar(32) NOT NULL,
@@ -219,6 +236,7 @@ CREATE TABLE mobility_mode_features_entry (
                              -- It is simply stored the way it is sent by the phone (as a JSON array). 
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   PRIMARY KEY (id),
+  INDEX (user_id, msg_timestamp),
   UNIQUE INDEX (user_id, epoch_millis),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
