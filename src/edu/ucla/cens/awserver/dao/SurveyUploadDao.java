@@ -36,17 +36,21 @@ import edu.ucla.cens.awserver.request.AwRequest;
 public class SurveyUploadDao extends AbstractUploadDao {
 	private static Logger _logger = Logger.getLogger(SurveyUploadDao.class);
 	
-	private final String _selectCampaignConfigId = "select id from campaign_configuration where campaign_id = ? and version = ?";
+	private final String _selectCampaignConfigId = "SELECT cc.id" +
+												   " FROM campaign_configuration cc, campaign c" +
+			                                       " WHERE cc.campaign_id = c.id" +
+			                                       " AND cc.version = ?" +
+			                                       " AND c.name = ?";
 	
-	private final String _insertSurveyResponse = "insert into survey_response" +
+	private final String _insertSurveyResponse = "INSERT into survey_response" +
 								           		 " (user_id, campaign_configuration_id, msg_timestamp, epoch_millis, phone_timezone," +
 									 	         " latitude, longitude, accuracy, provider, survey_id, json, client) " +
-										         " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+										         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 	
-	private final String _insertPromptResponse = "insert into prompt_response" +
+	private final String _insertPromptResponse = "INSERT into prompt_response" +
 	                                             " (user_id, survey_response_id, repeatable_set_id, repeatable_set_iteration," +
 	                                             " prompt_type, prompt_id, response)" +
-	                                             " values (?,?,?,?,?,?,?)";
+	                                             " VALUES (?,?,?,?,?,?,?)";
 	
 	public SurveyUploadDao(DataSource dataSource) {
 		super(dataSource);
@@ -71,7 +75,7 @@ public class SurveyUploadDao extends AbstractUploadDao {
 		try {
 			campaignConfigurationId = getJdbcTemplate().queryForInt(
 				_selectCampaignConfigId, 
-				new Object[] {awRequest.getUser().getCurrentCampaignId(), awRequest.getCampaignVersion()}
+				new Object[] {awRequest.getCampaignVersion(), awRequest.getCampaignName()}
 			);
 		}
 		catch (IncorrectResultSizeDataAccessException irsdae) { // this means that no rows were returned on the SQL returned more 

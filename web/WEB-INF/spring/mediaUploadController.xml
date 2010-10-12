@@ -7,7 +7,7 @@
      Spring ApplicationContext configuration for media data upload (jpeg images for now, but video, audio, text, in the future)  
   -->
   
-  <!-- Servlet-to-AW hooks -->
+  <!-- Servlet-to-AW hooks see web.xml -->
   <!-- pre-validate -->
   <bean id="mediaUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MediaUploadValidator">
     <constructor-arg index="0"><ref bean="diskItemFileFactory" /></constructor-arg>
@@ -23,13 +23,13 @@
     <constructor-arg index="0">
     <!-- service the upload request -->
       <list>
-        <ref bean="uploadAuthenticationService" />
+        <ref bean="authWithHashedPasswordService" />
         <ref bean="imageUploadDaoService" />
       </list>
     </constructor-arg>
     <property name="validators">
       <list>
-        <ref bean="uploadUserNameValidator" />
+        <ref bean="userNameValidator" />
         <ref bean="hashedPasswordValidator" />
         <!-- TODO need to check that there is a valid jpeg in awRequest.getMedia() --> 
         

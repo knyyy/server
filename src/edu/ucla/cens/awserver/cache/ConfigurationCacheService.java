@@ -54,6 +54,8 @@ public class ConfigurationCacheService extends AbstractCacheService {
 
 	/**
 	 * Returns a Configuration given a CampaignNameVersion key.
+	 * 
+	 * TODO return a copy 
 	 */
 	@Override
 	public Object lookup(Object key) {

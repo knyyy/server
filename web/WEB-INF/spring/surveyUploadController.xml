@@ -7,7 +7,7 @@
   -->
   
   <!-- Servlet-to-AW hooks -->
-  <!-- pre-validate http request -->
+  <!-- validate parameters in the http request -->
   <bean id="surveyUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.SurveyUploadValidator" />
   <!-- create AwRequest from data in the HttpServletRequest -->
   <bean id="surveyUploadAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.SurveyUploadAwRequestCreator" />
@@ -22,7 +22,7 @@
     <!-- service the upload request -->
       <list>
         <!-- authenticate the user -->
-        <ref bean="uploadAuthenticationService" />
+        <ref bean="authWithHashedPasswordService" />
         <!-- validate their upload -->
         <!-- JSON validation: deep specification validation -->
         <ref bean="jsonMessageSyntaxValidationService" />
@@ -36,8 +36,7 @@
     </constructor-arg>
     <property name="validators">
       <list>
-        <!-- Top-level validation: shallow sanity-check validation -->
-        <ref bean="uploadUserNameValidator" />
+        <ref bean="userNameValidator" />
         <ref bean="hashedPasswordValidator" />
         <ref bean="campaignNameVersionValidator" />
         <!-- any validator that simply checked for a empty string has been removed because it was redundant with 

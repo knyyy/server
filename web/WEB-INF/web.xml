@@ -153,7 +153,7 @@
     <url-pattern>*.jsp</url-pattern>
   </servlet-mapping>
     
-  <!--  Login  deprecated -->
+  <!--  Login  deprecated 
   <servlet>
     <description>
       Logs a user into the system. 
@@ -168,9 +168,11 @@
       <param-name>failedRequestRedirectUrl</param-name>
       <param-value>/app/login.jsp</param-value>
     </init-param>
+    -->
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids.    
     -->
+    <!--
     <init-param>
       <param-name>controllerName</param-name>
       <param-value>authenticationController</param-value>
@@ -190,6 +192,7 @@
     <servlet-name>Login</servlet-name>
     <url-pattern>/app/login</url-pattern>
   </servlet-mapping>
+  -->
   
   <!--  Mobility Data Upload -->
   <servlet>
@@ -291,13 +294,13 @@
     <description>
      performs an authentication check for client login - the request is stateless so no token is returned
     </description>
-    <servlet-name>StatelessAuthServlet</servlet-name>
+    <servlet-name>AuthStatelessServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids. -->  
     <init-param>
       <param-name>awRequestCreatorName</param-name>
-      <param-value>statelessAuthAwRequestCreator</param-value>
+      <param-value>authAwRequestCreator</param-value>
     </init-param>
     <init-param>
       <param-name>httpServletRequestValidatorName</param-name>
@@ -305,19 +308,55 @@
     </init-param>
     <init-param>
       <param-name>controllerName</param-name>
-      <param-value>statelessAuthController</param-value>
+      <param-value>authStatelessController</param-value>
     </init-param>
     <init-param>
       <param-name>responseWriterName</param-name>
-      <param-value>statelessAuthResponseWriter</param-value>
+      <param-value>authStatelessResponseWriter</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>AuthStatelessServlet</servlet-name>
+    <url-pattern>/app/auth</url-pattern>
+  </servlet-mapping>
+  
+  <!--  
+      Token-based Authentication  
+  -->
+  <servlet>
+    <description>
+     performs an authentication check for client login and returns a token and a list of campaigns for a successfully
+     authenticated user
+    </description>
+    <servlet-name>AuthTokenServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids. -->  
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>authAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>authHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>authTokenController</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>authTokenResponseWriter</param-value>
     </init-param>
     
     <load-on-startup>1</load-on-startup>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>StatelessAuthServlet</servlet-name>
-    <url-pattern>/app/auth</url-pattern>
+    <servlet-name>AuthTokenServlet</servlet-name>
+    <url-pattern>/app/auth_token</url-pattern>
   </servlet-mapping>
   
   <!--  Handle EMA Queries  -->
@@ -516,6 +555,7 @@
     <url-pattern>/app/q/hours-since-last-update</url-pattern>
   </servlet-mapping>
   
+  <!-- TODO fix this, should it just be index.html? -->
   <welcome-file-list>
     <welcome-file>/app/login.jsp</welcome-file>
   </welcome-file-list>

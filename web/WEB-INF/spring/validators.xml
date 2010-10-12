@@ -2,20 +2,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
- 
-  <!-- TODO - there is no longer any difference between form-based and upload validation -->
- 
-  <bean id="formBasedLoginUserNameValidator" class="edu.ucla.cens.awserver.validator.AwRequestUserNameValidator">
+  
+  <bean id="clearTextPasswordValidator" class="edu.ucla.cens.awserver.validator.AwRequestPasswordValidator">
     <constructor-arg index="0"><value>[a-z\.]{9,15}</value></constructor-arg>
-    <constructor-arg index="1"><ref bean="failedRequestAnnotator" /></constructor-arg>
+    <!-- <constructor-arg index="1"><ref bean="failedRequestAnnotator" /></constructor-arg> -->
+    <constructor-arg index="1"><ref bean="uploadPasswordFailedJsonRequestAnnotator" /></constructor-arg>
   </bean>
   
-  <bean id="formBasedLoginPasswordValidator" class="edu.ucla.cens.awserver.validator.AwRequestPasswordValidator">
-    <constructor-arg index="0"><value>[a-z\.]{9,15}</value></constructor-arg>
-    <constructor-arg index="1"><ref bean="failedRequestAnnotator" /></constructor-arg>
-  </bean>
-  
-  <bean id="uploadUserNameValidator" class="edu.ucla.cens.awserver.validator.AwRequestUserNameValidator">
+  <bean id="userNameValidator" class="edu.ucla.cens.awserver.validator.AwRequestUserNameValidator">
     <constructor-arg index="0"><value>[a-z\.]{9,15}</value></constructor-arg>
     <constructor-arg index="1"><ref bean="uploadUserNameFailedJsonRequestAnnotator" /></constructor-arg>
   </bean>

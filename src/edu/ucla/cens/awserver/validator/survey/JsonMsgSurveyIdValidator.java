@@ -44,14 +44,14 @@ public class JsonMsgSurveyIdValidator extends AbstractAnnotatingJsonObjectValida
 		}
 		
 		// validate against cache configuration
-		CampaignNameVersion cnv = new CampaignNameVersion(awRequest.getUser().getCurrentCampaignName(), 
+		CampaignNameVersion cnv = new CampaignNameVersion(awRequest.getCampaignName(), 
 				                                          awRequest.getCampaignVersion());
 		
 		Configuration configuration = (Configuration) _cacheService.lookup(cnv);
 		
 		if(null == configuration) { // this is bad because it means that previous validation failed or didn't run
 			throw new IllegalStateException("missing configuration for campaign name-version pair name=" 
-				+ awRequest.getUser().getCurrentCampaignName() + " version=" + awRequest.getCampaignVersion());
+				+ awRequest.getCampaignName() + " version=" + awRequest.getCampaignVersion());
 		}
 		
 		if(! configuration.surveyIdExists(surveyId)) {

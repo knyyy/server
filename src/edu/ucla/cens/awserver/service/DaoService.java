@@ -23,7 +23,7 @@ public class DaoService implements Service {
 	}
 	
 	/**
-	 * Simple dispatches to a DAO for request processing.
+	 * Simply dispatches to a DAO for request processing.
 	 */
 	public void execute(AwRequest awRequest) {
 		try {

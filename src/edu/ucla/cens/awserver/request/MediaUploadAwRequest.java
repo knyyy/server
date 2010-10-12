@@ -12,6 +12,8 @@ import java.util.List;
 public class MediaUploadAwRequest extends ResultListAwRequest {
 	private String _client;
 	private String _sessionId;
+	private String _campaignName;
+	
 	private byte[] _media;
 	private String _mediaId;
 	private String _mediaType;
@@ -24,6 +26,10 @@ public class MediaUploadAwRequest extends ResultListAwRequest {
 	 */
 	public MediaUploadAwRequest() {
 		
+	}
+	
+	public String getCampaignName() {
+		return _campaignName;
 	}
 	
 	public long getStartTime() {
@@ -81,15 +87,19 @@ public class MediaUploadAwRequest extends ResultListAwRequest {
 	public void setDuplicateIndexList(List<Integer> duplicateIndexList) {
 		_duplicateIndexList = duplicateIndexList;
 	}
+	
+	public void setCampaignName(String campaignName) {
+		_campaignName = campaignName;
+	}
 
 	@Override
 	public String toString() {
-		return "MediaUploadAwRequest [_client=" + _client
-				+ ", _duplicateIndexList=" + _duplicateIndexList + ", _media="
-				+ Arrays.toString(_media) + ", _mediaId=" + _mediaId
-				+ ", _mediaType=" + _mediaType + ", _sessionId=" + _sessionId
-				+ ", _startTime=" + _startTime + ", toString()="
-				+ super.toString() + "]";
+		return "MediaUploadAwRequest [_campaignName=" + _campaignName
+				+ ", _client=" + _client + ", _duplicateIndexList="
+				+ _duplicateIndexList + ", _media=" + Arrays.toString(_media)
+				+ ", _mediaId=" + _mediaId + ", _mediaType=" + _mediaType
+				+ ", _sessionId=" + _sessionId + ", _startTime=" + _startTime
+				+ "]";
 	}
 }
 

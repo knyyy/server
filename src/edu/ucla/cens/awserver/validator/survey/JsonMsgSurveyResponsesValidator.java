@@ -59,7 +59,7 @@ public class JsonMsgSurveyResponsesValidator extends AbstractAnnotatingJsonObjec
 		JSONArray jsonArray = JsonUtils.getJsonArrayFromJsonObject(jsonObject, _key);
 		String surveyId = JsonUtils.getStringFromJsonObject(jsonObject, "survey_id");
 		Configuration configuration = 
-			(Configuration) _cacheService.lookup(new CampaignNameVersion(awRequest.getUser().getCurrentCampaignName(), 
+			(Configuration) _cacheService.lookup(new CampaignNameVersion(awRequest.getCampaignName(), 
                                                                          awRequest.getCampaignVersion()));
 		
 		int arraySize = jsonArray.length();

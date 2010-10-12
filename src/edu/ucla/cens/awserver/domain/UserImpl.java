@@ -17,8 +17,8 @@ public class UserImpl implements User {
     private Map<String, List<Integer>> _campaignRoles;
 	private boolean _loggedIn;
 	private String _password;
-	private String _currentCampaignId;
-	private String _currentCampaignName;
+//	private String _currentCampaignId;
+//	private String _currentCampaignName;
 	
 	public UserImpl() {
 		_id = -1;
@@ -36,8 +36,8 @@ public class UserImpl implements User {
 		_campaignRoles = new HashMap<String, List<Integer>>();
 		_campaignRoles.putAll(user.getCampaignRoles()); // shallow copy ok because once a user is created it is read-only in practice 
 		_loggedIn = user.isLoggedIn();
-		_currentCampaignId = user.getCurrentCampaignId();
-		_currentCampaignName = user.getCurrentCampaignName();
+//		_currentCampaignId = user.getCurrentCampaignId();
+//		_currentCampaignName = user.getCurrentCampaignName();
 	}
 	
     public int getId() {
@@ -90,25 +90,25 @@ public class UserImpl implements User {
 		return _password;
 	}
 	
-	public void setCurrentCampaignId(String id) {
-		_currentCampaignId = id;
-	}
+//	public void setCurrentCampaignId(String id) {
+//		_currentCampaignId = id;
+//	}
+//	
+//	public String getCurrentCampaignId() {
+//		return _currentCampaignId;
+//	}
+//
+//	public void setCurrentCampaignName(String name) {
+//		_currentCampaignName = name;
+//	}
+//	
+//	public String getCurrentCampaignName() {
+//		return _currentCampaignName;
+//	}
 	
-	public String getCurrentCampaignId() {
-		return _currentCampaignId;
-	}
-
-	public void setCurrentCampaignName(String name) {
-		_currentCampaignName = name;
-	}
-	
-	public String getCurrentCampaignName() {
-		return _currentCampaignName;
-	}
-	
-	public boolean getIsResearcherOrAdmin() {
+	public boolean isResearcherOrAdmin(String campaignName) {
 		boolean isResearcherOrAdmin = false;
-		List<Integer> list = getCampaignRoles().get(Integer.valueOf(getCurrentCampaignId()));
+		List<Integer> list = _campaignRoles.get(campaignName);
 		
 		for(Integer i : list) {
 			// 1 is admin, 3 is researcher (hard coded for now)
@@ -121,12 +121,12 @@ public class UserImpl implements User {
 		return isResearcherOrAdmin;
 	}
 
-	@Override
-	public String toString() {
-		return "UserImpl [_campaignRoles=" + _campaignRoles
-				+ ", _currentCampaignId=" + _currentCampaignId
-				+ ", _currentCampaignName=" + _currentCampaignName + ", _id="
-				+ _id + ", _loggedIn=" + _loggedIn + ", _password=" + _password
-				+ ", _userName=" + _userName + "]";
-	}	
+//	@Override
+//	public String toString() {
+//		return "UserImpl [_campaignRoles=" + _campaignRoles
+//				+ ", _currentCampaignId=" + _currentCampaignId
+//				+ ", _currentCampaignName=" + _currentCampaignName + ", _id="
+//				+ _id + ", _loggedIn=" + _loggedIn + ", _password=" + _password
+//				+ ", _userName=" + _userName + "]";
+//	}	
 }

@@ -29,7 +29,7 @@ public class SurveyUploadValidator extends AbstractHttpServletRequestValidator {
 		// Check for missing or extra parameters
 		
 		if(parameterMap.size() != _parameterList.size()) {
-			_logger.warn("an incorrect number of parameters was found on phone mobility upload: " + parameterMap.size());
+			_logger.warn("an incorrect number of parameters was found on phone survey upload: " + parameterMap.size());
 			return false;
 		}
 		

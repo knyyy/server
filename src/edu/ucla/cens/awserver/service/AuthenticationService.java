@@ -77,22 +77,16 @@ public class AuthenticationService extends AbstractDaoService {
 					if(! _newAccountsAllowed && loginResult.isNew()) {
 						
 						_newAccountAwRequestAnnotator.annotate(awRequest, "new account disallowed access");
-						
 						_logger.info("user " + awRequest.getUser().getUserName() + " is new and must change their password via " +
 							"phone before being granted access");
-						
 						return;
 					}
 					
 					if(! loginResult.isEnabled()) {
-						
-						// getAnnotator().annotate(awRequest, _disabledMessage);
+					
 						_disabledAccountAwRequestAnnotator.annotate(awRequest, "disabled user");
-						
 						_logger.info("user " + awRequest.getUser().getUserName() + " is not enabled for access");
-						
 						return;
-						
 					}
 					
 					// -------
@@ -110,20 +104,11 @@ public class AuthenticationService extends AbstractDaoService {
 					awRequest.getUser().addCampaignRole(loginResult.getCampaignName(), loginResult.getUserRoleId());
 				}
 				
-				// Set the current campaign on the user if the user belongs to only one campaign. If the user belongs to more
-				// than one campaign, they will have to choose a campaign post-login (TODO campaign-chooser functionality in FrontEnd)
-				if(userBelongsToOneCampaign(results)) {
-					awRequest.getUser().setCurrentCampaignId(String.valueOf(((LoginResult)results.get(0)).getCampaignId()));
-					awRequest.getUser().setCurrentCampaignName(((LoginResult)results.get(0)).getCampaignName());
-				}
-				
 				_logger.info("user " + awRequest.getUser().getUserName() + " successfully logged in");
 				
 			} else { // no user found or invalid password
 				
-				// getAnnotator().annotate(awRequest, _errorMessage);
 				_errorAwRequestAnnotator.annotate(awRequest, "user not found");
-				
 				_logger.info("user " + awRequest.getUser().getUserName() + " not found or invalid password was supplied");
 			}
 			
@@ -131,22 +116,5 @@ public class AuthenticationService extends AbstractDaoService {
 			
 			throw new ServiceException(dae);
 		}
-	}
-	
-	/**
-	 * Check to see whether the results list contains multiple campaigns. 
-	 */
-	private boolean userBelongsToOneCampaign(List<?> results) {
-		if(results.size() == 1) {
-			return true;
-		} else {
-			int cid = ((LoginResult) results.get(0)).getCampaignId();
-			for(int i = 1; i < results.size(); i++) {
-				if(cid != ((LoginResult) results.get(i)).getCampaignId()) {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 }

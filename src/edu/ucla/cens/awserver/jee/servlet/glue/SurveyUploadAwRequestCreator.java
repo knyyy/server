@@ -57,8 +57,7 @@ public class SurveyUploadAwRequestCreator implements AwRequestCreator {
         UserImpl user = new UserImpl();
         user.setUserName(userName);
         user.setPassword(password);
-        user.setCurrentCampaignName(campaignName);
-        
+                
         AwRequest awRequest = new SurveyUploadAwRequest();
 
         awRequest.setStartTime(System.currentTimeMillis());
@@ -67,6 +66,7 @@ public class SurveyUploadAwRequestCreator implements AwRequestCreator {
         awRequest.setClient(client);
         awRequest.setJsonDataAsString(jsonData);
         awRequest.setCampaignVersion(campaignVersion);
+        awRequest.setCampaignName(campaignName);
                 
         String requestUrl = request.getRequestURL().toString();
         if(null != request.getQueryString()) {

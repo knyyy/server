@@ -25,7 +25,7 @@ public class CampaignNameVersionValidator extends AbstractAnnotatingValidator {
 		
 	@Override
 	public boolean validate(AwRequest awRequest) {
-		String campaignName = awRequest.getUser().getCurrentCampaignName(); // TODO - move the current campaign out of the User class
+		String campaignName = awRequest.getCampaignName();
 		String campaignVersion = awRequest.getCampaignVersion();
 		
 		CampaignNameVersion campaignNameVersion = new CampaignNameVersion(campaignName, campaignVersion);

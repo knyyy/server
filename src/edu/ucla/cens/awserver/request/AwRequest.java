@@ -97,6 +97,9 @@ import edu.ucla.cens.awserver.domain.User;
 	 User getUser();
 	 void setUser(User user);
 	
+	 String getUserToken();
+	 void setUserToken(String token);
+	 
 	 String getRequestUrl();
 	 void setRequestUrl(String requestUrl);
 	
@@ -117,4 +120,7 @@ import edu.ucla.cens.awserver.domain.User;
 	 
 	 String getMediaType();
 	 void setMediaType(String id);
+	 
+	 String getCampaignName();
+	 void setCampaignName(String campaignName);
 }

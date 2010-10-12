@@ -15,6 +15,8 @@ public class UploadAwRequest extends ResultListAwRequest {
 	// Input state //
 	private String _client;
 	private String _sessionId;
+	private String _campaignName;
+	
 	// Processing state // 
 	private long _startTime;              // processing start time for logging
 	private int _currentMessageIndex; // used for logging errors based on the current invalid message
@@ -29,6 +31,14 @@ public class UploadAwRequest extends ResultListAwRequest {
 	 */
 	public UploadAwRequest() {
 		_currentMessageIndex = -1;
+	}
+	
+	public String getCampaignName() {
+		return _campaignName;
+	}
+	
+	public void setCampaignName(String campaignName) {
+		_campaignName = campaignName;
 	}
 	
 	public long getStartTime() {
@@ -97,14 +107,12 @@ public class UploadAwRequest extends ResultListAwRequest {
 
 	@Override
 	public String toString() {
-		return "UploadAwRequest [_client=" + _client
-				+ ", _currentMessageIndex=" + _currentMessageIndex
+		return "UploadAwRequest [_campaignName=" + _campaignName + ", _client="
+				+ _client + ", _currentMessageIndex=" + _currentMessageIndex
 				+ ", _dataPackets=" + _dataPackets + ", _duplicateIndexList="
 				+ _duplicateIndexList + ", _jsonDataAsJsonArray="
 				+ _jsonDataAsJsonArray + ", _jsonDataAsString="
 				+ _jsonDataAsString + ", _sessionId=" + _sessionId
-				+ ", _startTime=" + _startTime + ", toString()="
-				+ super.toString() + "]";
-	}	
+				+ ", _startTime=" + _startTime + "]";
+	}
 }
-

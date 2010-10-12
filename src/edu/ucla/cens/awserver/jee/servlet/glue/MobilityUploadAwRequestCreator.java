@@ -33,7 +33,7 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 		String sessionId = request.getSession(false).getId(); // for upload logging to connect app logs to upload logs
 		
 		String userName = request.getParameter("u");
-		String campaignId = request.getParameter("c");
+		String campaignName = request.getParameter("c");
 		String password = request.getParameter("p"); 
 		String ci = request.getParameter("ci");
 		String jsonData = null; 
@@ -53,7 +53,6 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 		UserImpl user = new UserImpl();
 		user.setUserName(userName);
 		user.setPassword(password);
-		user.setCurrentCampaignId(campaignId);
 		
 		AwRequest awRequest = new UploadAwRequest();
 
@@ -62,7 +61,8 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 		awRequest.setUser(user);
 		awRequest.setClient(ci);
 		awRequest.setJsonDataAsString(jsonData);
-				
+		awRequest.setCampaignName(campaignName);
+		
 		String requestUrl = request.getRequestURL().toString();
 		if(null != request.getQueryString()) {
 			requestUrl += "?" + request.getQueryString(); 
