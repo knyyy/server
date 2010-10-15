@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.request.AwRequest;
@@ -37,8 +38,16 @@ public class RetrieveConfigResponseWriter extends AbstractResponseWriter {
 			// Build the appropriate response 
 			if(! awRequest.isFailedRequest()) {
 				
-				JSONObject jsonObject = new JSONObject().put("result", "success").put("configuration", ((RetrieveConfigAwRequest) awRequest).getOutputConfigXml());
-				responseText = jsonObject.toString().replace("\n", " ");
+				JSONObject jsonObject = 
+					new JSONObject().put("result", "success")
+					                .put("configuration", ((RetrieveConfigAwRequest) awRequest).getOutputConfigXml())
+				                    .put("user_role", ((RetrieveConfigAwRequest) awRequest).getOutputUserRole())
+				                    .put("user_list", new JSONArray(((RetrieveConfigAwRequest) awRequest).getOutputUserList()))
+				                    // TODO add the special_ids when the Data Point API is written 
+				                    // The special ids can be added one by one as the system makes the queries available
+				                    .put("special_ids", new JSONArray());
+				
+				responseText = jsonObject.toString();
 				
 			} else {
 				

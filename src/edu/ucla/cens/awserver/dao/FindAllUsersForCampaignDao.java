@@ -1,14 +1,10 @@
 package edu.ucla.cens.awserver.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 
-import edu.ucla.cens.awserver.domain.SimpleUser;
 import edu.ucla.cens.awserver.request.AwRequest;
 
 /**
@@ -22,7 +18,7 @@ import edu.ucla.cens.awserver.request.AwRequest;
 public class FindAllUsersForCampaignDao extends AbstractDao {
 	private static Logger _logger = Logger.getLogger(FindAllUsersForCampaignDao.class);
 	
-	private String findAllUsersForCampaignSql = "SELECT DISTINCT user_id, login_id" +                 // distinct is used here in order to  
+	private String findAllUsersForCampaignSql = "SELECT DISTINCT login_id" +                          // distinct is used here in order to  
 												" FROM user_role_campaign urc, user u, campaign c" +  // avoid multiple rows returned for  
  												" WHERE urc.campaign_id = c.id " +                    // users with multiple roles
 												" AND urc.user_id = u.id" +
@@ -43,14 +39,15 @@ public class FindAllUsersForCampaignDao extends AbstractDao {
 				getJdbcTemplate().query(
 					findAllUsersForCampaignSql,
 					new Object[] {awRequest.getCampaignName()},
-					new RowMapper() {
-						public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-							SimpleUser su = new SimpleUser();
-							su.setId(rs.getInt(1));
-							su.setUserName(rs.getString(2));
-							return su;
-						}
-					}
+					new SingleColumnRowMapper()
+//					new RowMapper() {
+//						public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+//							SimpleUser su = new SimpleUser();
+//							su.setId(rs.getInt(1));
+//							su.setUserName(rs.getString(2));
+//							return su;
+//						}
+//					}
 				)
 			);
 			

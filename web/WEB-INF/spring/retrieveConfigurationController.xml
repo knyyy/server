@@ -20,6 +20,7 @@
       <list>
         <ref bean="tokenBasedAuthenticationService" />
         <ref bean="retrieveConfigurationService" />
+        <ref bean="userListService" />
       </list>
     </constructor-arg>
     <!-- all validation is handled in the servlet layer because it is simple sanity-check validation -->
@@ -58,5 +59,20 @@
       </bean>
     </constructor-arg>
   </bean>
+  
+   <bean id="userListService" class="edu.ucla.cens.awserver.service.UserListService">
+     <constructor-arg index="0">
+       <ref bean="findAllUsersForCampaignDao" />
+     </constructor-arg>
+    <constructor-arg index="1">
+      <ref bean="userRoleCacheService" />
+    </constructor-arg>
+  </bean>
+  
+  <bean id="findAllUsersForCampaignDao" class="edu.ucla.cens.awserver.dao.FindAllUsersForCampaignDao">
+    <constructor-arg index="0">
+      <ref bean="dataSource" />
+    </constructor-arg>
+  </bean> 
   
 </beans>
