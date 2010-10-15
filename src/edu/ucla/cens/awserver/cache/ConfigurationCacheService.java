@@ -3,6 +3,7 @@ package edu.ucla.cens.awserver.cache;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -69,4 +70,23 @@ public class ConfigurationCacheService extends AbstractCacheService {
 	public boolean containsKey(Object key) {
 		return _configurationMap.containsKey(key);
 	}
+	
+	
+	/**
+	 * This is a hacky method that assumes only one configuration will exist for a given campaign. This assumption is correct 
+	 * for the current 2.x release, but will need to be changed whenever it is decided to support multiple campaign config
+	 * versions across the entire app.
+	 */
+	public Configuration lookupByCampaign(String campaignName) {
+		Set<CampaignNameVersion> keys = _configurationMap.keySet();
+		
+		for(CampaignNameVersion key : keys) {
+			if(key.getCampaignName().equals(campaignName)) {
+				return _configurationMap.get(key);
+			}
+			
+		}
+		throw new IllegalStateException("no configurations found for campaign " + campaignName);
+	}
+	
 }

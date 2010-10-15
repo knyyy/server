@@ -43,7 +43,7 @@ public class ConfigurationDao extends AbstractParameterLessDao {
 					String campaignName = rs.getString(1);
 					String campaignVersion = rs.getString(2);
 					String xml = rs.getString(3);
-					return new Configuration(campaignName, campaignVersion, _surveyBuilder.buildFrom(xml));
+					return new Configuration(campaignName, campaignVersion, _surveyBuilder.buildFrom(xml), xml);
 				}
 		    });
 			

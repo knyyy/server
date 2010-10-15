@@ -12,14 +12,13 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.request.AwRequest;
+import edu.ucla.cens.awserver.request.RetrieveConfigAwRequest;
 
 /**
- * Writer for cases where the result being output is a simple success message or the failure message contained in an awRequest.
- * 
  * @author selsky
  */
-public class SuccessOrFailResponseWriter extends AbstractResponseWriter {
-	private static Logger _logger = Logger.getLogger(SuccessOrFailResponseWriter.class);
+public class RetrieveConfigResponseWriter extends AbstractResponseWriter {
+	private static Logger _logger = Logger.getLogger(RetrieveConfigResponseWriter.class);
 	
 	@Override
 	public void write(HttpServletRequest request, HttpServletResponse response, AwRequest awRequest) {
@@ -38,7 +37,8 @@ public class SuccessOrFailResponseWriter extends AbstractResponseWriter {
 			// Build the appropriate response 
 			if(! awRequest.isFailedRequest()) {
 				
-				responseText = new JSONObject().put("result", "success").toString();
+				JSONObject jsonObject = new JSONObject().put("result", "success").put("configuration", ((RetrieveConfigAwRequest) awRequest).getOutputConfigXml());
+				responseText = jsonObject.toString().replace("\n", " ");
 				
 			} else {
 				
@@ -52,8 +52,7 @@ public class SuccessOrFailResponseWriter extends AbstractResponseWriter {
 		catch(Exception e) { // catch Exception in order to avoid redundant catch block functionality (Java 7 will have 
 			                 // comma-separated catch clauses) 
 			
-			_logger.error("an unrecoverable exception occurred while generating a response", e);
-			
+			_logger.error("an unrecoverable exception occurred while running an EMA query", e);
 			try {
 				
 				writer.write("{\"code\":\"0103\",\"text\":\"" + e.getMessage() + "\"}");
@@ -80,5 +79,4 @@ public class SuccessOrFailResponseWriter extends AbstractResponseWriter {
 			}
 		}
 	}
-
 }

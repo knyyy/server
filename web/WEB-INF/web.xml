@@ -359,6 +359,42 @@
     <url-pattern>/app/auth_token</url-pattern>
   </servlet-mapping>
   
+  <!--  handle configuration queries  -->
+  <servlet>
+    <description>
+      returns campaign configurations and special ids (ids for queryable items that are not prompt ids) to logged-in users. also 
+      returns a list of users   
+    </description>
+    <servlet-name>ConfigRetrievalServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids.    
+    -->
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>retrieveConfigurationController</param-value>
+    </init-param>
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>retrieveConfigAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>retrieveConfigHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>retrieveConfigResponseWriter</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>ConfigRetrievalServlet</servlet-name>
+    <url-pattern>/app/q/config</url-pattern>
+  </servlet-mapping>
+  
+  
   <!--  Handle EMA Queries  -->
   <servlet>
     <description>

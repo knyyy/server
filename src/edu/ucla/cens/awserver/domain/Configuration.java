@@ -12,8 +12,9 @@ public class Configuration {
 	private String _campaignName;
 	private String _campaignVersion;
 	private Map<String, Survey> _surveyMap;
+	private String _xml;
 	
-	public Configuration(String campaignName, String campaignVersion, Map<String, Survey> surveyMap) {
+	public Configuration(String campaignName, String campaignVersion, Map<String, Survey> surveyMap, String xml) {
 		if(null == campaignName) {
 			throw new IllegalArgumentException("a campaignName is required");
 		}
@@ -23,10 +24,14 @@ public class Configuration {
 		if(null == surveyMap) {
 			throw new IllegalArgumentException("a map of surveys is required");
 		}
+		if(null == xml) {
+			throw new IllegalArgumentException("xml is required");
+		}
 		
 		_campaignName = campaignName;
 		_campaignVersion = campaignVersion;
 		_surveyMap = surveyMap; // TODO deep copy?
+		_xml = xml;
 	}
 	
 	public String getCampaignName() {
@@ -93,11 +98,18 @@ public class Configuration {
 		SurveyItem si = _surveyMap.get(surveyId).getSurveyItemMap().get(repeatableSetId);
         return ((RepeatableSet) si).getPromptMap().size();
 	}
+	
+	/**
+	 * Returns the "raw" configuration xml.
+	 */
+	public String getXml() {
+		return _xml;
+	}
 
 	@Override
 	public String toString() {
 		return "Configuration [_campaignName=" + _campaignName
 				+ ", _campaignVersion=" + _campaignVersion + ", _surveyMap="
-				+ _surveyMap + "]";
-	}
+				+ _surveyMap + ", _xml=" + _xml + "]";
+	}	
 }

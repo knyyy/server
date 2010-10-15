@@ -7,10 +7,10 @@
   -->
   
   <!-- Servlet-to-AW hooks -->
-  <!-- validate parameters in the http request -->
-  <bean id="surveyUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.SurveyUploadValidator" />
   <!-- create AwRequest from data in the HttpServletRequest -->
   <bean id="surveyUploadAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.SurveyUploadAwRequestCreator" />
+  <!-- validate parameters in the http request -->
+  <bean id="surveyUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.SurveyUploadValidator" />
   <!-- the response writer is shared with mobilityUploadController.xml -->
   
   <!-- 
