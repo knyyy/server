@@ -58,7 +58,7 @@ public class SurveyUploadAwRequestCreator implements AwRequestCreator {
         user.setUserName(userName);
         user.setPassword(password);
                 
-        AwRequest awRequest = new SurveyUploadAwRequest();
+        SurveyUploadAwRequest awRequest = new SurveyUploadAwRequest();
 
         awRequest.setStartTime(System.currentTimeMillis());
         awRequest.setSessionId(sessionId);
@@ -67,13 +67,13 @@ public class SurveyUploadAwRequestCreator implements AwRequestCreator {
         awRequest.setJsonDataAsString(jsonData);
         awRequest.setCampaignVersion(campaignVersion);
         awRequest.setCampaignName(campaignName);
-                
+
         String requestUrl = request.getRequestURL().toString();
         if(null != request.getQueryString()) {
             requestUrl += "?" + request.getQueryString(); 
         }
         
-        awRequest.setRequestUrl(requestUrl); // output in reponse in case of error
+        awRequest.setRequestUrl(requestUrl); // output in reponse in case of error, logged to filesystem
         
         NDC.push("ci=" + client); // push the client string into the Log4J NDC for the currently executing thread - this means that 
                                   // it will be in every log message for the thread

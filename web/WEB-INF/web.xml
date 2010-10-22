@@ -398,35 +398,35 @@
   <!--  Handle EMA Queries  -->
   <servlet>
     <description>
-      Runs queries for EMA (prompt response) data. 
+      Runs data point queries (prompt response data, mobility data) 
     </description>
-    <servlet-name>EmaQueryServlet</servlet-name>
+    <servlet-name>DataPointQueryServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids.    
     -->
     <init-param>
       <param-name>controllerName</param-name>
-      <param-value>emaQueryController</param-value>
+      <param-value>dataPointQueryController</param-value>
     </init-param>
     <init-param>
       <param-name>awRequestCreatorName</param-name>
-      <param-value>emaQueryAwRequestCreator</param-value>
+      <param-value>dataPointQueryAwRequestCreator</param-value>
     </init-param>
     <init-param>
       <param-name>httpServletRequestValidatorName</param-name>
-      <param-value>emaQueryHttpServletRequestValidator</param-value>
+      <param-value>dataPointQueryHttpServletRequestValidator</param-value>
     </init-param>
     <init-param>
       <param-name>responseWriterName</param-name>
-      <param-value>emaQueryResponseWriter</param-value>
+      <param-value>dataPointQueryResponseWriter</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>EmaQueryServlet</servlet-name>
-    <url-pattern>/app/q/ema</url-pattern>
+    <servlet-name>DataPointQueryServlet</servlet-name>
+    <url-pattern>/app/q/dp</url-pattern>
   </servlet-mapping>
   
   

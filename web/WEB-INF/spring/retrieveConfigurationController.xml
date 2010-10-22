@@ -12,7 +12,11 @@
   <!-- validate input data (sanity check) -->
   <bean id="retrieveConfigHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.RetrieveConfigValidator" />
   <!-- write output -->
-  <bean id="retrieveConfigResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.RetrieveConfigResponseWriter" />  
+  <bean id="retrieveConfigResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.RetrieveConfigResponseWriter">
+    <constructor-arg index="0">
+      <ref bean="dataPointAPISpecialIds" />
+    </constructor-arg>
+  </bean>  
     
   <!-- Controller -->
   <bean id="retrieveConfigurationController" class="edu.ucla.cens.awserver.controller.ControllerImpl">

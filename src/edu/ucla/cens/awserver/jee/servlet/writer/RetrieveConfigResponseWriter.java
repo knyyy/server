@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,14 @@ import edu.ucla.cens.awserver.request.RetrieveConfigAwRequest;
  */
 public class RetrieveConfigResponseWriter extends AbstractResponseWriter {
 	private static Logger _logger = Logger.getLogger(RetrieveConfigResponseWriter.class);
+	private List<String> _dataPointApiSpecialIds;
+	
+	public RetrieveConfigResponseWriter(List<String> dataPointApiSpecialIds) {
+		if(null == dataPointApiSpecialIds || dataPointApiSpecialIds.isEmpty()) {
+			_logger.warn("no data point API special ids found");
+		}
+		_dataPointApiSpecialIds = dataPointApiSpecialIds;  
+	}
 	
 	@Override
 	public void write(HttpServletRequest request, HttpServletResponse response, AwRequest awRequest) {
@@ -40,12 +49,12 @@ public class RetrieveConfigResponseWriter extends AbstractResponseWriter {
 				
 				JSONObject jsonObject = 
 					new JSONObject().put("result", "success")
-					                .put("configuration", ((RetrieveConfigAwRequest) awRequest).getOutputConfigXml())
+					                .put("configuration", ((RetrieveConfigAwRequest) awRequest).getOutputConfigXml().replaceAll("\\n", " "))
 				                    .put("user_role", ((RetrieveConfigAwRequest) awRequest).getOutputUserRole())
 				                    .put("user_list", new JSONArray(((RetrieveConfigAwRequest) awRequest).getOutputUserList()))
 				                    // TODO add the special_ids when the Data Point API is written 
 				                    // The special ids can be added one by one as the system makes the queries available
-				                    .put("special_ids", new JSONArray());
+				                    .put("special_ids", new JSONArray(_dataPointApiSpecialIds));
 				
 				responseText = jsonObject.toString();
 				

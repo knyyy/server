@@ -6,17 +6,22 @@
   <bean id="clearTextPasswordValidator" class="edu.ucla.cens.awserver.validator.AwRequestPasswordValidator">
     <constructor-arg index="0"><value>[a-z\.]{9,15}</value></constructor-arg>
     <!-- <constructor-arg index="1"><ref bean="failedRequestAnnotator" /></constructor-arg> -->
-    <constructor-arg index="1"><ref bean="uploadPasswordFailedJsonRequestAnnotator" /></constructor-arg>
+    <constructor-arg index="1"><ref bean="passwordFailedJsonRequestAnnotator" /></constructor-arg>
   </bean>
   
   <bean id="userNameValidator" class="edu.ucla.cens.awserver.validator.AwRequestUserNameValidator">
     <constructor-arg index="0"><value>[a-z\.]{9,15}</value></constructor-arg>
-    <constructor-arg index="1"><ref bean="uploadUserNameFailedJsonRequestAnnotator" /></constructor-arg>
+    <constructor-arg index="1"><ref bean="userNameFailedJsonRequestAnnotator" /></constructor-arg>
   </bean>
   
   <bean id="hashedPasswordValidator" class="edu.ucla.cens.awserver.validator.AwRequestPasswordValidator">
     <constructor-arg index="0"><value>[\w\.\$\/]{50,60}</value></constructor-arg>
-    <constructor-arg index="1"><ref bean="uploadPasswordFailedJsonRequestAnnotator" /></constructor-arg>
+    <constructor-arg index="1"><ref bean="passwordFailedJsonRequestAnnotator" /></constructor-arg>
+  </bean>
+
+  <bean id="userTokenValidator" class="edu.ucla.cens.awserver.validator.AwRequestUserTokenValidator">
+    <constructor-arg index="0"><value>[a-fA-F0-9]{8}\-[a-fA-F0-9]{4}\-[a-fA-F0-9]{4}\-[a-fA-F0-9]{4}\-[a-fA-F0-9]{12}</value></constructor-arg>
+    <constructor-arg index="1"><ref bean="userNameFailedJsonRequestAnnotator" /></constructor-arg>
   </bean>
   
   <!-- unused 
@@ -60,7 +65,7 @@
     <constructor-arg index="1"><value>jsonDataAsString</value></constructor-arg>
   </bean>
   
-  <bean id="uploadUserNameFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+  <bean id="userNameFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
         <property name="code" value="0200" />
@@ -69,7 +74,7 @@
     </constructor-arg>
   </bean>
   
-  <bean id="uploadPasswordFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+  <bean id="passwordFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
         <property name="code" value="0200" />
@@ -129,6 +134,8 @@
   
   <!-- The one and only FailedRequestAnnotator. Used for annotating AwRequests in the context of web browser to server 
        communication. 
+       
+       TODO - get rid of this because it's no longer necessary?
   -->
   <bean id="failedRequestAnnotator" class="edu.ucla.cens.awserver.validator.FailedRequestAnnotator" />
   

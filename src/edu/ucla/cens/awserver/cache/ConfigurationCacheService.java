@@ -41,9 +41,11 @@ public class ConfigurationCacheService extends AbstractCacheService {
 		
 		_logger.info("loaded " + configurations.size() + " campaign configurations");
 		
-//		for(Configuration c : _configurations) {
-//			_logger.info(c);
-//		}
+		if(_logger.isDebugEnabled()) {
+			for(Configuration c : configurations) {
+				_logger.debug(c);
+			}
+		}
 		
 		_configurationMap = new HashMap<CampaignNameVersion, Configuration>();
 		
@@ -56,7 +58,7 @@ public class ConfigurationCacheService extends AbstractCacheService {
 	/**
 	 * Returns a Configuration given a CampaignNameVersion key.
 	 * 
-	 * TODO return a copy 
+	 * TODO return a copy  
 	 */
 	@Override
 	public Object lookup(Object key) {
@@ -70,7 +72,6 @@ public class ConfigurationCacheService extends AbstractCacheService {
 	public boolean containsKey(Object key) {
 		return _configurationMap.containsKey(key);
 	}
-	
 	
 	/**
 	 * This is a hacky method that assumes only one configuration will exist for a given campaign. This assumption is correct 
@@ -86,7 +87,7 @@ public class ConfigurationCacheService extends AbstractCacheService {
 			}
 			
 		}
+		
 		throw new IllegalStateException("no configurations found for campaign " + campaignName);
 	}
-	
 }

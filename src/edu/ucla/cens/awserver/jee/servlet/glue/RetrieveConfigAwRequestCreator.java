@@ -8,8 +8,6 @@ import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.RetrieveConfigAwRequest;
 
 /**
- * AwRequestCreator for phone authentication, which includes the extra phone version (phv) parameter.
- * 
  * @author selsky
  */
 public class RetrieveConfigAwRequestCreator implements AwRequestCreator {

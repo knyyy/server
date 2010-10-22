@@ -5,7 +5,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
   
-  <!-- this makes the application properties accessible to the rest of the beans in the app -->
+  <!-- 
+    this makes application properties accessible to the rest of the beans in the app via ${}-style variable references instead
+    of the ref element 
+  --> 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="propertiesArray">
       <list>
@@ -25,5 +28,10 @@
   <util:map id="systemProps">
     <entry key="system.imageDir" value="/Users/selsky/opt/aw2/userdata/images" />
   </util:map>
+  
+  <!-- Allow queries against data points that are not prompt ids -->
+  <util:list id="dataPointAPISpecialIds">
+    <value>mobility</value>
+  </util:list>
 
 </beans>

@@ -252,7 +252,7 @@ CREATE TABLE mobility_entry_five_min_summary (
   phone_timezone varchar(32) NOT NULL,
   mode varchar(30) NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE INDEX (user_id,time_stamp, mode),
+  UNIQUE INDEX (user_id, msg_timestamp, mode),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
