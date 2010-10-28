@@ -143,7 +143,6 @@ CREATE TABLE survey_response (
 -- --------------------------------------------------------------------
 CREATE TABLE prompt_response (
   id integer unsigned NOT NULL auto_increment,
-  user_id smallint(6) unsigned NOT NULL,
   survey_response_id integer unsigned NOT NULL,
   
   prompt_id varchar(250) NOT NULL,  -- a prompt id as defined in a configuration at the XPath //promptId
@@ -155,10 +154,10 @@ CREATE TABLE prompt_response (
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   
   PRIMARY KEY (id),
-  INDEX (user_id, survey_response_id),
+  INDEX (survey_response_id),
+  INDEX (prompt_id),
   -- uniqueness of survey uploads is handled by the survey_response table
   
-  CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FOREIGN KEY (survey_response_id) REFERENCES survey_response (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
