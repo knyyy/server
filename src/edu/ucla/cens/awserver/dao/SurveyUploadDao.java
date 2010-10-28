@@ -48,9 +48,9 @@ public class SurveyUploadDao extends AbstractUploadDao {
 										         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	private final String _insertPromptResponse = "INSERT into prompt_response" +
-	                                             " (user_id, survey_response_id, repeatable_set_id, repeatable_set_iteration," +
+	                                             " (survey_response_id, repeatable_set_id, repeatable_set_iteration," +
 	                                             " prompt_type, prompt_id, response)" +
-	                                             " VALUES (?,?,?,?,?,?,?)";
+	                                             " VALUES (?,?,?,?,?,?)";
 	
 	public SurveyUploadDao(DataSource dataSource) {
 		super(dataSource);
@@ -182,17 +182,16 @@ public class SurveyUploadDao extends AbstractUploadDao {
 								public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
 									PreparedStatement ps 
 										= connection.prepareStatement(_insertPromptResponse);
-									ps.setInt(1, userId);
-									ps.setInt(2, surveyResponseId.intValue());
-									ps.setString(3, prdp.getRepeatableSetId());
+									ps.setInt(1, surveyResponseId.intValue());
+									ps.setString(2, prdp.getRepeatableSetId());
 									if(null != prdp.getRepeatableSetIteration()) {
-										ps.setInt(4, prdp.getRepeatableSetIteration());
+										ps.setInt(3, prdp.getRepeatableSetIteration());
 									} else {
-										ps.setNull(4, java.sql.Types.NULL);
+										ps.setNull(3, java.sql.Types.NULL);
 									}
-									ps.setString(5, prdp.getType());
-									ps.setString(6, prdp.getPromptId());
-									ps.setString(7, prdp.getValue());
+									ps.setString(4, prdp.getType());
+									ps.setString(5, prdp.getPromptId());
+									ps.setString(6, prdp.getValue());
 									
 									return ps;
 								}
