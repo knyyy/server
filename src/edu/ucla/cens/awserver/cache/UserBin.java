@@ -76,6 +76,7 @@ public class UserBin extends TimerTask {
 		if(null != ut) { 
 			User u = ut.getUser();
 			if(null != u) {
+				ut.setTime(System.currentTimeMillis()); // refresh the time 
 				return new UserImpl(u); // lazy to assume that UserImpl is always what's needed, but it is the only User 
 				                        // implementation for now.
 			}
@@ -84,7 +85,7 @@ public class UserBin extends TimerTask {
 	}
 	
 	/**
-	 * Starts the background thread for purging expired Users.
+	 * Background thread for purging expired Users.
 	 */
 	@Override
 	public void run() {

@@ -21,4 +21,8 @@ public class UserTime {
 	public User getUser() {
 		return _user;
 	}
+	
+	public void setTime(long time) {
+		_time = time;
+	}
 }

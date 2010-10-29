@@ -38,7 +38,7 @@
     <url-pattern>/app/*</url-pattern>
   </filter-mapping>
  
-  <!--  Handles redirect back to login for an unauthenticated user accessing content that requires stateful authentication -->
+  <!--  Handles redirect back to login for an unauthenticated user accessing content that requires stateful authentication 
   <filter>
     <filter-name>AuthenticationFilter</filter-name>
     <filter-class>edu.ucla.cens.awserver.jee.filter.AuthenticationFilter</filter-class>
@@ -52,12 +52,14 @@
     </init-param>
     <init-param>
       <param-name>ajaxUrls</param-name>
-      <!--  To add a URL, make this a comma-separated list -->
+  --><!--
+      <!--  To add a URL, make this a comma-separated list 
       <param-value>/app/q/ema,/app/q/percent-successful-location-updates,/app/q/completed-surveys-per-day,/app/q/mobility-modes-per-day,/app/q/hours-since-last-survey,/app/q/hours-since-last-update</param-value>
     </init-param>
   </filter>
+  -->
   
-  <!--  Add filter mappings for whatever resources require authenticated access --> 
+  <!--  Add filter mappings for whatever resources require authenticated access  
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
     <servlet-name>jsp</servlet-name>
@@ -68,6 +70,7 @@
     <servlet-name>MostRecentSurveyQueryServlet</servlet-name>
     <servlet-name>MostRecentActivityQueryServlet</servlet-name>
   </filter-mapping>
+  -->
   
   <!-- Servlets.  Note that url-patterns are matched against initial (or re-dispatched) requests, not a request possiblty modified
        by filters.  -->
@@ -395,7 +398,7 @@
   </servlet-mapping>
   
   
-  <!--  Handle EMA Queries  -->
+  <!--  Handle EMA Queries -->
   <servlet>
     <description>
       Runs data point queries (prompt response data, mobility data) 
@@ -423,23 +426,24 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  
   <servlet-mapping>
     <servlet-name>DataPointQueryServlet</servlet-name>
     <url-pattern>/app/q/dp</url-pattern>
   </servlet-mapping>
   
   
-  <!--  Handle location update queries -->
+  <!--  Handle location update queries 
   <servlet>
     <description>
       Runs queries for the percentage of successful location updates per day. 
     </description>
     <servlet-name>SuccessfulLocationUpdatesQueryServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+   -->
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids.    
     -->
+    <!--
     <init-param>
       <param-name>controllerName</param-name>
       <param-value>successfulLocationUpdatesQueryController</param-value>
@@ -459,6 +463,7 @@
     <servlet-name>SuccessfulLocationUpdatesQueryServlet</servlet-name>
     <url-pattern>/app/q/percent-successful-location-updates</url-pattern>
   </servlet-mapping>
+  -->
   
   <!--  Handle completed surveys queries -->
   <!--
@@ -531,22 +536,24 @@
   </servlet-mapping>
   -->
   
-  <!--  Handle hours since last survey queries -->
+  <!--  Handle hours since last survey queries
   <servlet>
     <description>
       Runs queries to determine the hours since the last survey
     </description>
     <servlet-name>MostRecentSurveyQueryServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+   -->
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids.    
     -->
+    <!--
     <init-param>
       <param-name>controllerName</param-name>
       <param-value>mostRecentSurveyQueryController</param-value>
     </init-param>
      <init-param>
-      <param-name>awRequestCreatorName</param-name> <!-- note: shared with successful location updates query -->
+      <param-name>awRequestCreatorName</param-name> --><!-- note: shared with successful location updates query --><!--
       <param-value>userOnlyAwRequestCreator</param-value>
     </init-param>
     <init-param>
@@ -555,28 +562,30 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  
   <servlet-mapping>
     <servlet-name>MostRecentSurveyQueryServlet</servlet-name>
     <url-pattern>/app/q/hours-since-last-survey</url-pattern>
   </servlet-mapping>
+  -->
   
-   <!--  Handle hours since last survey queries -->
+   <!--  Handle hours since last survey queries 
   <servlet>
     <description>
       Runs queries to determine the hours since the last survey or mobility message
     </description>
     <servlet-name>MostRecentActivityQueryServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    -->
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids.    
     -->
+    <!--
     <init-param>
       <param-name>controllerName</param-name>
       <param-value>mostRecentActivityQueryController</param-value>
     </init-param>
      <init-param>
-      <param-name>awRequestCreatorName</param-name> <!-- note: shared with successful location updates query -->
+      <param-name>awRequestCreatorName</param-name>--> <!-- note: shared with successful location updates query --><!--
       <param-value>userOnlyAwRequestCreator</param-value>
     </init-param>
     <init-param>
@@ -585,15 +594,15 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  
   <servlet-mapping>
     <servlet-name>MostRecentActivityQueryServlet</servlet-name>
     <url-pattern>/app/q/hours-since-last-update</url-pattern>
   </servlet-mapping>
+  -->
   
   <!-- TODO fix this, should it just be index.html? -->
   <welcome-file-list>
-    <welcome-file>/app/login.jsp</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
    
   <error-page>
@@ -636,7 +645,7 @@
     <session-timeout>1</session-timeout>
   </session-config>
   
-  <!--
+  <!-- Uncomment to make the entire app require HTTPS 
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Restricted URLs</web-resource-name>

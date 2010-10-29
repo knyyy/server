@@ -1,5 +1,7 @@
 package edu.ucla.cens.awserver.request;
 
+import java.util.List;
+
 
 /**
  * State for data point API queries.
@@ -12,8 +14,11 @@ public class DataPointQueryAwRequest extends ResultListAwRequest {
 	private String _userNameRequestParam;
 	private String _client;
 	private String _campaignName;
+	private String _campaignVersion;
+	
 	private String _dataPointId;
 	// private String _authToken; see userToken in parent class
+	private List<String> _metadataPromptIds;
 	
 	public String getStartDate() {
 		return _startDate;
@@ -55,6 +60,14 @@ public class DataPointQueryAwRequest extends ResultListAwRequest {
 		_campaignName = campaignName;
 	}
 
+	public String getCampaignVersion() {
+		return _campaignVersion;
+	}
+
+	public void setCampaignVersion(String campaignVersion) {
+		_campaignVersion = campaignVersion;
+	}
+	
 	public String getDataPointId() {
 		return _dataPointId;
 	}
@@ -62,12 +75,12 @@ public class DataPointQueryAwRequest extends ResultListAwRequest {
 	public void setDataPointId(String dataPointId) {
 		_dataPointId = dataPointId;
 	}
+	
+	public List<String> getMetadataPromptIds() {
+		return _metadataPromptIds;
+	}
 
-//	public String getAuthToken() {
-//		return _authToken;
-//	}
-//
-//	public void setAuthToken(String authToken) {
-//		_authToken = authToken;
-//	}
+	public void setMetadataPromptIds(List<String> metadataPromptIds) {
+		_metadataPromptIds = metadataPromptIds; 
+	}
 }

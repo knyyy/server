@@ -31,7 +31,12 @@
   
   <!-- Allow queries against data points that are not prompt ids -->
   <util:list id="dataPointAPISpecialIds">
-    <value>mobility</value>
+    <value>hours_since_last_survey</value>
+    <value>hours_since_last_update</value>
+    <value>percent_successful_location_updates</value>
+    <value>completed_surveys_per_day</value>
+    <value>mobility_modes_per_day</value>
+    <!-- other mobility special ids to be added later -->
   </util:list>
 
 </beans>

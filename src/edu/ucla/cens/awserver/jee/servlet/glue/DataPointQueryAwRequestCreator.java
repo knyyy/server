@@ -30,6 +30,7 @@ public class DataPointQueryAwRequestCreator implements AwRequestCreator {
 		String userNameRequestParam = request.getParameter("u"); // researchers are allowed to pass an optional user name
 		String client = request.getParameter("ci");
 		String campaignName = request.getParameter("c");
+		String campaignVersion = request.getParameter("cv");
 		String authToken = request.getParameter("t");
 		String dataPointId = request.getParameter("i");
 		
@@ -42,6 +43,7 @@ public class DataPointQueryAwRequestCreator implements AwRequestCreator {
 		awRequest.setClient(client);
 		awRequest.setCampaignName(campaignName);
 		awRequest.setDataPointId(dataPointId);
+		awRequest.setCampaignVersion(campaignVersion);
 		
 		return awRequest;
 	}

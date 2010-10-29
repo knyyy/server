@@ -22,7 +22,7 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 	/**
 	 */
 	public DataPointQueryValidator() {
-		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"s","e","u","c","ci","i","t"}));
+		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"s","e","u","c","ci","i","t","cv"}));
 	}
 	
 	/**
@@ -77,6 +77,7 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 		String ci = (String) httpServletRequest.getParameter("ci");
 		String t = (String) httpServletRequest.getParameter("t");
 		String i = (String) httpServletRequest.getParameter("i");
+		String cv = (String) httpServletRequest.getParameter("cv");
 		
 		// Check for abnormal lengths (buffer overflow attack)
 		// The lengths are pretty arbitrary, but values exceeded them would be very strange
@@ -84,6 +85,7 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 		if(greaterThanLength("startDate", "s", s, 50) 
 		   || greaterThanLength("endDate", "e", e, 50)
 		   || greaterThanLength("campaignName", "c", c, 250)
+		   || greaterThanLength("campaignVersion", "cv", cv, 250)
 		   || greaterThanLength("client", "ci",ci, 500)		   
 		   || greaterThanLength("authToken", "t", t, 50)
   		   || greaterThanLength("dataPointId", "i", i, 250)
