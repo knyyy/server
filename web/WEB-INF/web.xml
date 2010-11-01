@@ -53,7 +53,7 @@
     <init-param>
       <param-name>ajaxUrls</param-name>
   --><!--
-      <!--  To add a URL, make this a comma-separated list 
+       To add a URL, make this a comma-separated list 
       <param-value>/app/q/ema,/app/q/percent-successful-location-updates,/app/q/completed-surveys-per-day,/app/q/mobility-modes-per-day,/app/q/hours-since-last-survey,/app/q/hours-since-last-update</param-value>
     </init-param>
   </filter>
@@ -629,7 +629,8 @@
     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
   </listener>
 
-  <!-- Provide temp directory cleanip and ensure that the cleanup process terminates gracefully on app termination -->
+  <!-- Provide temp directory cleanup (for temp image storage) and ensure that the cleanup process terminates gracefully on 
+       app termination -->
   <listener>
     <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>

@@ -81,7 +81,12 @@ public class DataPointQueryDao extends AbstractDao {
 			result.setPromptId(rs.getString(1));
 			result.setPromptType(rs.getString(2));
 			result.setResponse(rs.getString(3));
-			result.setRepeatableSetIteration(/*null == rs.getInt(4) ? -1 :*/ rs.getInt(4));
+			Object o = rs.getObject(4);
+			if(null == o) {
+				result.setRepeatableSetIteration(-1);	
+			} else {
+				result.setRepeatableSetIteration(rs.getInt(4));
+			}
 			result.setRepeatableSetId(rs.getString(5));
 			result.setTimestamp(rs.getString(6));
 			result.setTimezone(rs.getString(7));
