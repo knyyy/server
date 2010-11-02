@@ -139,6 +139,68 @@ public class Configuration {
 		return list;
 	}
 	
+	public String getDisplayTypeFor(String surveyId, String promptId) {
+		return getPrompt(surveyId, promptId).getDisplayType();		
+	}
+	
+	public String getDisplayTypeFor(String surveyId, String repeatableSetId, String promptId) {
+		return getPrompt(surveyId, repeatableSetId, promptId).getDisplayType();
+	}
+
+	public String getDisplayLabelFor(String surveyId, String promptId) {
+		return getPrompt(surveyId, promptId).getDisplayLabel();		
+	}
+	
+	public String getDisplayLabelFor(String surveyId, String repeatableSetId, String promptId) {
+		return getPrompt(surveyId, repeatableSetId, promptId).getDisplayLabel();
+	}
+	
+	public String getValueForChoiceKey(String surveyId, String promptId, String key) {
+		return getChoiceValueFrom(getPrompt(surveyId, promptId), key);
+	}
+	
+	public String getValueForChoiceKey(String surveyId, String repeatableSetId, String promptId, String key) {
+		return getChoiceValueFrom(getPrompt(surveyId, repeatableSetId, promptId), key);
+	}
+	
+	private String getChoiceValueFrom(Prompt prompt, String key) {
+		Map<String, PromptProperty> props = prompt.getProperties();
+		String value = null;
+		if(null != props) {
+			if(props.containsKey(key)) {
+				return props.get(key).getValue();
+			}
+		}
+		return value;
+	}
+
+	public String getLabelForChoiceKey(String surveyId, String promptId, String key) {
+		return getChoiceLabelFrom(getPrompt(surveyId, promptId), key);
+	}
+	
+	public String getLabelForChoiceKey(String surveyId, String repeatableSetId, String promptId, String key) {
+		return getChoiceLabelFrom(getPrompt(surveyId, repeatableSetId, promptId), key);
+	}
+	
+	private String getChoiceLabelFrom(Prompt prompt, String key) {
+		Map<String, PromptProperty> props = prompt.getProperties();
+		String value = null;
+		if(null != props) {
+			if(props.containsKey(key)) {
+				return props.get(key).getLabel();
+			}
+		}
+		return value;
+	}
+	
+	public String getUnitFor(String surveyId, String promptId) {
+		return getPrompt(surveyId, promptId).getUnit();
+	}
+	
+	public String getUnitFor(String surveyId, String repeatableSetId, String promptId) {
+		return getPrompt(surveyId, repeatableSetId, promptId).getUnit();
+	}
+	
 	/**
 	 * Returns the "raw" configuration xml.
 	 */

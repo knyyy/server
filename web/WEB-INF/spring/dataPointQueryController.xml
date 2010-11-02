@@ -13,7 +13,7 @@
   <bean id="dataPointQueryAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.DataPointQueryAwRequestCreator" />
   <!-- write outbound data, post-controller -->
   <!-- TODO - make a specific writer -->
-  <bean id="dataPointQueryResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.SuccessOrFailResponseWriter" />
+  <bean id="dataPointQueryResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.DataPointQueryResponseWriter" />
     
   <!-- Controller -->
   <bean id="dataPointQueryController" class="edu.ucla.cens.awserver.controller.ControllerImpl">

@@ -12,15 +12,13 @@ import nu.xom.Node;
 import nu.xom.Nodes;
 import nu.xom.ParsingException;
 
-import org.apache.log4j.Logger;
-
 /**
  * Builder class that converts XML into a List of Surveys.
  * 
  * @author selsky
  */
 public class SurveyMapFromXmlBuilder implements SurveyMapBuilder {
-	private static Logger _logger = Logger.getLogger(SurveyMapFromXmlBuilder.class);
+	// private static Logger _logger = Logger.getLogger(SurveyMapFromXmlBuilder.class);
 	
 	/**
 	 * Creates a List of Surveys from the provided String that must be valid XML according to configuration.xsd. This validity
@@ -111,9 +109,16 @@ public class SurveyMapFromXmlBuilder implements SurveyMapBuilder {
 		
 		String id = node.query("id").get(0).getValue();
 		String displayType = node.query("displayType").get(0).getValue();
+		String displayLabel = node.query("displayLabel").get(0).getValue();
+		String unit = null;
+		Nodes nodes = node.query("unit");
+		if(nodes.size() > 0) {
+			unit = nodes.get(0).getValue();
+		}
+		
 		String type = node.query("promptType").get(0).getValue();
 		boolean skippable = Boolean.valueOf(node.query("skippable").get(0).getValue());
 		
-		return new Prompt(id, displayType, type, ppMap, skippable);
+		return new Prompt(id, displayType, type, ppMap, skippable, displayLabel, unit);
 	}
 }
