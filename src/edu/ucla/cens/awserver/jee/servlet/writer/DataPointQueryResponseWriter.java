@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.DataPointQueryResult;
+import edu.ucla.cens.awserver.domain.ErrorResponse;
 import edu.ucla.cens.awserver.request.AwRequest;
 
 /**
@@ -21,6 +22,11 @@ import edu.ucla.cens.awserver.request.AwRequest;
  */
 public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 	private static Logger _logger = Logger.getLogger(DataPointQueryResponseWriter.class);
+	
+	public DataPointQueryResponseWriter(ErrorResponse errorResponse) {
+		super(errorResponse);
+	}
+	
 	
 	@Override
 	public void write(HttpServletRequest request, HttpServletResponse response, AwRequest awRequest) {
@@ -32,13 +38,18 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 			String responseText = null;
 			expireResponse(response);
 			response.setContentType("application/json");
+			JSONObject rootObject = new JSONObject();
 			
 			// Build the appropriate response 
 			if(! awRequest.isFailedRequest()) {
+				
+				rootObject.put("result", "success");
+				
 				// Convert the results to JSON for output.
 				List<?> results =  awRequest.getResultList();
+				
 				JSONArray jsonArray = new JSONArray();
-					
+				
 				for(int i = 0; i < results.size(); i++) {
 					DataPointQueryResult result = (DataPointQueryResult) results.get(i);
 					JSONObject entry = new JSONObject();	
@@ -58,12 +69,11 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 						entry.put("iteration", result.getRepeatableSetIteration());
 					}
 					
-					// skipping metadata for now
-					
 					jsonArray.put(entry);
 				}
 				
-				responseText = jsonArray.toString();
+				rootObject.put("data", jsonArray);
+				responseText = rootObject.toString();
 				
 			} else {
 				
@@ -80,11 +90,11 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 			_logger.error("an unrecoverable exception occurred while running an EMA query", e);
 			try {
 				
-				writer.write("{\"code\":\"0103\",\"text\":\"" + e.getMessage() + "\"}");
+				writer.write(generalJsonErrorMessage());
 				
-			} catch (IOException ioe) {
+			} catch (Exception ee) {
 				
-				_logger.error("caught IOException when attempting to write to HTTP output stream: " + ioe.getMessage());
+				_logger.error("caught Exception when attempting to write to HTTP output stream", ee);
 			}
 			
 		} finally {
@@ -99,7 +109,7 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 					
 				} catch (IOException ioe) {
 					
-					_logger.error("caught IOException when attempting to free resources: " + ioe.getMessage());
+					_logger.error("caught IOException when attempting to free resources", ioe);
 				}
 			}
 		}

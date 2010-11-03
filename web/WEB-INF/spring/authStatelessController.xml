@@ -12,7 +12,9 @@
   <!-- create AW request -->
   <bean id="authAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.AuthAwRequestCreator" />
   <!-- generate output -->
-  <bean id="authStatelessResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.StatelessAuthResponseWriter" />
+  <bean id="authStatelessResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.StatelessAuthResponseWriter">
+    <constructor-arg index="0"><ref bean="severeErrorResponse" /></constructor-arg>
+  </bean>
     
   <!-- Controller - all components here are reused from sensorUploadController.xml -->
   <bean id="authStatelessController" class="edu.ucla.cens.awserver.controller.ControllerImpl">

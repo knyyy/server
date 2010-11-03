@@ -13,12 +13,22 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.ucla.cens.awserver.domain.ErrorResponse;
 import edu.ucla.cens.awserver.domain.MobilityModeCountQueryResult;
 import edu.ucla.cens.awserver.domain.UserDate;
 import edu.ucla.cens.awserver.request.AwRequest;
 
+/**
+ * 
+ * @deprecated
+ *
+ */
 public class MobilityModeCountQueryResponseWriter extends AbstractResponseWriter {
 	private static Logger _logger = Logger.getLogger(MobilityModeCountQueryResponseWriter.class);
+	
+	public MobilityModeCountQueryResponseWriter(ErrorResponse errorResponse) {
+		super(errorResponse);
+	}
 	
 	@Override
 	public void write(HttpServletRequest request, HttpServletResponse response, AwRequest awRequest) {
@@ -135,3 +145,4 @@ public class MobilityModeCountQueryResponseWriter extends AbstractResponseWriter
 		}
 	}
 }
+;

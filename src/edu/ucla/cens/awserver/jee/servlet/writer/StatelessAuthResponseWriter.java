@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.ucla.cens.awserver.domain.ErrorResponse;
 import edu.ucla.cens.awserver.request.AwRequest;
 
 /**
@@ -21,6 +22,10 @@ import edu.ucla.cens.awserver.request.AwRequest;
  */
 public class StatelessAuthResponseWriter extends AbstractResponseWriter {
 	private static Logger _logger = Logger.getLogger(StatelessAuthResponseWriter.class);
+	
+	public StatelessAuthResponseWriter(ErrorResponse errorResponse) {
+		super(errorResponse);
+	}
 	
 	/**
 	 * Generates the JSON response to the client. For successful responses, an array of campaign names is returned.
@@ -69,14 +74,15 @@ public class StatelessAuthResponseWriter extends AbstractResponseWriter {
 		catch(Exception e) { // catch Exception in order to avoid redundant catch block functionality (Java 7 will have 
 			                 // comma-separated catch clauses) 
 			
-			_logger.error("an unrecoverable exception occurred while running an EMA query", e);
+			_logger.error("an unrecoverable exception occurred while running stateless authentication", e);
+			
 			try {
 				
-				writer.write("{\"code\":\"0103\",\"text\":\"" + e.getMessage() + "\"}");
+				writer.write(this.generalJsonErrorMessage());
 				
-			} catch (IOException ioe) {
+			} catch (Exception ee) {
 				
-				_logger.error("caught IOException when attempting to write to HTTP output stream: " + ioe.getMessage());
+				_logger.error("caught Exception when attempting to write to HTTP output stream", ee);
 			}
 			
 		} finally {
@@ -91,7 +97,7 @@ public class StatelessAuthResponseWriter extends AbstractResponseWriter {
 					
 				} catch (IOException ioe) {
 					
-					_logger.error("caught IOException when attempting to free resources: " + ioe.getMessage());
+					_logger.error("caught IOException when attempting to free resources", ioe);
 				}
 			}
 		}

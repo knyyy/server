@@ -8,6 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import edu.ucla.cens.awserver.domain.ErrorResponse;
 
 /**
  * Abstract helper class for ResponseWriter utilities.
@@ -16,6 +21,20 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractResponseWriter implements ResponseWriter {
 	private static Logger _logger = Logger.getLogger(AbstractResponseWriter.class);
+	private ErrorResponse _errorResponse;
+	private String _successJson;
+	
+	/**
+	 * @param errorResponse the general JSON error response
+	 * @throws IllegalArgumentException if errorResponse is null
+	 */
+	public AbstractResponseWriter(ErrorResponse errorResponse) {
+		if(null == errorResponse) {
+			throw new IllegalArgumentException("an ErrorResponse is required");
+		}
+		_errorResponse = errorResponse;
+		_successJson = "{\"result\",\"success\"}";
+	}
 	
 	/**
 	 * Sets the response headers to disallow client caching.
@@ -59,5 +78,25 @@ public abstract class AbstractResponseWriter implements ResponseWriter {
 		
 		return os;
 	}
+	
+	protected String generalJsonErrorMessage() {
+		try {
+			JSONObject root = new JSONObject();
+			JSONObject msg = new JSONObject();
+			JSONArray a = new JSONArray();
+			root.put("result", "failure");
+			msg.put("code", _errorResponse.getCode());
+			msg.put("text", _errorResponse.getText());
+			a.put(msg);
+			root.put("errors", a);
+			return root.toString();
+		} catch (JSONException jsone) { // if this occurs there is a logical error
+			_logger.error(jsone);
+			throw new IllegalStateException(jsone);
+		}
+	}
 
+	protected String generalJsonSuccessMessage() {
+		return _successJson;
+	}
 }

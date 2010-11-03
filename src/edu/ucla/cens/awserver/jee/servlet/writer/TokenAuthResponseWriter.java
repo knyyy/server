@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.ucla.cens.awserver.domain.ErrorResponse;
 import edu.ucla.cens.awserver.request.AwRequest;
 
 /**
@@ -21,6 +22,10 @@ import edu.ucla.cens.awserver.request.AwRequest;
  */
 public class TokenAuthResponseWriter extends AbstractResponseWriter {
 	private static Logger _logger = Logger.getLogger(TokenAuthResponseWriter.class);
+	
+	public TokenAuthResponseWriter(ErrorResponse errorResponse) {
+		super(errorResponse);
+	}
 	
 	/**
 	 * Generates the JSON response to the client. For successful responses, an array of campaign names is returned.
@@ -79,11 +84,11 @@ public class TokenAuthResponseWriter extends AbstractResponseWriter {
 			
 			try {
 				
-				writer.write("{\"code\":\"0103\",\"text\":\"" + e.getMessage() + "\"}");
+				writer.write(this.generalJsonErrorMessage());
 				
-			} catch (IOException ioe) {
+			} catch (Exception ee) {
 				
-				_logger.error("caught IOException when attempting to write to HTTP output stream: " + ioe.getMessage());
+				_logger.error("caught Exception when attempting to write to HTTP output stream", ee);
 			}
 			
 		} finally {
@@ -98,7 +103,7 @@ public class TokenAuthResponseWriter extends AbstractResponseWriter {
 					
 				} catch (IOException ioe) {
 					
-					_logger.error("caught IOException when attempting to free resources: " + ioe.getMessage());
+					_logger.error("caught IOException when attempting to free resources", ioe);
 				}
 			}
 		}

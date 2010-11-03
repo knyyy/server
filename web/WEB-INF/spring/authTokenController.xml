@@ -11,7 +11,9 @@
   
   <!-- except for the ResponseWriter ... -->
   <!-- generate output -->
-  <bean id="authTokenResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.TokenAuthResponseWriter" />
+  <bean id="authTokenResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.TokenAuthResponseWriter">
+    <constructor-arg index="0"><ref bean="severeErrorResponse" /></constructor-arg>
+  </bean>
     
   <!-- Controller -->
   <bean id="authTokenController" class="edu.ucla.cens.awserver.controller.ControllerImpl">

@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.ucla.cens.awserver.domain.ErrorResponse;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.RetrieveConfigAwRequest;
 
@@ -23,7 +24,8 @@ public class RetrieveConfigResponseWriter extends AbstractResponseWriter {
 	private static Logger _logger = Logger.getLogger(RetrieveConfigResponseWriter.class);
 	private List<String> _dataPointApiSpecialIds;
 	
-	public RetrieveConfigResponseWriter(List<String> dataPointApiSpecialIds) {
+	public RetrieveConfigResponseWriter(List<String> dataPointApiSpecialIds, ErrorResponse errorResponse) {
+		super(errorResponse);
 		if(null == dataPointApiSpecialIds || dataPointApiSpecialIds.isEmpty()) {
 			_logger.warn("no data point API special ids found");
 		}
@@ -67,17 +69,17 @@ public class RetrieveConfigResponseWriter extends AbstractResponseWriter {
 			writer.write(responseText);
 		}
 		
-		catch(Exception e) { // catch Exception in order to avoid redundant catch block functionality (Java 7 will have 
-			                 // comma-separated catch clauses) 
+		catch(Exception e) { // catch Exception in order to avoid redundant catch block functionality
 			
-			_logger.error("an unrecoverable exception occurred while running an EMA query", e);
+			_logger.error("an unrecoverable exception occurred while running an retrieve config query", e);
+			
 			try {
 				
-				writer.write("{\"code\":\"0103\",\"text\":\"" + e.getMessage() + "\"}");
+				writer.write(this.generalJsonErrorMessage());
 				
-			} catch (IOException ioe) {
+			} catch (Exception ee) {
 				
-				_logger.error("caught IOException when attempting to write to HTTP output stream: " + ioe.getMessage());
+				_logger.error("caught Exception when attempting to write to HTTP output stream", ee);
 			}
 			
 		} finally {
@@ -92,7 +94,7 @@ public class RetrieveConfigResponseWriter extends AbstractResponseWriter {
 					
 				} catch (IOException ioe) {
 					
-					_logger.error("caught IOException when attempting to free resources: " + ioe.getMessage());
+					_logger.error("caught IOException when attempting to free resources", ioe);
 				}
 			}
 		}

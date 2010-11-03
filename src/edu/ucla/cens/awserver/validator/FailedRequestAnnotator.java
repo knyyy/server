@@ -8,6 +8,7 @@ import edu.ucla.cens.awserver.request.AwRequest;
  * An implementation of AwRequestAnnotator for general validation failures.
  * 
  * @author selsky
+ * @deprecated
  */
 public class FailedRequestAnnotator implements AwRequestAnnotator {
 	private static Logger _logger = Logger.getLogger(FailedRequestAnnotator.class);

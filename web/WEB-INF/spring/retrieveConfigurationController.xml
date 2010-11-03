@@ -16,6 +16,7 @@
     <constructor-arg index="0">
       <ref bean="dataPointAPISpecialIds" />
     </constructor-arg>
+    <constructor-arg index="1"><ref bean="severeErrorResponse" /></constructor-arg>
   </bean>  
     
   <!-- Controller -->

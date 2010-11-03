@@ -57,7 +57,7 @@ public class FailedJsonRequestAnnotator implements AwRequestAnnotator {
 	public void annotate(AwRequest awRequest, String message) {
 		awRequest.setFailedRequest(true);
 		
-		try { // TODO - the response JSONObjects can be cached because they are not unique to a request
+		try {
 			
 			JSONObject responseJsonObject = new JSONObject();
 			JSONObject errorJsonObject = new JSONObject();

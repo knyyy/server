@@ -13,7 +13,9 @@
   <!-- create AwRequest from data in the HttpServletRequest -->
   <bean id="mobilityUploadAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.MobilityUploadAwRequestCreator" />
   <!-- generate output - defined here and shared with surveyUpload (see web.xml) -->
-  <bean id="successOrFailResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.SuccessOrFailResponseWriter" />
+  <bean id="successOrFailResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.SuccessOrFailResponseWriter">
+    <constructor-arg index="0"><ref bean="severeErrorResponse" /></constructor-arg>
+  </bean>
   
   <!-- Controller - main workflow -->
   <bean id="mobilityUploadController" class="edu.ucla.cens.awserver.controller.ControllerImpl">

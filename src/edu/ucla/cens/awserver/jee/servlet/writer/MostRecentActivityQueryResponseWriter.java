@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.ucla.cens.awserver.domain.ErrorResponse;
 import edu.ucla.cens.awserver.domain.MostRecentActivityQueryResult;
 import edu.ucla.cens.awserver.request.AwRequest;
 
@@ -20,9 +21,14 @@ import edu.ucla.cens.awserver.request.AwRequest;
  * Writer of JSON query output for the most recent activity query.
  * 
  * @author selsky
+ * @deprecated
  */
 public class MostRecentActivityQueryResponseWriter extends AbstractResponseWriter {
 	private static Logger _logger = Logger.getLogger(MostRecentActivityQueryResponseWriter.class);
+	
+	public MostRecentActivityQueryResponseWriter(ErrorResponse errorResponse) {
+		super(errorResponse);
+	}
 	
 	@Override
 	public void write(HttpServletRequest request, HttpServletResponse response, AwRequest awRequest) {
