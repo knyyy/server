@@ -398,10 +398,10 @@
   </servlet-mapping>
   
   
-  <!--  Handle EMA Queries -->
+  <!--  Handle data point queries -->
   <servlet>
     <description>
-      Runs data point queries (prompt response data, mobility data) 
+      runs data point queries (survey response data, mobility data, upload stats) 
     </description>
     <servlet-name>DataPointQueryServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
@@ -600,19 +600,22 @@
   </servlet-mapping>
   -->
   
-  <!-- TODO fix this, should it just be index.html? -->
+  
+  <!-- For AW 2.x and up, the server app is effectively headless. There is probably a better way to return headers only.
+       empty.html is returned in order override the default Tomcat error pages. It is rarely a good idea to give away 
+       information about the app server and the Tomcat pages do just that. -->
   <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>/empty.html</welcome-file>
   </welcome-file-list>
    
   <error-page>
     <error-code>500</error-code>
-    <location>/server_error.jsp</location>
+    <location>/empty.html</location>
   </error-page>
    
   <error-page>
     <error-code>404</error-code>
-    <location>/file_not_found.html</location>
+    <location>/empty.html</location>
   </error-page>   
   
   <!-- Parameter with comma separated list of files (or patterns) that tells Spring where to pick up bean configurations. -->
