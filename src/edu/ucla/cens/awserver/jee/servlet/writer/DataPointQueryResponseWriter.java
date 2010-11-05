@@ -87,7 +87,7 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 		catch(Exception e) { // catch Exception in order to avoid redundant catch block functionality (Java 7 will have 
 			                 // comma-separated catch clauses) 
 			
-			_logger.error("an unrecoverable exception occurred while running an EMA query", e);
+			_logger.error("an unrecoverable exception occurred while running an data point query", e);
 			try {
 				
 				writer.write(generalJsonErrorMessage());

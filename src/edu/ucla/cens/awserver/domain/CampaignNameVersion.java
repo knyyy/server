@@ -5,7 +5,7 @@ package edu.ucla.cens.awserver.domain;
  * 
  * @author selsky
  */
-public class CampaignNameVersion {
+public class CampaignNameVersion implements Comparable<CampaignNameVersion> {
 	private String _campaignName;
 	private String _campaignVersion;
 	
@@ -54,5 +54,23 @@ public class CampaignNameVersion {
 		} else if (!_campaignVersion.equals(other._campaignVersion))
 			return false;
 		return true;
+	}
+	
+	public int compareTo(CampaignNameVersion other) {
+		if(null == other) {
+			throw new NullPointerException("cannot compare against null");
+		}
+		
+		if(this.equals(other)) {
+			return 0;
+		}
+		
+		int campaignCompareResult = this.getCampaignName().compareTo(other.getCampaignName()); 
+		
+		if(0 == campaignCompareResult) {
+			return other.getCampaignVersion().compareTo(this.getCampaignVersion());
+		}
+		
+		return campaignCompareResult;
 	}
 }

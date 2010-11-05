@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
@@ -58,7 +60,7 @@ public class ConfigurationCacheService extends AbstractCacheService {
 	/**
 	 * Returns a Configuration given a CampaignNameVersion key.
 	 * 
-	 * TODO return a copy  
+	 * TODO return a copy or an immutable configuration
 	 */
 	@Override
 	public Object lookup(Object key) {
@@ -74,20 +76,21 @@ public class ConfigurationCacheService extends AbstractCacheService {
 	}
 	
 	/**
-	 * This is a hacky method that assumes only one configuration will exist for a given campaign. This assumption is correct 
-	 * for the current 2.x release, but will need to be changed whenever it is decided to support multiple campaign config
-	 * versions across the entire app.
+	 * Returns a map of Configurations for the provided list of campaign names.
+	 * 
+	 * TODO the output list needs to be made Immutable as do the Configurations inside of the list
+	 * TODO this should be named something like findAllForList for a more generic API to push up to the Cache interface
 	 */
-	public Configuration lookupByCampaign(String campaignName) {
+	public SortedMap<CampaignNameVersion, Configuration> lookupByCampaigns(List<?> campaignNames) {
 		Set<CampaignNameVersion> keys = _configurationMap.keySet();
+		SortedMap<CampaignNameVersion, Configuration> configurations = new TreeMap<CampaignNameVersion, Configuration>();
 		
 		for(CampaignNameVersion key : keys) {
-			if(key.getCampaignName().equals(campaignName)) {
-				return _configurationMap.get(key);
+			if(campaignNames.contains(key.getCampaignName())) {
+				configurations.put(key, _configurationMap.get(key)); 
 			}
-			
 		}
 		
-		throw new IllegalStateException("no configurations found for campaign " + campaignName);
+		return configurations;
 	}
 }

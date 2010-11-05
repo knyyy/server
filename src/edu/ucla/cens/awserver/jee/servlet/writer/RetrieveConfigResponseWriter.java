@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,9 +15,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.ucla.cens.awserver.domain.ConfigQueryResult;
 import edu.ucla.cens.awserver.domain.ErrorResponse;
 import edu.ucla.cens.awserver.request.AwRequest;
-import edu.ucla.cens.awserver.request.RetrieveConfigAwRequest;
 
 /**
  * @author selsky
@@ -48,16 +50,34 @@ public class RetrieveConfigResponseWriter extends AbstractResponseWriter {
 			
 			// Build the appropriate response 
 			if(! awRequest.isFailedRequest()) {
+
+				JSONObject jsonObject 
+					= new JSONObject().put("result", "success")
+					                  .put("special_ids", new JSONArray(_dataPointApiSpecialIds));
 				
-				JSONObject jsonObject = 
-					new JSONObject().put("result", "success")
-					                .put("configuration", ((RetrieveConfigAwRequest) awRequest).getOutputConfigXml().replaceAll("\\n", " "))
-				                    .put("user_role", ((RetrieveConfigAwRequest) awRequest).getOutputUserRole())
-				                    .put("user_list", new JSONArray(((RetrieveConfigAwRequest) awRequest).getOutputUserList()))
-				                    // TODO add the special_ids when the Data Point API is written 
-				                    // The special ids can be added one by one as the system makes the queries available
-				                    .put("special_ids", new JSONArray(_dataPointApiSpecialIds));
+				List<?> resultList = awRequest.getResultList();
+				int numberOfResults = resultList.size();
 				
+				JSONArray campaignArray = new JSONArray();
+				for(int i = 0; i < numberOfResults; i++) {
+					ConfigQueryResult result = (ConfigQueryResult) resultList.get(i);
+					JSONObject campaignObject = new JSONObject();
+					campaignObject.put("id", result.getCampaignName());
+					campaignObject.put("user_role", result.getUserRole());
+					campaignObject.put("user_list", new JSONArray(result.getUserList()));
+					
+					JSONArray configArray = new JSONArray();
+					Map<String, String> versionXmlMap = result.getVersionXmlMap();
+					Iterator<String> mapIterator = versionXmlMap.keySet().iterator();
+					while(mapIterator.hasNext()) {
+						String k = mapIterator.next();
+						configArray.put(new JSONObject().put("version", k).put("configuration", versionXmlMap.get(k)));
+					}
+					campaignObject.put("configurations", configArray);
+					campaignArray.put(campaignObject);
+				}
+				
+				jsonObject.put("campaigns", campaignArray);
 				responseText = jsonObject.toString();
 				
 			} else {
