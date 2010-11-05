@@ -28,7 +28,10 @@ public class RetrieveConfigResponseWriter extends AbstractResponseWriter {
 	
 	public RetrieveConfigResponseWriter(List<String> dataPointApiSpecialIds, ErrorResponse errorResponse) {
 		super(errorResponse);
-		if(null == dataPointApiSpecialIds || dataPointApiSpecialIds.isEmpty()) {
+		if(null == dataPointApiSpecialIds) {
+			throw new IllegalArgumentException("a list of data point API special ids is required. An empty list is allowed.");
+		}
+		if(dataPointApiSpecialIds.isEmpty()) {
 			_logger.warn("no data point API special ids found");
 		}
 		_dataPointApiSpecialIds = dataPointApiSpecialIds;  
