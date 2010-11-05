@@ -616,7 +616,13 @@
   <error-page>
     <error-code>404</error-code>
     <location>/empty.html</location>
+  </error-page>
+  
+  <error-page>
+    <error-code>405</error-code>
+    <location>/empty.html</location>
   </error-page>   
+     
   
   <!-- Parameter with comma separated list of files (or patterns) that tells Spring where to pick up bean configurations. -->
   <context-param>
