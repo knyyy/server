@@ -47,8 +47,7 @@ public class DataPointQueryService extends AbstractDaoService {
 		
 		req.setMetadataPromptIds(metadataPromptIds);	
 		
-		// 2. Pass those ids to the DAO 
-		// TODO - need a researcher version of the DAO
+		// 2. Pass those ids to the DAO
 		getDao().execute(req);
 		
 		// 3. Post-process

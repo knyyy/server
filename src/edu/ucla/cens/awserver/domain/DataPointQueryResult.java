@@ -143,7 +143,7 @@ public class DataPointQueryResult {
 	public void setDisplayValue(Object displayValue) {
 		_displayValue = displayValue;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "DataPointQueryResult [_displayLabel=" + _displayLabel
