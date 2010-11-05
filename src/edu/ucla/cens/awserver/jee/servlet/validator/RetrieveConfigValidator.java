@@ -19,7 +19,7 @@ public class RetrieveConfigValidator extends AbstractHttpServletRequestValidator
 	 */
 	public RetrieveConfigValidator() {
 		// TODO this can be a static variable
-		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"c","ci","t"}));
+		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"ci","t"}));
 	}
 	
 	
@@ -62,7 +62,6 @@ public class RetrieveConfigValidator extends AbstractHttpServletRequestValidator
 		}
 		
 		String ci = (String) request.getParameter("ci");
-		String c = (String) request.getParameter("c");
 		String t = (String) request.getParameter("t");
 		
 		// Check for abnormal lengths (buffer overflow attack)
@@ -71,12 +70,10 @@ public class RetrieveConfigValidator extends AbstractHttpServletRequestValidator
 		
 		if(greaterThanLength("token", "t", t, 108)
 		   || greaterThanLength("client", "ci", ci, 600)
-		   || greaterThanLength("campaign name", "c", c, 750)
 		) {
 			return false;
 		}
 		
 		return true;
 	}
-
 }
