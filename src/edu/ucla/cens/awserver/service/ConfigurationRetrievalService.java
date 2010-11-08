@@ -117,6 +117,8 @@ public class ConfigurationRetrievalService extends AbstractAnnotatingService {
 			List<String> userList = new ArrayList<String>();
 			
 			if(isAdminOrResearcher) {
+				awRequest.setCampaignName(campaignName);
+				
 				_findAllUsersForCampaignDao.execute(awRequest);
 				
 				List<?> users = awRequest.getResultList();
