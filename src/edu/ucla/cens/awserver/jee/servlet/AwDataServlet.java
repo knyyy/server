@@ -130,14 +130,9 @@ public class AwDataServlet extends AbstractAwHttpServlet {
 			
 			if(! awRequest.isFailedRequest()) { // this is bad because it means an error occurred and the code didn't mark up 
 				                                // the awRequest correctly
-				_logger.warn("caught a ControllerException where the awRequest was not marked as failed: " + ce.getMessage());
+				_logger.warn("caught a ControllerException where the awRequest was not marked as failed");
 				awRequest.setFailedRequest(true);
 			}
-			
-			if(null == awRequest.getFailedRequestErrorMessage()) {
-				awRequest.setFailedRequestErrorMessage("an general error occurred processing the request");
-			}
-			
 		}
 		
 		// Invalidate the session

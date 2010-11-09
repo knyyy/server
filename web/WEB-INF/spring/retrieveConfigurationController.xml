@@ -27,6 +27,9 @@
         <ref bean="retrieveConfigurationService" />
       </list>
     </constructor-arg>
+    <constructor-arg index="1">
+      <ref bean="serverErrorRequestAnnotator" />
+    </constructor-arg>
     <!-- all validation is handled in the servlet layer because it is simple sanity-check validation -->
     <property name="featureName"><value>configuration retrieval</value></property>
   </bean>
@@ -77,7 +80,5 @@
       <ref bean="userRoleCacheService" />
     </constructor-arg>
   </bean>
-  
-  
   
 </beans>

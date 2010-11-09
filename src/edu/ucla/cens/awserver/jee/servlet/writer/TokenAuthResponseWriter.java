@@ -45,25 +45,16 @@ public class TokenAuthResponseWriter extends AbstractResponseWriter {
 			if(! awRequest.isFailedRequest()) {
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("result", "success");
-				
-//				Set<String> keys = awRequest.getUser().getCampaignRoles().keySet();
-//				Iterator<String> iterator = keys.iterator();
-//				
-//				JSONArray jsonArray = new JSONArray();
-//					
-//				while(iterator.hasNext()) {
-//					jsonArray.put(iterator.next());
-//				}
-				
 				jsonObject.put("token", awRequest.getUserToken()); // this one line is the only difference with StatelessAuthResponseWriter
-				
-//				jsonObject.put("campaigns", jsonArray);
-				
 				responseText = jsonObject.toString();
 				
 			} else {
 				
-				responseText = awRequest.getFailedRequestErrorMessage();
+				if(null != awRequest.getFailedRequestErrorMessage()) {
+					responseText = awRequest.getFailedRequestErrorMessage();
+				} else {
+					responseText = generalJsonErrorMessage();
+				}
 			}
 			
 			if(_logger.isDebugEnabled()) {

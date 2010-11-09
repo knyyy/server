@@ -27,6 +27,9 @@
         <ref bean="imageUploadDaoService" />
       </list>
     </constructor-arg>
+    <constructor-arg index="1">
+      <ref bean="serverErrorRequestAnnotator" />
+    </constructor-arg>
     <property name="validators">
       <list>
         <ref bean="userNameValidator" />

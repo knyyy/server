@@ -46,7 +46,11 @@ public class SuccessOrFailResponseWriter extends AbstractResponseWriter {
 				
 			} else {
 				
-				responseText = awRequest.getFailedRequestErrorMessage();
+				if(null != awRequest.getFailedRequestErrorMessage()) {
+					responseText = awRequest.getFailedRequestErrorMessage();
+				} else {
+					responseText = generalJsonErrorMessage();
+				}
 			}
 			
 			_logger.info("about to write output");
