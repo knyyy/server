@@ -5,6 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
   
+  <!-- this really belongs somewhere else -->
   <bean id="serverErrorRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0"> 
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
@@ -45,7 +46,7 @@
     <value>percent_successful_location_updates</value>
     <value>completed_surveys_per_day</value>
     <value>mobility_modes_per_day</value>
-    <!-- other mobility special ids to be added later -->
+    <!-- other mobility special ids to be added later once aggregation jobs are in place -->
   </util:list>
 
 </beans>
