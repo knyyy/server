@@ -27,12 +27,12 @@ public class DataPointQueryAwRequestCreator implements AwRequestCreator {
 		
 		String startDate = request.getParameter("s");
 		String endDate = request.getParameter("e");
-		String userNameRequestParam = request.getParameter("u"); // researchers are allowed to pass an optional user name
+		String userNameRequestParam = request.getParameter("u");
 		String client = request.getParameter("ci");
 		String campaignName = request.getParameter("c");
 		String campaignVersion = request.getParameter("cv");
 		String authToken = request.getParameter("t");
-		String dataPointId = request.getParameter("i");
+		String[] dataPointIds = request.getParameterValues("i");  
 		
 		DataPointQueryAwRequest awRequest = new DataPointQueryAwRequest();
 //		awRequest.setUser(user);
@@ -42,7 +42,7 @@ public class DataPointQueryAwRequestCreator implements AwRequestCreator {
 		awRequest.setUserToken(authToken);
 		awRequest.setClient(client);
 		awRequest.setCampaignName(campaignName);
-		awRequest.setDataPointId(dataPointId);
+		awRequest.setDataPointIds(dataPointIds);
 		awRequest.setCampaignVersion(campaignVersion);
 		
 		return awRequest;

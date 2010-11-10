@@ -16,7 +16,7 @@ public class DataPointQueryAwRequest extends ResultListAwRequest {
 	private String _campaignName;
 	private String _campaignVersion;
 	
-	private String _dataPointId;
+	private String[] _dataPointIds;
 	// private String _authToken; see userToken in parent class
 	private List<String> _metadataPromptIds;
 	
@@ -68,12 +68,12 @@ public class DataPointQueryAwRequest extends ResultListAwRequest {
 		_campaignVersion = campaignVersion;
 	}
 	
-	public String getDataPointId() {
-		return _dataPointId;
+	public String[] getDataPointIds() {
+		return _dataPointIds;
 	}
 
-	public void setDataPointId(String dataPointId) {
-		_dataPointId = dataPointId;
+	public void setDataPointIds(String[] dataPointIds) {
+		_dataPointIds = dataPointIds;
 	}
 	
 	public List<String> getMetadataPromptIds() {

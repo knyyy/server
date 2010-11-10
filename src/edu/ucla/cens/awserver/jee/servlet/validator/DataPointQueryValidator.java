@@ -33,14 +33,9 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 		Map<?,?> parameterMap = httpServletRequest.getParameterMap(); // String, String[]
 		
 		// Check for missing or extra parameters
-		// The "u" param is optional in the special case where the query is one of the upload stat queries and the currently
-		// logged in user is a researcher or an admin
-		if(parameterMap.size() != _parameterList.size()) {
-			if(null != httpServletRequest.getParameter("u")) { // some other required parameter is missing
-				
-				_logger.warn("an incorrect number of parameters was found for an data point query: " + parameterMap.size());
-				return false;
-			}
+		if(parameterMap.size() != _parameterList.size()) {				
+			_logger.warn("an incorrect number of parameters was found for an data point query: " + parameterMap.size());
+			return false;
 		}
 		
 		// ------- This could all be moved to a separate class
@@ -53,7 +48,7 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 			String key = (String) iterator.next();
 			String[] valuesForKey = (String[]) parameterMap.get(key);
 			
-			if(valuesForKey.length != 1) {
+			if(valuesForKey.length != 1 && ! "i".equals(key)) {
 				_logger.warn("an incorrect number of values (" + valuesForKey.length + ") was found for parameter " + key);
 				return false;
 			}
@@ -80,8 +75,9 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 		String c = (String) httpServletRequest.getParameter("c");
 		String ci = (String) httpServletRequest.getParameter("ci");
 		String t = (String) httpServletRequest.getParameter("t");
-		String i = (String) httpServletRequest.getParameter("i");
 		String cv = (String) httpServletRequest.getParameter("cv");
+		
+		String[] eyes = httpServletRequest.getParameterValues("i");
 		
 		// Check for abnormal lengths (buffer overflow attack)
 		// The lengths are pretty arbitrary, but values exceeded them would be very strange
@@ -92,11 +88,19 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 		   || greaterThanLength("campaignVersion", "cv", cv, 250)
 		   || greaterThanLength("client", "ci",ci, 500)		   
 		   || greaterThanLength("authToken", "t", t, 50)
-  		   || greaterThanLength("dataId", "i", i, 250)
 		   || greaterThanLength("userName", "u", u, 75)) {
 			
 			_logger.warn("found an input parameter that exceeds its allowed length");
 			return false;
+		}
+		
+		int x = 0;
+		for(String eye : eyes) { 
+			if(greaterThanLength("dataPointId", "i[" + x + "]", eye, 250)) {
+				_logger.warn("found an input parameter that exceeds its allowed length");
+				return false;
+			}
+			x++;
 		}
 		
 		return true;

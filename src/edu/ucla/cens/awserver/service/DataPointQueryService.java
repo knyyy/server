@@ -1,5 +1,6 @@
 package edu.ucla.cens.awserver.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -40,10 +41,18 @@ public class DataPointQueryService extends AbstractDaoService {
 		CampaignNameVersion cnv = new CampaignNameVersion(req.getCampaignName(), req.getCampaignVersion());
 		
 		// TODO - what if the end user has selected a metadata data point? it means there will be redundancy between the 
-		// dataPointId and the metadataPromptIds
+		// dataPointId and the metadataPromptIds. not really the end of world, just sloppy
 		
 		Configuration config = (Configuration) _configurationCacheService.lookup(cnv);
-		List<String> metadataPromptIds = config.getMetadataPromptIds(req.getDataPointId()); 
+		List<String> metadataPromptIds = new ArrayList<String>();
+		String[] dataPointIds = req.getDataPointIds();
+		
+		for(String dataPointId : dataPointIds) {
+			List<String> list = config.getMetadataPromptIds(dataPointId); 
+			if(! metadataPromptIds.containsAll(list)) {
+				metadataPromptIds.addAll(list);
+			}
+		}
 		
 		req.setMetadataPromptIds(metadataPromptIds);	
 		

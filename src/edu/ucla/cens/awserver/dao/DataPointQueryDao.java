@@ -30,9 +30,8 @@ public class DataPointQueryDao extends AbstractDao {
 	                    + " AND cc.campaign_id = c.id"
 	                    + " AND cc.version = ?"
 	                    + " AND cc.id = sr.campaign_configuration_id"
-	                    + " AND sr.msg_timestamp BETWEEN ? AND ?";
-	
-	private String _params = " AND prompt_id in (?";
+	                    + " AND sr.msg_timestamp BETWEEN ? AND ?"
+	                    + " AND prompt_id in ";
 	
 	public DataPointQueryDao(DataSource dataSource) {
 		super(dataSource);
@@ -42,11 +41,18 @@ public class DataPointQueryDao extends AbstractDao {
 	public void execute(AwRequest awRequest) {
 		DataPointQueryAwRequest req = (DataPointQueryAwRequest) awRequest;
 		List<String> metadataPromptIds = req.getMetadataPromptIds();
-		int numberOfMetadataPoints = metadataPromptIds.size(); 
+		String[] promptIds = req.getDataPointIds();
 		
-		StringBuilder builder = new StringBuilder(_params);
-		for(int i = 0; i < numberOfMetadataPoints; i++) {
-			builder.append(",?");
+		int numberOfMetadataPoints = metadataPromptIds.size();
+		int numberOfPromptIds = promptIds.length;
+		int totalNumberOfParams = numberOfMetadataPoints + numberOfPromptIds;
+		
+		StringBuilder builder = new StringBuilder("(");
+		for(int i = 0; i < totalNumberOfParams; i++) {
+			builder.append("?");
+			if(i < totalNumberOfParams - 1) {
+				builder.append(",");
+			}
 		}
 		builder.append(")");
 		
@@ -62,7 +68,10 @@ public class DataPointQueryDao extends AbstractDao {
 		paramObjects.add(req.getCampaignVersion());
 		paramObjects.add(req.getStartDate());
 		paramObjects.add(req.getEndDate());
-		paramObjects.add(req.getDataPointId());
+		
+		for(int i = 0; i < numberOfPromptIds; i++) {
+			paramObjects.add(promptIds[i]);
+		}
 		
 		for(int i = 0; i < numberOfMetadataPoints; i++) {
 			paramObjects.add(metadataPromptIds.get(i));
@@ -77,7 +86,7 @@ public class DataPointQueryDao extends AbstractDao {
 		} catch(org.springframework.dao.DataAccessException dae) {
 			
 			_logger.error("caught DataAccessException when running the following SQL '" + sql + "' with the parameters: " +
-				req.getStartDate() + ", " + req.getEndDate() + ", " + req.getDataPointId() + ", " + paramObjects, dae);
+				paramObjects, dae);
 			
 			throw new DataAccessException(dae);
 		}
