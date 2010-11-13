@@ -41,7 +41,7 @@ public class DataPointQueryService extends AbstractDaoService {
 		CampaignNameVersion cnv = new CampaignNameVersion(req.getCampaignName(), req.getCampaignVersion());
 		
 		// TODO - what if the end user has selected a metadata data point? it means there will be redundancy between the 
-		// dataPointId and the metadataPromptIds. not really the end of world, just sloppy
+		// dataPointId and the metadataPromptIds. not really the end of world, just sloppy.
 		
 		Configuration config = (Configuration) _configurationCacheService.lookup(cnv);
 		List<String> metadataPromptIds = new ArrayList<String>();
@@ -108,7 +108,8 @@ public class DataPointQueryService extends AbstractDaoService {
 					JSONArray responseArray = JsonUtils.getJsonArrayFromString(String.valueOf(result.getResponse()));
 					
 					if(null == responseArray) { // very bad - this means we have invalid data in the db
-						throw new IllegalStateException("unparseable JSONArray: " + result.getResponse());
+						_logger.error("unparseable JSON array found for multi-choice response: " + result.getResponse());
+						throw new ServiceException("unparseable JSONArray: " + result.getResponse());
 					}
 					
 					JSONArray valueArray = new JSONArray();
@@ -237,7 +238,7 @@ public class DataPointQueryService extends AbstractDaoService {
 			
 			return Integer.parseInt(string);
 			
-		} catch(NumberFormatException nfe) { /* not a problem */ }
+		} catch(NumberFormatException nfe) { /* not a problem for the purpose here */ }
 		
 		return null;
 	}
@@ -247,7 +248,7 @@ public class DataPointQueryService extends AbstractDaoService {
 			
 			return Integer.parseInt(String.valueOf(object));
 			
-		} catch(NumberFormatException nfe) { /* not a problem */ }
+		} catch(NumberFormatException nfe) { /* not a problem for the purpose here */ }
 		
 		return null;
 	}

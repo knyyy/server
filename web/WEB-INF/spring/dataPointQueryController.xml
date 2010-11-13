@@ -21,7 +21,7 @@
     <constructor-arg index="0">
       <list>
         <ref bean="tokenBasedAuthenticationService" />
-        <ref bean="dataPointQueryUserValidationService" />
+        <ref bean="userInQueryValidationService" />
         <ref bean="dataPointQueryService" />
       </list>
     </constructor-arg>
@@ -38,7 +38,7 @@
     <property name="featureName"><value>data point query</value></property>
   </bean>
   
-  <bean id="dataPointQueryUserValidationService" class="edu.ucla.cens.awserver.service.DataPointQueryUserValidationService">
+  <bean id="userInQueryValidationService" class="edu.ucla.cens.awserver.service.UserInQueryValidationService">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.dao.FindAllCampaignsForUserDao">
         <constructor-arg index="0"><ref bean="dataSource"/></constructor-arg>
@@ -46,6 +46,9 @@
       </bean>
     </constructor-arg>
     <constructor-arg index="1">
+      <ref bean="userRoleCacheService" />
+    </constructor-arg>
+    <constructor-arg index="2">
       <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
         <constructor-arg index="0">
           <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
@@ -55,7 +58,7 @@
         </constructor-arg>
       </bean>
     </constructor-arg>
-    <constructor-arg index="2">
+    <constructor-arg index="3">
       <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
         <constructor-arg index="0">
           <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">

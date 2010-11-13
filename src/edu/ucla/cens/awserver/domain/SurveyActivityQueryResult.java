@@ -2,7 +2,7 @@ package edu.ucla.cens.awserver.domain;
 
 import java.sql.Timestamp;
 
-public class PromptActivityQueryResult {
+public class SurveyActivityQueryResult {
 	private String _userName;
 	private double _value;
 	

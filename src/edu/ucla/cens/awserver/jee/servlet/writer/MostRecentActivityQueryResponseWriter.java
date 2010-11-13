@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.ErrorResponse;
-import edu.ucla.cens.awserver.domain.MostRecentActivityQueryResult;
+import edu.ucla.cens.awserver.domain.UserStatsQueryResult;
 import edu.ucla.cens.awserver.request.AwRequest;
 
 /**
@@ -53,7 +53,7 @@ public class MostRecentActivityQueryResponseWriter extends AbstractResponseWrite
 				
 			    for(int i = 0; i < size; i++) {
 			    	JSONObject jsonObject = new JSONObject();
-			    	MostRecentActivityQueryResult result = (MostRecentActivityQueryResult) results.get(i);
+			    	UserStatsQueryResult result = (UserStatsQueryResult) results.get(i);
 			    	String type = result.getMaxFieldLabel();
 			    	
 			    	if("mobility".equals(type)) {
@@ -63,8 +63,8 @@ public class MostRecentActivityQueryResponseWriter extends AbstractResponseWrite
 			    		
 			    	} else if("prompt".equals(type)) {
 			    		
-			    		jsonObject.put("user", result.getPromptActivityQueryResult().getUserName());
-			    		jsonObject.put("tz", result.getPromptActivityQueryResult().getPromptTimezone());
+			    		jsonObject.put("user", result.getSurveyActivityQueryResult().getUserName());
+			    		jsonObject.put("tz", result.getSurveyActivityQueryResult().getPromptTimezone());
 			    		
 			    	} else {
 			    		

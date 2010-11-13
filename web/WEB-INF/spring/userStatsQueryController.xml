@@ -1,0 +1,38 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+  <!--  
+     Spring ApplicationContext configuration the data point API 
+  -->
+  
+  <!-- Servlet-to-AW hooks -->
+  <!-- "pre-validate" inbound data -->
+  <bean id="userStatsQueryHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.UserStatsQueryValidator" />
+  <!-- create AwRequest from data in the HttpServletRequest -->
+  <bean id="userStatsQueryAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.UserStatsQueryAwRequestCreator" />
+  <!-- write outbound data, post-controller -->
+  <bean id="userStatsQueryResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.SuccessOrFailResponseWriter">
+    <constructor-arg index="0"><ref bean="severeErrorResponse" /></constructor-arg>
+  </bean>
+    
+  <!-- Controller -->
+  <bean id="userStatsQueryController" class="edu.ucla.cens.awserver.controller.ControllerImpl">
+    <constructor-arg index="0">
+      <list>
+        <ref bean="tokenBasedAuthenticationService" />
+        <ref bean="userInQueryValidationService" />
+      </list>
+    </constructor-arg>
+    <constructor-arg index="1">
+      <ref bean="serverErrorRequestAnnotator" />
+    </constructor-arg>
+    <property name="validators">
+      <list>
+        <ref bean="userTokenValidator" />
+      </list>      
+    </property>
+    <property name="featureName"><value>user stats query</value></property>
+  </bean>
+  
+</beans>

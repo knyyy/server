@@ -11,8 +11,8 @@
 //import org.springframework.jdbc.core.RowMapper;
 //
 //import edu.ucla.cens.awserver.domain.MobilityActivityQueryResult;
-//import edu.ucla.cens.awserver.domain.MostRecentActivityQueryResult;
-//import edu.ucla.cens.awserver.domain.PromptActivityQueryResult;
+//import edu.ucla.cens.awserver.domain.UserStatsQueryResult;
+//import edu.ucla.cens.awserver.domain.SurveyActivityQueryResult;
 //import edu.ucla.cens.awserver.domain.User;
 //import edu.ucla.cens.awserver.request.AwRequest;
 //
@@ -48,7 +48,7 @@
 //	 */
 //	@Override
 //	public void execute(AwRequest awRequest) {
-//		List<MostRecentActivityQueryResult> results = new ArrayList<MostRecentActivityQueryResult>();
+//		List<UserStatsQueryResult> results = new ArrayList<UserStatsQueryResult>();
 //		User user = awRequest.getUser();
 //		results.add(executeSqlForSingleUser(Integer.parseInt(user.getCurrentCampaignId()), user.getId(), user.getUserName()));
 //		awRequest.setResultList(results);
@@ -57,19 +57,19 @@
 //	/**
 //	 * Runs queries for find the most recent prompt and mobility activities for the user described by the provided parameters. 
 //	 */
-//	protected MostRecentActivityQueryResult executeSqlForSingleUser(int campaignId, int userId, final String userName) {
+//	protected UserStatsQueryResult executeSqlForSingleUser(int campaignId, int userId, final String userName) {
 //		String currentSql = null; // used for logging messages
 //		
 //		try {
 //			
-//			MostRecentActivityQueryResult result = new MostRecentActivityQueryResult();
+//			UserStatsQueryResult result = new UserStatsQueryResult();
 //			currentSql = _promptResponseSql;
 //			
 //			List<?> results = 
 //				getJdbcTemplate().query(_promptResponseSql, new Object[] {campaignId, userId, userId}, new RowMapper() {
 //					public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
 //						
-//						PromptActivityQueryResult result = new PromptActivityQueryResult(); 
+//						SurveyActivityQueryResult result = new SurveyActivityQueryResult(); 
 //						result.setUserName(userName);
 //						result.setPromptTimestamp(rs.getTimestamp(1));
 //						result.setPromptTimezone(rs.getString(2));
@@ -81,7 +81,7 @@
 //			
 //			if(results.size() != 0) {
 //				
-//				result.setPromptActivityQueryResult((PromptActivityQueryResult) results.get(0));
+//				result.setPromptActivityQueryResult((SurveyActivityQueryResult) results.get(0));
 //			}
 //			
 //			

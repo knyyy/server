@@ -7,7 +7,7 @@
 //
 //import org.apache.log4j.Logger;
 //
-//import edu.ucla.cens.awserver.domain.MostRecentActivityQueryResult;
+//import edu.ucla.cens.awserver.domain.UserStatsQueryResult;
 //import edu.ucla.cens.awserver.domain.SimpleUser;
 //import edu.ucla.cens.awserver.request.AwRequest;
 //
@@ -44,7 +44,7 @@
 //		_findAllUsersForCampaignDao.execute(awRequest);
 //		
 //		List<?> userList = awRequest.getResultList();
-//		List<MostRecentActivityQueryResult> results = new ArrayList<MostRecentActivityQueryResult>();
+//		List<UserStatsQueryResult> results = new ArrayList<UserStatsQueryResult>();
 //		
 //		int size = userList.size();
 //		
@@ -55,7 +55,7 @@
 //		for(int i = 0; i < size; i++) {
 //			
 //			SimpleUser su = (SimpleUser) userList.get(i);
-//			MostRecentActivityQueryResult result = executeSqlForSingleUser(Integer.parseInt(awRequest.getUser().getCurrentCampaignId()), su.getId(), su.getUserName());
+//			UserStatsQueryResult result = executeSqlForSingleUser(Integer.parseInt(awRequest.getUser().getCurrentCampaignId()), su.getId(), su.getUserName());
 //			results.add(result);
 //		}
 //		

@@ -5,8 +5,8 @@
 //import edu.ucla.cens.awserver.cache.CacheService;
 //import edu.ucla.cens.awserver.dao.Dao;
 //import edu.ucla.cens.awserver.domain.MobilityActivityQueryResult;
-//import edu.ucla.cens.awserver.domain.MostRecentActivityQueryResult;
-//import edu.ucla.cens.awserver.domain.PromptActivityQueryResult;
+//import edu.ucla.cens.awserver.domain.UserStatsQueryResult;
+//import edu.ucla.cens.awserver.domain.SurveyActivityQueryResult;
 //import edu.ucla.cens.awserver.request.AwRequest;
 //import edu.ucla.cens.awserver.util.DateUtils;
 //
@@ -86,9 +86,9 @@
 //		// For each result, find the most recent upload type and calculate the hours since the last update 
 //		for(int i = 0; i < size; i++) {
 //			
-//			MostRecentActivityQueryResult result = (MostRecentActivityQueryResult) results.get(i);
+//			UserStatsQueryResult result = (UserStatsQueryResult) results.get(i);
 //			MobilityActivityQueryResult mobilityResult = result.getMobilityActivityQueryResult();
-//			PromptActivityQueryResult promptResult = result.getPromptActivityQueryResult();
+//			SurveyActivityQueryResult promptResult = result.getPromptActivityQueryResult();
 //			
 //			// Normalize the timestamps to the server timezone in case they have different timezones
 //			long mobilityTime = 0L;

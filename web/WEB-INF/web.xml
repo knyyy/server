@@ -431,6 +431,38 @@
     <url-pattern>/q/dp</url-pattern>
   </servlet-mapping>
   
+  <!--  Handle user stat queries -->
+  <servlet>
+    <description>
+      runs user stats queries (successful location updates, most recent activity) 
+    </description>
+    <servlet-name>UserStatsQueryServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids.    
+    -->
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>userStatsQueryController</param-value>
+    </init-param>
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>userStatsQueryAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>userStatsQueryHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>userStatsQueryResponseWriter</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserStatsQueryServlet</servlet-name>
+    <url-pattern>/q/us</url-pattern>
+  </servlet-mapping>
   
   <!--  Handle location update queries 
   <servlet>
