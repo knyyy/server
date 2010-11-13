@@ -40,4 +40,11 @@ public class SurveyActivityQueryResult {
 	public void setPromptTimezone(String promptTimezone) {
 		_promptTimezone = promptTimezone;
 	}
+
+	@Override
+	public String toString() {
+		return "SurveyActivityQueryResult [_promptTimestamp="
+				+ _promptTimestamp + ", _promptTimezone=" + _promptTimezone
+				+ ", _userName=" + _userName + ", _value=" + _value + "]";
+	}
 }

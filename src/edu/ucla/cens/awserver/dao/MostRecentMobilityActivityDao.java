@@ -43,6 +43,7 @@ public class MostRecentMobilityActivityDao extends AbstractDao {
 		
 		if(null == req.getUserStatsQueryResult()) {
 			userStatsQueryResult = new UserStatsQueryResult();
+			req.setUserStatsQueryResult(userStatsQueryResult);
 		} else {
 			userStatsQueryResult = req.getUserStatsQueryResult();
 		}

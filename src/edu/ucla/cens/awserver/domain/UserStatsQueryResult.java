@@ -73,4 +73,18 @@ public class UserStatsQueryResult {
 	public void setMobilityLocationUpdatesPercentage(UserPercentage mobilityLocationUpdatesPercentage) {
 		_mobilityLocationUpdatesPercentage = mobilityLocationUpdatesPercentage;
 	}
+
+	@Override
+	public String toString() {
+		return "UserStatsQueryResult [_hoursSinceLastActivity="
+				+ _hoursSinceLastActivity + ", _maxFieldLabel="
+				+ _maxFieldLabel + ", _mobilityActivityQueryResult="
+				+ _mobilityActivityQueryResult
+				+ ", _mobilityLocationUpdatesPercentage="
+				+ _mobilityLocationUpdatesPercentage
+				+ ", _surveyActivityQueryResult=" + _surveyActivityQueryResult
+				+ ", _surveyLocationUpdatesPercentage="
+				+ _surveyLocationUpdatesPercentage + ", _userName=" + _userName
+				+ "]";
+	}
 }

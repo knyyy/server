@@ -20,13 +20,16 @@ import edu.ucla.cens.awserver.request.UserStatsQueryAwRequest;
 public class MostRecentSurveyActivityDao extends AbstractDao {
 	private static Logger _logger = Logger.getLogger(MostRecentSurveyActivityDao.class);
 	
-	private String _sql = "SELECT msg_timestamp, phone_timezone "
-		                 + "FROM survey_response sr, user u "
-                         + "WHERE sr.campaign_id = ? "
-                         + "AND sr.msg_timestamp = " 
-						 + "(SELECT MAX(msg_timestamp)"
-						 +	" FROM survey_response sr, user u"
-						 +	" WHERE u.id = sr.user_id AND u.login_id = ?)";
+	private String _sql = "SELECT msg_timestamp, phone_timezone"
+		                 + " FROM survey_response sr"
+                         + " WHERE sr.msg_timestamp =" 
+						 + " (SELECT MAX(msg_timestamp)"
+						 +	" FROM survey_response sr, campaign_configuration cc, campaign c, user u"
+						 +	" WHERE u.id = sr.user_id "
+						 +	" AND sr.campaign_configuration_id = cc.id "
+						 +	" AND cc.campaign_id = c.id "
+						 +  " AND c.name = ?"
+						 +  " AND u.login_id = ?)";
 	
 	public MostRecentSurveyActivityDao(DataSource dataSource) {
 		super(dataSource);
@@ -45,6 +48,7 @@ public class MostRecentSurveyActivityDao extends AbstractDao {
 		
 		if(null == req.getUserStatsQueryResult()) {
 			userStatsQueryResult = new UserStatsQueryResult();
+			req.setUserStatsQueryResult(userStatsQueryResult);
 		} else {
 			userStatsQueryResult = req.getUserStatsQueryResult();
 		}
@@ -57,6 +61,9 @@ public class MostRecentSurveyActivityDao extends AbstractDao {
 					saqr.setUserName(userId);
 					saqr.setPromptTimestamp(rs.getTimestamp(1));
 					saqr.setPromptTimezone(rs.getString(2));
+					
+					_logger.info(saqr);
+					
 					return saqr;
 				}
 			});

@@ -12,7 +12,7 @@
   <!-- create AwRequest from data in the HttpServletRequest -->
   <bean id="userStatsQueryAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.UserStatsQueryAwRequestCreator" />
   <!-- write outbound data, post-controller -->
-  <bean id="userStatsQueryResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.SuccessOrFailResponseWriter">
+  <bean id="userStatsQueryResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.UserStatsQueryResponseWriter">
     <constructor-arg index="0"><ref bean="severeErrorResponse" /></constructor-arg>
   </bean>
     
@@ -22,6 +22,10 @@
       <list>
         <ref bean="tokenBasedAuthenticationService" />
         <ref bean="userInQueryValidationService" />
+        <ref bean="mostRecentMobilityActivityQueryService" />
+        <ref bean="mostRecentSurveyActivityQueryService" />
+        <ref bean="pastDayMobilityLocationUpdatesQueryService" />
+        <ref bean="pastDaySurveyLocationUpdatesQueryService" />
       </list>
     </constructor-arg>
     <constructor-arg index="1">
@@ -35,4 +39,44 @@
     <property name="featureName"><value>user stats query</value></property>
   </bean>
   
+  <bean id="mostRecentMobilityActivityQueryService" class="edu.ucla.cens.awserver.service.SimpleQueryService">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.dao.MostRecentMobilityActivityDao">
+        <constructor-arg index="0">
+            <ref bean="dataSource" />
+        </constructor-arg>
+      </bean>
+    </constructor-arg>
+  </bean>
+
+  <bean id="mostRecentSurveyActivityQueryService" class="edu.ucla.cens.awserver.service.SimpleQueryService">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.dao.MostRecentSurveyActivityDao">
+        <constructor-arg index="0">
+            <ref bean="dataSource" />
+        </constructor-arg>
+      </bean>
+    </constructor-arg>
+  </bean>
+
+  <bean id="pastDayMobilityLocationUpdatesQueryService" class="edu.ucla.cens.awserver.service.SimpleQueryService">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.dao.PastDayMobilityLocationUpdatesQueryDao">
+        <constructor-arg index="0">
+            <ref bean="dataSource" />
+        </constructor-arg>
+      </bean>
+    </constructor-arg>
+  </bean>
+
+  <bean id="pastDaySurveyLocationUpdatesQueryService" class="edu.ucla.cens.awserver.service.SimpleQueryService">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.dao.PastDaySurveyLocationUpdatesQueryDao">
+        <constructor-arg index="0">
+            <ref bean="dataSource" />
+        </constructor-arg>
+      </bean>
+    </constructor-arg>
+  </bean>
+    
 </beans>

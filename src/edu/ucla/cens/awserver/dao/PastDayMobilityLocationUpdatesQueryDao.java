@@ -1,5 +1,7 @@
 package edu.ucla.cens.awserver.dao;
 
+import java.util.Arrays;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -44,9 +46,9 @@ public class PastDayMobilityLocationUpdatesQueryDao extends AbstractDao {
 	 */
 	@Override
 	public void execute(AwRequest awRequest) {
-		UserStatsQueryAwRequest req = (UserStatsQueryAwRequest) awRequest; //TODO should do an instanceof check here
+		UserStatsQueryAwRequest req = (UserStatsQueryAwRequest) awRequest; //TODO instanceof?
 		
-		Object[] paramArray = {req.getUserNameRequestParam(), req.getCampaignName()};
+		Object[] paramArray = {req.getUserNameRequestParam()};
 		double totalSuccess = 0d;
 		double total = 0d;
 		String currentSql =_totalPointsSql; 
@@ -55,6 +57,7 @@ public class PastDayMobilityLocationUpdatesQueryDao extends AbstractDao {
 		
 		if(null == req.getUserStatsQueryResult()) {
 			userStatsQueryResult = new UserStatsQueryResult();
+			req.setUserStatsQueryResult(userStatsQueryResult);
 		} else {
 			userStatsQueryResult = req.getUserStatsQueryResult();
 		}
@@ -80,13 +83,13 @@ public class PastDayMobilityLocationUpdatesQueryDao extends AbstractDao {
 		} catch (IncorrectResultSizeDataAccessException irsdae) { // thrown if queryForInt returns more than one row which means 
                                                                   // there is a logical error in the SQL being run
 
-			_logger.error("an incorrect number of rows was returned by '" + currentSql + "' with parameters " + paramArray);
+			_logger.error("an incorrect number of rows was returned by '" + currentSql + "' with parameters " + Arrays.toString(paramArray));
 			throw new DataAccessException(irsdae);
 
 		} catch (org.springframework.dao.DataAccessException dae) { // thrown for general SQL errors
 
 			_logger.error("an error was encountered when executing the following SQL: " + currentSql + " with parameters " 
-				+ paramArray);
+				+ Arrays.toString(paramArray));
 			throw new DataAccessException(dae);
 		}
 	}
