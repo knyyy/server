@@ -34,13 +34,14 @@ public class MobilityUploadDao extends AbstractUploadDao {
 
 	private final String _insertMobilityModeOnlySql =   "insert into mobility_mode_only_entry"
 	                                                  + " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude,"
-	                                                  + " longitude, accuracy, provider, mode, client) values (?,?,?,?,?,?,?,?,?,?)";
+	                                                  + " longitude, accuracy, provider, mode, client, upload_timestamp)"
+	                                                  + " values (?,?,?,?,?,?,?,?,?,?,?)";
 
 	private final String _insertMobilityModeFeaturesSql =   "insert into mobility_mode_features_entry"
 			                                              + " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude," 
 			                                              + " longitude, accuracy, provider, mode, speed, variance, average, fft,"
-			                                              + " client)"
-			                                              + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			                                              + " client, upload_timestamp)"
+			                                              + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	public MobilityUploadDao(DataSource datasource) {
 		super(datasource);
@@ -207,6 +208,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					ps.setString(8, dataPacket.getProvider());
 					ps.setString(9, dataPacket.getMode());
 					ps.setString(10, client);
+					ps.setTimestamp(11, new Timestamp(System.currentTimeMillis()));
 					
 					return ps;
 				}
@@ -240,7 +242,6 @@ public class MobilityUploadDao extends AbstractUploadDao {
 						ps.setDouble(6, dataPacket.getLongitude());
 					}
 					
-					
 					ps.setDouble(7, dataPacket.getAccuracy());
 					ps.setString(8, dataPacket.getProvider());
 					ps.setString(9, dataPacket.getMode());
@@ -249,6 +250,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					ps.setDouble(12, dataPacket.getAverage());
 					ps.setString(13, dataPacket.getFftArray());
 					ps.setString(14, client);
+					ps.setTimestamp(15, new Timestamp(System.currentTimeMillis()));
 											
 					return ps;
 				}

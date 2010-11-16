@@ -115,11 +115,13 @@ CREATE TABLE survey_response (
   survey_id varchar(250) NOT NULL,  -- a survey id as defined in a configuration at the XPath //surveyId
   json text NOT NULL, -- the max length for text is 21845 UTF-8 chars
   
+  upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone
+  
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   
   PRIMARY KEY (id),
   INDEX (user_id, campaign_configuration_id),
-  INDEX (user_id, msg_timestamp),
+  INDEX (user_id, upload_timestamp),
   UNIQUE (user_id, survey_id, epoch_millis), -- handle duplicate survey uploads
   
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,    
@@ -200,10 +202,12 @@ CREATE TABLE mobility_mode_only_entry (
   provider varchar(250),
   mode varchar(30) NOT NULL,
   
+  upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone
+  
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   
   PRIMARY KEY (id),
-  INDEX (user_id, msg_timestamp),
+  INDEX (user_id, upload_timestamp),
   UNIQUE (user_id, epoch_millis), -- enforce no-duplicates rule at the table level
   
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -233,9 +237,11 @@ CREATE TABLE mobility_mode_features_entry (
   fft varchar(300) NOT NULL, -- A comma separated list of 10 FFT floating-point values. The reason the array is not unpacked  
                              -- into separate columns is because the data will not be used outside of a debugging scenario.
                              -- It is simply stored the way it is sent by the phone (as a JSON array). 
+                             
+  upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   PRIMARY KEY (id),
-  INDEX (user_id, msg_timestamp),
+  INDEX (user_id, _timestamp),
   UNIQUE INDEX (user_id, epoch_millis),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

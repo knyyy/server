@@ -43,9 +43,10 @@ public class SurveyUploadDao extends AbstractUploadDao {
 			                                       " AND c.name = ?";
 	
 	private final String _insertSurveyResponse = "INSERT into survey_response" +
-								           		 " (user_id, campaign_configuration_id, msg_timestamp, epoch_millis, phone_timezone," +
-									 	         " latitude, longitude, accuracy, provider, survey_id, json, client) " +
-										         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+								           		 " (user_id, campaign_configuration_id, msg_timestamp, epoch_millis," +
+								           		 " phone_timezone, latitude, longitude, accuracy, provider, survey_id, json," +
+								           		 " client, upload_timestamp) " +
+										         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	private final String _insertPromptResponse = "INSERT into prompt_response" +
 	                                             " (survey_response_id, repeatable_set_id, repeatable_set_iteration," +
@@ -156,7 +157,7 @@ public class SurveyUploadDao extends AbstractUploadDao {
 								ps.setString(10, surveyDataPacket.getSurveyId());
 								ps.setString(11, surveyDataPacket.getSurvey());
 								ps.setString(12, client);
-								
+								ps.setTimestamp(13, new Timestamp(System.currentTimeMillis()));
 								return ps;
 							}
 						},
