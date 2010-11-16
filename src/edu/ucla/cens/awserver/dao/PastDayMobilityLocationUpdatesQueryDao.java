@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
-import edu.ucla.cens.awserver.domain.UserPercentage;
 import edu.ucla.cens.awserver.domain.UserStatsQueryResult;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.UserStatsQueryAwRequest;
@@ -26,8 +25,8 @@ public class PastDayMobilityLocationUpdatesQueryDao extends AbstractDao {
 	private String _nonNullPointsSql = "SELECT COUNT(*)" +
 			                           " FROM mobility_mode_only_entry m, user u" +
 			                           " WHERE m.user_id = u.id" +
-			                           " AND u.login_ud = ?" +
-			                           " AND DATE(msg_timestamp) BETWEEN DATE((now() - 1)) and DATE(now())" +
+			                           " AND u.login_id = ?" +
+			                           " AND date(upload_timestamp) BETWEEN date((now() - 1)) and date(now())" +
 			                           " AND latitude is not NULL" +
 			                           " AND longitude is not NULL";      
 	
@@ -35,7 +34,7 @@ public class PastDayMobilityLocationUpdatesQueryDao extends AbstractDao {
 				                     " FROM mobility_mode_only_entry m, user u" +
 						             " WHERE m.user_id = u.id" +
 						             " AND u.login_id = ?" +
-						             " AND DATE(msg_timestamp) BETWEEN DATE(now() - 1) and DATE(now())";
+						             " AND date(upload_timestamp) BETWEEN date(now() - 1) and date(now())";
 
 	public PastDayMobilityLocationUpdatesQueryDao(DataSource dataSource) {
 		super(dataSource);
@@ -52,7 +51,7 @@ public class PastDayMobilityLocationUpdatesQueryDao extends AbstractDao {
 		double totalSuccess = 0d;
 		double total = 0d;
 		String currentSql =_totalPointsSql; 
-		UserPercentage userPercentage = null;
+		Double userPercentage = null;
 		UserStatsQueryResult userStatsQueryResult = null;
 		
 		if(null == req.getUserStatsQueryResult()) {
@@ -68,13 +67,13 @@ public class PastDayMobilityLocationUpdatesQueryDao extends AbstractDao {
 			
 			if(0 == total) {
 				
-				userPercentage = new UserPercentage(req.getUserNameRequestParam(), 0d);
+				userPercentage = new Double(0d);
 				
 			} else {
 				
 				currentSql = _nonNullPointsSql;
 				totalSuccess = getJdbcTemplate().queryForInt(currentSql, paramArray);
-				userPercentage = new UserPercentage(req.getUserNameRequestParam(), (totalSuccess / total));
+				userPercentage = new Double(totalSuccess / total);
 			}
 			
 			// the line below, the SQL being run, and the SQL params are the only items that differ from PastDaySurveyLocationUpdatesQueryDao

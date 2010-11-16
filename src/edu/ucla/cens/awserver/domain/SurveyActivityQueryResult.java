@@ -3,19 +3,9 @@ package edu.ucla.cens.awserver.domain;
 import java.sql.Timestamp;
 
 public class SurveyActivityQueryResult {
-	private String _userName;
 	private double _value;
-	
 	private Timestamp _promptTimestamp;
 	private String _promptTimezone;
-	
-	public String getUserName() {
-		return _userName;
-	}
-	
-	public void setUserName(String userName) {
-		_userName = userName;
-	}
 
 	public double getValue() {
 		return _value;
@@ -45,6 +35,6 @@ public class SurveyActivityQueryResult {
 	public String toString() {
 		return "SurveyActivityQueryResult [_promptTimestamp="
 				+ _promptTimestamp + ", _promptTimezone=" + _promptTimezone
-				+ ", _userName=" + _userName + ", _value=" + _value + "]";
+				+ ", _value=" + _value + "]";
 	}
 }

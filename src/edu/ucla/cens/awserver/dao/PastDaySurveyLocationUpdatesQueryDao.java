@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
-import edu.ucla.cens.awserver.domain.UserPercentage;
 import edu.ucla.cens.awserver.domain.UserStatsQueryResult;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.UserStatsQueryAwRequest;
@@ -27,10 +26,10 @@ public class PastDaySurveyLocationUpdatesQueryDao extends AbstractDao {
 					                 + " FROM survey_response sr, campaign_configuration cc, campaign c, user u"
 					                 + " WHERE u.login_id = ?"
 						             + " AND sr.user_id = u.id"
-						             + " AND sr.campaign__configuration_id = cc.id"
+						             + " AND sr.campaign_configuration_id = cc.id"
 						             + " AND cc.campaign_id = c.id"
 						             + " AND c.name = ?"
-						             + " AND DATE(sr.msg_timestamp) BETWEEN DATE(now() - 1) and DATE(now())"
+						             + " AND date(sr.upload_timestamp) BETWEEN date(now() - 1) and date(now())"
 						             + " AND sr.latitude is not NULL"
 						             + " AND sr.longitude is not NULL";      
 	
@@ -41,7 +40,7 @@ public class PastDaySurveyLocationUpdatesQueryDao extends AbstractDao {
                                    + " AND sr.campaign_configuration_id = cc.id"
                                    + " AND cc.campaign_id = c.id"
                                    + " AND c.name = ?"
-                                   + " AND DATE(sr.msg_timestamp) BETWEEN DATE(now() - 1) and DATE(now())";
+                                   + " AND date(sr.upload_timestamp) BETWEEN date(now() - 1) and date(now())";
 	
 	public PastDaySurveyLocationUpdatesQueryDao(DataSource dataSource) {
 		super(dataSource);
@@ -58,7 +57,7 @@ public class PastDaySurveyLocationUpdatesQueryDao extends AbstractDao {
 		double totalSuccess = 0d;
 		double total = 0d;
 		String currentSql =_totalPointsSql; 
-		UserPercentage userPercentage = null;
+		Double userPercentage = null;
 		UserStatsQueryResult userStatsQueryResult = null;
 		
 		if(null == req.getUserStatsQueryResult()) {
@@ -74,13 +73,13 @@ public class PastDaySurveyLocationUpdatesQueryDao extends AbstractDao {
 			
 			if(0 == total) {
 				
-				userPercentage = new UserPercentage(req.getUserNameRequestParam(), 0d);
+				userPercentage = new Double(0d);
 				
 			} else {
 				
 				currentSql = _nonNullPointsSql;
 				totalSuccess = getJdbcTemplate().queryForInt(currentSql, paramArray);
-				userPercentage = new UserPercentage(req.getUserNameRequestParam(), (totalSuccess / total));
+				userPercentage = new Double(totalSuccess / total);
 			}
 			
 			userStatsQueryResult.setSurveyLocationUpdatesPercentage(userPercentage);

@@ -9,8 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.ErrorResponse;
+import edu.ucla.cens.awserver.domain.UserStatsQueryResult;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.UserStatsQueryAwRequest;
 
@@ -29,8 +32,10 @@ public class UserStatsQueryResponseWriter extends AbstractResponseWriter {
 		Writer writer = null;
 		
 		try {
-			_logger.info(((UserStatsQueryAwRequest) awRequest).getUserStatsQueryResult()); 
 			
+			if(_logger.isDebugEnabled()) {
+				_logger.debug(((UserStatsQueryAwRequest) awRequest).getUserStatsQueryResult());
+			}
 			
 			// Prepare for sending the response to the client
 			writer = new BufferedWriter(new OutputStreamWriter(getOutputStream(request, response)));
@@ -43,8 +48,38 @@ public class UserStatsQueryResponseWriter extends AbstractResponseWriter {
 			
 			// Build the appropriate response 
 			if(! awRequest.isFailedRequest()) {
+				JSONObject jsonObject = new JSONObject().put("result", "success");
+				UserStatsQueryResult result = ((UserStatsQueryAwRequest) awRequest).getUserStatsQueryResult();
+				JSONArray outerArray = new JSONArray();
 				
-				responseText = generalJsonSuccessMessage();
+				if(null == result.getMostRecentSurveyUploadTime()) {
+					outerArray.put(new JSONArray().put("Hours Since Last Survey Upload").put("null"));
+				} else {
+					outerArray.put(new JSONArray().put("Hours Since Last Survey Upload").put(
+						((System.currentTimeMillis() - result.getMostRecentSurveyUploadTime()) / 1000d / 60d / 60d) ));
+				}
+				
+				if(null == result.getMostRecentMobilityUploadTime()) {
+					outerArray.put(new JSONArray().put("Hours Since Last Mobility Upload").put("null"));
+				} else {
+					outerArray.put(new JSONArray().put("Hours Since Last Mobility Upload").put(
+						((System.currentTimeMillis() - result.getMostRecentMobilityUploadTime()) / 1000d / 60d / 60d) ));
+				}
+				
+				if(null == result.getSurveyLocationUpdatesPercentage()) {
+					outerArray.put(new JSONArray().put("Percent Successful Survey Location Updates").put("null"));
+				} else {
+					outerArray.put(new JSONArray().put("Percent Successful Survey Location Updates").put(result.getSurveyLocationUpdatesPercentage()));
+				}
+				
+				if(null == result.getMobilityLocationUpdatesPercentage()) {
+					outerArray.put(new JSONArray().put("Percent Successful Mobility Location Updates").put("null"));
+				} else {
+					outerArray.put(new JSONArray().put("Percent Successful Mobility Location Updates").put(result.getMobilityLocationUpdatesPercentage()));
+				}
+				
+				jsonObject.put("stats", outerArray);
+				responseText = jsonObject.toString();
 				
 			} else {
 				

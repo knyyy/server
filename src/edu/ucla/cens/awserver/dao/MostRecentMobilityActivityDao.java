@@ -9,7 +9,6 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 
-import edu.ucla.cens.awserver.domain.MobilityActivityQueryResult;
 import edu.ucla.cens.awserver.domain.UserStatsQueryResult;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.UserStatsQueryAwRequest;
@@ -22,8 +21,8 @@ public class MostRecentMobilityActivityDao extends AbstractDao {
 	
 	private String _sql = "SELECT msg_timestamp, phone_timezone"
 					    + " FROM mobility_mode_only_entry"
-					    + " WHERE msg_timestamp ="
-						+  " (SELECT MAX(msg_timestamp)"
+					    + " WHERE upload_timestamp ="
+						+  " (SELECT MAX(upload_timestamp)"
 						+     " FROM mobility_mode_only_entry m, user u"
 						+  	  " WHERE m.user_id = u.id AND u.login_id = ?)";
 	
@@ -52,16 +51,12 @@ public class MostRecentMobilityActivityDao extends AbstractDao {
 			
 			List<?> results = getJdbcTemplate().query(_sql, new Object[] {userId}, new RowMapper() {
 				public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-					MobilityActivityQueryResult maqr = new MobilityActivityQueryResult(); 
-					maqr.setUserName(userId);
-					maqr.setMobilityTimestamp(rs.getTimestamp(1));
-					maqr.setMobilityTimezone(rs.getString(2));
-					return maqr;
+					return rs.getTimestamp(1).getTime();
 				}
 			});
 			
 			if(0 != results.size()) { 
-				userStatsQueryResult.setMobilityActivityQueryResult((MobilityActivityQueryResult) results.get(0));
+				userStatsQueryResult.setMostRecentMobilityUploadTime((Long) results.get(0));
 			}
 			
 		} catch (org.springframework.dao.DataAccessException dae) {
