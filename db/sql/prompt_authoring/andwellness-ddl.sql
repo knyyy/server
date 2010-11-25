@@ -222,47 +222,12 @@ CREATE TABLE mobility_mode_features_entry (
   accuracy double,
   provider varchar(250),
   mode varchar(30) NOT NULL,
-  speed double NOT NULL,
-  variance double NOT NULL,
-  average double NOT NULL,
-  fft varchar(300) NOT NULL, -- A comma separated list of 10 FFT floating-point values. The reason the array is not unpacked  
-                             -- into separate columns is because the data will not be used outside of a debugging scenario.
-                             -- It is simply stored the way it is sent by the phone (as a JSON array). 
-                             
+  features text NOT NULL,
+  
   upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   PRIMARY KEY (id),
   INDEX (user_id, _timestamp),
   UNIQUE INDEX (user_id, epoch_millis),
-  CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ---------------------------------------------------------------------------------
--- 5 minute summary of mobility data from mobility_mode_only_entry and
--- mobility_mode_features_entry
--- ---------------------------------------------------------------------------------
-CREATE TABLE mobility_entry_five_min_summary (
-  id integer unsigned NOT NULL auto_increment,
-  user_id smallint(6) unsigned NOT NULL,
-  msg_timestamp datetime NOT NULL,
-  phone_timezone varchar(32) NOT NULL,
-  mode varchar(30) NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE INDEX (user_id, msg_timestamp, mode),
-  CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ---------------------------------------------------------------------------------
--- Daily summary of mobility data from mobility_mode_only_entry and
--- mobility_mode_features_entry
--- ---------------------------------------------------------------------------------
-CREATE TABLE mobility_entry_daily_summary (
-  id integer unsigned NOT NULL auto_increment,
-  user_id smallint(6) unsigned NOT NULL,
-  entry_date date NOT NULL,
-  mode varchar(30) NOT NULL,
-  duration smallint (5) unsigned NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE INDEX (user_id, entry_date),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

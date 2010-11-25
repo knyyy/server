@@ -131,14 +131,9 @@
             <ref bean="jsonMsgLatitudeValidator" />
             <ref bean="jsonMsgLongitudeValidator" />
             <ref bean="jsonMsgLocationAccuracyValidator" />
-            <ref bean="jsonMsgLocationProviderValidator" />            
+            <ref bean="jsonMsgLocationProviderValidator" />
+            <ref bean="jsonMsgModeOnlyModeValidator" />            
             <ref bean="jsonMsgFeaturesExistValidator" />
-            <ref bean="jsonMsgModeFeaturesModeValidator" />
-            <ref bean="jsonMsgModeFeaturesSpeedValidator" />
-            <ref bean="jsonMsgModeFeaturesVarianceValidator" />
-            <ref bean="jsonMsgModeFeaturesAverageValidator" />
-            <ref bean="jsonMsgModeFeaturesFftArrayExistsValidator" />
-            <ref bean="jsonMsgModeFeaturesFftArrayValuesValidator" />
           </list>
         </entry>
       </map>
@@ -272,16 +267,13 @@
         <constructor-arg index="0">
           <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
           	<property name="code" value="0501" />
-          	<property name="text" value="missing or invalid mode in mode_only message" />
+          	<property name="text" value="missing or invalid mode in mobility message" />
           </bean>
         </constructor-arg>  
       </bean>
     </constructor-arg>
     <constructor-arg index="1">
-     <ref bean="mobilityModes" />
-    </constructor-arg>
-    <constructor-arg index="2">
-      <value>false</value>
+      <ref bean="mobilityModes" />
     </constructor-arg>
   </bean>
 
@@ -298,99 +290,6 @@
     </constructor-arg>
     <constructor-arg index="1">
       <value>features</value>
-    </constructor-arg>
-  </bean>
-  
-    <bean id="jsonMsgModeFeaturesModeValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgMobilityModeValidator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-        <constructor-arg index="0">
-          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-          	<property name="code" value="0501" />
-          	<property name="text" value="missing or invalid mode in mode_features message" />
-          </bean>
-        </constructor-arg>  
-      </bean>
-    </constructor-arg>
-    <constructor-arg index="1">
-      <ref bean="mobilityModes" />
-    </constructor-arg>
-    <constructor-arg index="2">
-      <value>true</value>
-    </constructor-arg>
-  </bean>
-  
-  <bean id="jsonMsgModeFeaturesSpeedValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgFeaturesDoubleValidator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-        <constructor-arg index="0">
-          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-          	<property name="code" value="0502" />
-          	<property name="text" value="missing or invalid speed in mode_features message" />
-          </bean>
-        </constructor-arg>  
-      </bean>
-    </constructor-arg>
-    <constructor-arg index="1">
-      <value>speed</value>
-    </constructor-arg>
-  </bean>
-
-  <bean id="jsonMsgModeFeaturesVarianceValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgFeaturesDoubleValidator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-        <constructor-arg index="0">
-          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-          	<property name="code" value="0503" />
-          	<property name="text" value="missing or invalid variance in mode_features message" />
-          </bean>
-        </constructor-arg>  
-      </bean>
-    </constructor-arg>
-    <constructor-arg index="1">
-      <value>variance</value>
-    </constructor-arg>
-  </bean>
-
-  <bean id="jsonMsgModeFeaturesAverageValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgFeaturesDoubleValidator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-        <constructor-arg index="0">
-          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-          	<property name="code" value="0504" />
-          	<property name="text" value="missing or invalid average in mode_features message" />
-          </bean>
-        </constructor-arg>  
-      </bean>
-    </constructor-arg>
-    <constructor-arg index="1">
-      <value>average</value>
-    </constructor-arg>
-  </bean>
-
-  <bean id="jsonMsgModeFeaturesFftArrayExistsValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgFeaturesFftArrayExistsValidator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-        <constructor-arg index="0">
-          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-          	<property name="code" value="0505" />
-          	<property name="text" value="missing or invalid fft array in mode_features message" />
-          </bean>
-        </constructor-arg>  
-      </bean>
-    </constructor-arg>
-  </bean>
-
-  <bean id="jsonMsgModeFeaturesFftArrayValuesValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgFeaturesFftArrayValuesValidator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-        <constructor-arg index="0">
-          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-          	<property name="code" value="0505" />
-          	<property name="text" value="invalid fft array in mode_features message" />
-          </bean>
-        </constructor-arg>  
-      </bean>
     </constructor-arg>
   </bean>
 

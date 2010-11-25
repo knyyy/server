@@ -9,10 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 /**
- * Simulator of phone/sensor messages that correspond to the mobility type and mode_features subtype. 
- * See the <a href="http://www.lecs.cs.ucla.edu/wikis/andwellness/index.php/AndWellness-JSON">JSON Protocol documentation</a>
- * on the wiki for details.
- * 
  * @author selsky
  */
 public class MobilityModeFeaturesJsonMessageCreator implements JsonMessageCreator {
@@ -29,8 +25,8 @@ public class MobilityModeFeaturesJsonMessageCreator implements JsonMessageCreato
 //            "accuracy":0.9283213,
 //            "provider":"GPS"
 //        },
-//        "features":{
-//            "mode":"still",
+//	      "mode":"still",
+//        "features":{            
 //            "speed":0.0,
 //            "variance":0.0,
 //            "average":0.0,
@@ -60,6 +56,7 @@ public class MobilityModeFeaturesJsonMessageCreator implements JsonMessageCreato
 			map.put("time", epoch);
 			map.put("timezone", tz);
 			map.put("subtype", subtype);
+			map.put("mode", mode);
 			
 			Map<String, Object> location = new HashMap<String, Object>();
 			location.put("latitude", latitude);
@@ -69,7 +66,6 @@ public class MobilityModeFeaturesJsonMessageCreator implements JsonMessageCreato
 			map.put("location", location);
 			
 			Map<String, Object> features = new HashMap<String, Object>();
-			features.put("mode", mode);
 			features.put("speed", ValueCreator.randomPositiveDouble());
 			features.put("variance", ValueCreator.randomPositiveDouble());
 			features.put("average", ValueCreator.randomPositiveDouble());

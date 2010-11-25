@@ -7,52 +7,19 @@ package edu.ucla.cens.awserver.domain;
  * @author selsky
  */
 public class MobilityModeFeaturesDataPacket extends MobilityModeOnlyDataPacket {
-	private Double _speed;
-	private Double _variance;
-	private Double _average;
-	private String _fftArrayString; // this is an unpacked JSON array
-	
-	public MobilityModeFeaturesDataPacket() {
-		
+	private String _featuresString;
+
+	public String getFeaturesString() {
+		return _featuresString;
 	}
-	
-	public Double getSpeed() {
-		return _speed;
-	}
-	
-	public void setSpeed(Double speed) {
-		_speed = speed;
-	}
-	
-	public Double getVariance() {
-		return _variance;
-	}
-	
-	public void setVariance(Double variance) {
-		_variance = variance;
-	}
-	
-	public Double getAverage() {
-		return _average;
-	}
-	
-	public void setAverage(Double average) {
-		_average = average;
-	}
-	
-	public String getFftArray() {
-		return _fftArrayString;
-	}
-	
-	public void setFftArray(String fftArrayString) {
-		_fftArrayString = fftArrayString;
+
+	public void setFeaturesString(String featuresString) {
+		_featuresString = featuresString;
 	}
 
 	@Override
 	public String toString() {
-		return "MobilityModeFeaturesDataPacket [_average=" + _average
-				+ ", _fftArrayString=" + _fftArrayString + ", _speed="
-				+ _speed + ", _variance=" + _variance + " " + super.toString() +"]";
+		return "MobilityModeFeaturesDataPacket [_featuresString="
+				+ _featuresString + ", toString()=" + super.toString() + "]";
 	}
-		
 }

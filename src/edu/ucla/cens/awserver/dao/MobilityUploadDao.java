@@ -39,9 +39,8 @@ public class MobilityUploadDao extends AbstractUploadDao {
 
 	private final String _insertMobilityModeFeaturesSql =   "insert into mobility_mode_features_entry"
 			                                              + " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude," 
-			                                              + " longitude, accuracy, provider, mode, speed, variance, average, fft,"
-			                                              + " client, upload_timestamp)"
-			                                              + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			                                              + " longitude, accuracy, provider, mode, features, client,"
+			                                              + " upload_timestamp) values (?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	public MobilityUploadDao(DataSource datasource) {
 		super(datasource);
@@ -245,12 +244,9 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					ps.setDouble(7, dataPacket.getAccuracy());
 					ps.setString(8, dataPacket.getProvider());
 					ps.setString(9, dataPacket.getMode());
-					ps.setDouble(10, dataPacket.getSpeed());
-					ps.setDouble(11, dataPacket.getVariance());
-					ps.setDouble(12, dataPacket.getAverage());
-					ps.setString(13, dataPacket.getFftArray());
-					ps.setString(14, client);
-					ps.setTimestamp(15, new Timestamp(System.currentTimeMillis()));
+					ps.setString(10, dataPacket.getFeaturesString());
+					ps.setString(11, client);
+					ps.setTimestamp(12, new Timestamp(System.currentTimeMillis()));
 											
 					return ps;
 				}
@@ -269,8 +265,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 				mmfdp.getTimezone() + ", " + (mmfdp.getLatitude().equals(Double.NaN) ? "null" : mmfdp.getLatitude()) +  ", " + 
 			    (mmfdp.getLongitude().equals(Double.NaN) ? "null" : mmfdp.getLongitude()) + ", " + mmfdp.getAccuracy() + ", " +
 			    mmfdp.getProvider() + ", " +  mmfdp.getMode() + ", " + 
-			    mmfdp.getSpeed() + ", " + mmfdp.getVariance() + ", " + mmfdp.getAverage() + ", " + mmfdp.getFftArray() + ", " +
-			    client);
+			    mmfdp.getFeaturesString() + ", " + client);
 			 
 		} else {
 			
