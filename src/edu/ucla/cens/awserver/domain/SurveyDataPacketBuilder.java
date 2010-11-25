@@ -37,6 +37,7 @@ public class SurveyDataPacketBuilder extends AbstractDataPacketBuilder {
 		createCommonFields(source, surveyDataPacket);
 		String surveyId = JsonUtils.getStringFromJsonObject(source, "survey_id");
 		surveyDataPacket.setSurveyId(surveyId);
+		surveyDataPacket.setLaunchContext(JsonUtils.getJsonObjectFromJsonObject(source, "survey_launch_context").toString());
 		surveyDataPacket.setSurvey(source.toString()); // the whole JSONObject is stored in order to avoid having to recreate
 		                                               // it after the fact
 		

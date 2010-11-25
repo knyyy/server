@@ -12,9 +12,18 @@ import java.util.List;
 public class SurveyDataPacket extends MetadataDataPacket {
 	private String _survey;
 	private String _surveyId;
+	private String _launchContext;
 	private List<PromptResponseDataPacket> _responses;
 	private int _surveyResponseKey = -1;
 	
+	public String getLaunchContext() {
+		return _launchContext;
+	}
+
+	public void setLaunchContext(String launchContext) {
+		_launchContext = launchContext;
+	}
+
 	public String getSurvey() {
 		return _survey;
 	}
@@ -49,9 +58,9 @@ public class SurveyDataPacket extends MetadataDataPacket {
 
 	@Override
 	public String toString() {
-		return "SurveyDataPacket [_responses=" + _responses + ", _survey="
-				+ _survey + ", _surveyId=" + _surveyId
-				+ ", _surveyResponseKey=" + _surveyResponseKey
-				+ ", toString()=" + super.toString() + "]";
+		return "SurveyDataPacket [_launchContext=" + _launchContext
+				+ ", _responses=" + _responses + ", _survey=" + _survey
+				+ ", _surveyId=" + _surveyId + ", _surveyResponseKey="
+				+ _surveyResponseKey + ", toString()=" + super.toString() + "]";
 	}
 }

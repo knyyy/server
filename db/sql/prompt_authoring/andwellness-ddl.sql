@@ -112,8 +112,9 @@ CREATE TABLE survey_response (
   accuracy double,
   provider varchar(250),
   
-  survey_id varchar(250) NOT NULL,  -- a survey id as defined in a configuration at the XPath //surveyId
-  json text NOT NULL, -- the max length for text is 21845 UTF-8 chars
+  survey_id varchar(250) NOT NULL,    -- a survey id as defined in a configuration at the XPath //surveyId
+  survey text NOT NULL,               -- the max length for text is 21843 UTF-8 chars
+  launch_context text, 
   
   upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone
   
@@ -127,16 +128,6 @@ CREATE TABLE survey_response (
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,    
   CONSTRAINT FOREIGN KEY (campaign_configuration_id) REFERENCES campaign_configuration (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------------------
--- Prompt types. Types are strings to be used as hints in determining 
--- how to process prompt response data. 
--- --------------------------------------------------------------------
--- CREATE TABLE prompt_type (
---    id tinyint unsigned NOT NULL auto_increment,
---     type varchar(50) NOT NULL,
---    PRIMARY KEY (id)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
 -- Stores individual prompt responses for a user in a campaign. Both
