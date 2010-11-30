@@ -21,8 +21,10 @@
     <constructor-arg index="0">
     <!-- service the upload request -->
       <list>
-        <!-- authenticate the user -->
+        <!-- authenticate -->
         <ref bean="authWithHashedPasswordService" />
+        <!-- authorize -->
+        <ref bean="userCampaignValidationService" />
         <!-- validate their upload -->
         <!-- JSON validation: deep specification validation -->
         <ref bean="jsonMessageSyntaxValidationService" />
@@ -57,7 +59,20 @@
     <property name="featureName"><value>survey upload</value></property>
   </bean>
   
- <!-- Validate JSON content according to app business rules -->
+  <bean id="userCampaignValidationService" class="edu.ucla.cens.awserver.service.UserCampaignValidationService">
+     <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+        <constructor-arg index="0">
+           <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+            <property name="code" value="0200" />
+            <property name="text" value="user not in campaign" />
+          </bean>
+        </constructor-arg>
+      </bean>
+    </constructor-arg>
+  </bean>
+  
+  <!-- Validate JSON content according to app business rules -->
   <bean id="surveyMessageContentValidationService" class="edu.ucla.cens.awserver.service.JsonMessageContentValidationService">
     <constructor-arg index="0">
       <list>

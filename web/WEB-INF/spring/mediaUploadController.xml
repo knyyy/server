@@ -23,7 +23,10 @@
     <constructor-arg index="0">
     <!-- service the upload request -->
       <list>
+        <!-- authenticate -->
         <ref bean="authWithHashedPasswordService" />
+        <!-- authorize -->
+        <ref bean="userCampaignValidationService" />
         <ref bean="imageUploadDaoService" />
       </list>
     </constructor-arg>
