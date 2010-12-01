@@ -72,12 +72,11 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 						
 					DataPointQueryResult result = results.get(i);
 					
-					// entry.put("metadata", metadataResultArray);
-					
 					// The flow of this JSON serialization and the sort above rely on a few system facts:
-					// 1. Only one dataPointId (promptId) can be queried at a time. 
-					// 2. All promptIds in a configuration are unique.
-					// 3. Any other promptIds in the results with the same surveyId will be metadata promptIds 
+					// 1. Only one dataPointId (promptId) can be queried at a time 
+					// 2. All promptIds in a configuration are unique
+					// 3. Any other promptIds in the results with the same surveyId will be metadata promptIds
+					// 4. Queries against non-metadata promptIds are disallowed
 					
 					if(! "metadata".equals(result.getDisplayType())) {
 						

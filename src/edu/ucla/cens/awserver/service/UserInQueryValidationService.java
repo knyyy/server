@@ -16,7 +16,8 @@ import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
  * the query (the u parameter) belongs to the campaign specified in the query; and that the logged in user and the query user are 
  * the same if the logged in user is not a researcher or admin.
  * 
- * TODO - split apart into separate classes because the execute method does too much 
+ * TODO - split apart into separate classes because the execute method does too much and contains functionality that could be 
+ * reused elsewhere
  * 
  * @author selsky
  */

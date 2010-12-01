@@ -33,7 +33,6 @@
         <ref bean="surveyDataPacketBuilderService" />
         <!-- persist DataPackets into db -->
         <ref bean="surveyDataStorageService" />
-        
       </list>
     </constructor-arg>
     <constructor-arg index="1">
