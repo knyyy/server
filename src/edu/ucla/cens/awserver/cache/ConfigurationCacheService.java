@@ -43,11 +43,11 @@ public class ConfigurationCacheService extends AbstractCacheService {
 		
 		_logger.info("loaded " + configurations.size() + " campaign configurations");
 		
-		if(_logger.isDebugEnabled()) {
-			for(Configuration c : configurations) {
-				_logger.debug(c);
-			}
-		}
+//		if(_logger.isDebugEnabled()) {
+//			for(Configuration c : configurations) {
+//				_logger.debug(c);
+//			}
+//		}
 		
 		_configurationMap = new HashMap<CampaignNameVersion, Configuration>();
 		
