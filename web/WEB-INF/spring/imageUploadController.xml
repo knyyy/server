@@ -62,6 +62,8 @@
     <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
     <constructor-arg index="1" value="${system.imageDir}"/>
     <constructor-arg index="2" value=".jpg" />
+    <constructor-arg index="3" value="1000" /> <!-- max number of dirs -->
+    <constructor-arg index="4" value="1000" /> <!-- max number of files -->
   </bean>
   
 </beans>
