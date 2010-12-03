@@ -121,6 +121,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 			try {
 				
 				// first, save the id and location to the db
+				
 				getJdbcTemplate().update( 
 					new PreparedStatementCreator() {
 						public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
@@ -134,7 +135,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 					}
 				);
 				
-				// ok, now save to the file system
+				// now save to the file system
 				
 				File f = new File(new URI(url));
 				
@@ -162,9 +163,10 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 				outputStream.close();
 				outputStream = null;
 				
-				// ok, now set the write directory and file name for the next file
+				// now set the write directory and file name for the next file
 				setNextDirAndFile();
 				
+				// done 
 				transactionManager.commit(status);
 				
 			} catch (DataIntegrityViolationException dive) {
@@ -249,9 +251,10 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 		}
 	}
 	
+	/**
+	 * Sets the current write directory and the current file name by checking the filesystem subtree under the rootDir.
+	 */
 	private void init(String rootDir) { // e.g., /opt/aw/userdata/images
-		
-		// need to handle the case where the subdirectory filesystem already exists!
 		
 		synchronized(lock) {
 			
@@ -270,11 +273,15 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 				f = new File(rootDirectory.getAbsolutePath() + "/" + _initialDir + "/" + _initialDir + "/" + _initialDir);
 			}
 			
-			if(f.exists()) { // If the initial dir exists, fast-forward to the most recent storage location and use that location for the  
-				             // initialization properties
+			if(f.exists()) { // If the initial dir exists, fast-forward to the most recent storage location and use that location  
+				             // for the initialization properties
 			
-				_currentWriteDir = findStartDir(f.getAbsolutePath());
-				_logger.info("current write dir " + _currentWriteDir.getAbsolutePath());
+				try {
+					_currentWriteDir = findStartDir(f.getAbsolutePath());
+				} catch (IOException ioe) {
+					throw new IllegalStateException(ioe);
+				}
+				
 				_currentFileName = findStartFile(_currentWriteDir);
 				
 			} else { // first time creating the filesystem subtree
@@ -322,7 +329,8 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 					
 				}
 				
-				_currentWriteDir = incrementDir(parentDir);
+				_currentWriteDir = new File(incrementDir(parentDir).getAbsolutePath() + "/" + _initialDir);
+				_currentWriteDir.mkdir();
 				_currentFileName = _initialFileName;
 				
 			} else {
@@ -335,7 +343,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 	
 	private boolean directoryHasMaxNumberOfFiles(File dir) {
 		NumberFileNameFilter filter = new NumberFileNameFilter(); // this can be an instance var
-		if(dir.listFiles(filter).length < _maxNumberOfFiles) {
+		if(dir.listFiles(filter).length < _maxNumberOfFiles) { _logger.info(dir.getAbsolutePath() + ":" + dir.listFiles(filter).length);
 			return false;
 		}
 		return true;
@@ -382,7 +390,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 		return builder.toString();
 	}
 	
-	private File findStartDir(String path) {
+	private File findStartDir(String path) throws IOException {
 		File f = new File(path);
 		
 		if(! f.exists()) {
@@ -394,7 +402,28 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 		} else {
 			
 			if(directoryHasMaxNumberOfFiles(f)) {
-				return findStartDir(incrementSearchDir(f.getAbsolutePath()));
+				
+				File parentDir = f.getParentFile();
+				
+				if(directoryHasMaxNumberOfSubdirectories(parentDir)) {
+					
+					if(directoryHasMaxNumberOfSubdirectories(parentDir.getParentFile())) {
+						
+						_logger.fatal("media storage filesystem subtree is full!");
+						throw new IllegalStateException("media storage filesystem subtree is full!");
+						
+					} else {
+						
+						// _logger.info(incrementDir(parentDir).getAbsolutePath() + "/" + _initialDir);
+						return findStartDir(incrementDir(parentDir).getAbsolutePath() + "/" + _initialDir);
+						
+					}
+					
+				} else {
+					
+					return findStartDir(incrementSearchDir(f.getAbsolutePath()));
+				}
+				
 			} else {
 				return f;
 			}
@@ -443,13 +472,19 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 	private String findStartFile(File dir) {
 		NumberFileNameFilter filter = new NumberFileNameFilter(); // this can be an instance var
 		File[] files = dir.listFiles(filter);
-		Arrays.sort(files);
-		File f = files[files.length - 1];
-		// TODO jpg should not be hardcoded!
-		return incrementName(f.getName().substring(0, f.getName().lastIndexOf(".jpg")), _maxNumberOfFiles);
+		
+		if(files.length > 0) {
+			Arrays.sort(files);
+			File f = files[files.length - 1];
+			// TODO jpg should not be hardcoded!
+			return incrementName(f.getName().substring(0, f.getName().lastIndexOf(".jpg")), _maxNumberOfFiles);
+		} else {
+			return _initialFileName;
+		}
 	}
 	
-	/* These FilenameFilters are tricky. The File object passed to accept() is the parent directory of a file with the String name */
+	/* These FilenameFilters are tricky (and poorly named). The File object passed to accept() is the parent directory of a file 
+	 * with the String name */
 	
 	public class DirectoryFilter implements FilenameFilter {
 		public boolean accept(File f, String name) {
