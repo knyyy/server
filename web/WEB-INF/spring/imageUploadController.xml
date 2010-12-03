@@ -9,17 +9,17 @@
   
   <!-- Servlet-to-AW hooks see web.xml -->
   <!-- pre-validate -->
-  <bean id="mediaUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MediaUploadValidator">
+  <bean id="imageUploadHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MediaUploadValidator">
     <constructor-arg index="0"><ref bean="diskItemFileFactory" /></constructor-arg>
     <!-- The maximum size in bytes of a request's file attachment -->
     <constructor-arg index="1"><value>2097152</value></constructor-arg>
   </bean>
   <!-- create AwRequest from data in the HttpServletRequest -->
-  <bean id="mediaUploadAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.MediaUploadAwRequestCreator" />
+  <bean id="imageUploadAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.MediaUploadAwRequestCreator" />
   <!-- generate output - see successOrFailResponseWriter in mobilityUploadController.xml -->
   
   <!-- Controller - main workflow -->
-  <bean id="mediaUploadController" class="edu.ucla.cens.awserver.controller.ControllerImpl">
+  <bean id="imageUploadController" class="edu.ucla.cens.awserver.controller.ControllerImpl">
     <constructor-arg index="0">
     <!-- service the upload request -->
       <list>
@@ -58,7 +58,6 @@
     <constructor-arg index="0"><ref bean="imageUploadDao" /></constructor-arg>
   </bean> 
   
-  <!-- for now the mediaUploadDao only works with jpeg images -->
   <bean id ="imageUploadDao" class="edu.ucla.cens.awserver.dao.UrlBasedResourceDao">
     <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
     <constructor-arg index="1" value="${system.imageDir}"/>

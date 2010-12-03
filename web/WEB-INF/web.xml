@@ -259,24 +259,24 @@
     <url-pattern>/u/survey</url-pattern>
   </servlet-mapping>
   
-  <!--  Media Data Upload -->
+  <!--  Image Data Upload -->
   <servlet>
     <description>
-      processes media data uploads from a client 
+      processes image data uploads from a client 
     </description>
-    <servlet-name>MediaUploadServlet</servlet-name>
+    <servlet-name>ImageUploadServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
     <init-param>
       <param-name>awRequestCreatorName</param-name>
-      <param-value>mediaUploadAwRequestCreator</param-value>
+      <param-value>imageUploadAwRequestCreator</param-value>
     </init-param>
     <init-param>
       <param-name>controllerName</param-name>
-      <param-value>mediaUploadController</param-value>
+      <param-value>imageUploadController</param-value>
     </init-param>
     <init-param>
       <param-name>httpServletRequestValidatorName</param-name>
-      <param-value>mediaUploadHttpServletRequestValidator</param-value>
+      <param-value>imageUploadHttpServletRequestValidator</param-value>
     </init-param>
     <init-param>
       <param-name>responseWriterName</param-name>
@@ -286,8 +286,8 @@
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>MediaUploadServlet</servlet-name>
-    <url-pattern>/u/media</url-pattern>
+    <servlet-name>ImageUploadServlet</servlet-name>
+    <url-pattern>/u/image</url-pattern>
   </servlet-mapping>
    
   <!--  
