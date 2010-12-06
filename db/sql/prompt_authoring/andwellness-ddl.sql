@@ -227,7 +227,7 @@ CREATE TABLE mobility_mode_features_entry (
   upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   PRIMARY KEY (id),
-  INDEX (user_id, _timestamp),
+  INDEX (user_id, upload_timestamp),
   UNIQUE INDEX (user_id, epoch_millis),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
