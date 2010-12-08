@@ -51,7 +51,7 @@
         </constructor-arg>
       </bean>
     </property> -->
-    <property name="featureName"><value>media upload</value></property>
+    <property name="featureName"><value>image upload</value></property>
   </bean>
   
   <bean id="imageUploadDaoService" class="edu.ucla.cens.awserver.service.DaoService">
@@ -59,9 +59,9 @@
   </bean> 
   
   <bean id ="imageUploadDao" class="edu.ucla.cens.awserver.dao.UrlBasedResourceDao">
-    <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
-    <constructor-arg index="1" value="${system.imageDir}"/>
-    <constructor-arg index="2" value=".jpg" />
+    <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg> <!-- database access -->
+    <constructor-arg index="1" value="${system.imageDir}"/> <!-- root directory for storage -->
+    <constructor-arg index="2" value=".jpg" /> <!-- file extension -->
     <constructor-arg index="3" value="1000" /> <!-- max number of dirs -->
     <constructor-arg index="4" value="1000" /> <!-- max number of files -->
   </bean>

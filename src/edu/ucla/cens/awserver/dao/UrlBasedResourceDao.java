@@ -37,11 +37,13 @@ import edu.ucla.cens.awserver.util.StringUtils;
  * @author selsky
  */
 public class UrlBasedResourceDao extends AbstractUploadDao {
-	private Object lock = new Object();
-	private Pattern _numberRegexp = Pattern.compile("[0-9]+");
-	private Pattern _numberRegexpJpg = Pattern.compile("[0-9]+\\.jpg"); // TODO - the file extension should not be hardcoded because
-	                                                                    // it prevents this class from being used for other file types
 	private static Logger _logger = Logger.getLogger(UrlBasedResourceDao.class);
+	
+	private Object lock = new Object();
+	
+	private Pattern _numberRegexpDir = Pattern.compile("[0-9]+");
+	private Pattern _numberRegexpFile;
+	
 	private File _currentWriteDir;
 	private String _currentFileName;
 	private String _fileExtension;
@@ -49,18 +51,23 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 	private int _maxNumberOfFiles;
 	private String _initialFileName; // e.g., 000
 	private String _initialDir;      // e.g., 0000
+	
+	private NumberFileNameFilter _numberFileNameFilter;
+	private DirectoryFilter _directoryFilter;
+	
 	private static final String _insertSql = "insert into url_based_resource (user_id, uuid, url, client) values (?,?,?,?)";
 	
 	/**
 	 * Creates an instance that uses the provided DataSource for database access; rootDirectory as the root for filesystem
 	 * storage; fileExtension for naming saved files with the appropriate extension; maxNumberOfDirs for the maximum number of
 	 * storage subdirectories; and maxNumberOfFiles for the maximum number of files per directory. The rootDirectory is used to 
-	 * create the initial directory for storage: rootDirectory/000/000/000. 
+	 * create the initial directory for storage e.g. rootDirectory/000/000/000. 
 	 */
 	public UrlBasedResourceDao(DataSource dataSource, String rootDirectory, String fileExtension, 
 			int maxNumberOfDirs, int maxNumberOfFiles) {
 		
 		super(dataSource);
+		
 		if(StringUtils.isEmptyOrWhitespaceOnly(rootDirectory)) {
 			throw new IllegalArgumentException("rootDirectory is required");
 		}
@@ -75,6 +82,10 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 		}
 		
 		_fileExtension = fileExtension.startsWith(".") ? fileExtension : "." + fileExtension;
+		_numberRegexpFile = Pattern.compile("[0-9]+" + _fileExtension);
+		_numberFileNameFilter = new NumberFileNameFilter();
+		_directoryFilter = new DirectoryFilter();
+		
 		_maxNumberOfDirs = (maxNumberOfDirs % 10 == 0) ? maxNumberOfDirs - 1: maxNumberOfDirs;
 		_maxNumberOfFiles = (maxNumberOfFiles % 10 == 0) ? maxNumberOfFiles - 1: maxNumberOfFiles;
 		
@@ -85,7 +96,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 	
 	/**
 	 * Persists media data to a filesystem location and places a URL to the data into the url_based_resource table. The database
-	 * write and filesystem write are handled as one transaction in order to handle duplicate uploads gracefully.
+	 * write and filesystem write are handled as one transaction.
 	 */
 	@Override
 	public void execute(AwRequest awRequest) {
@@ -342,16 +353,14 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 	}
 	
 	private boolean directoryHasMaxNumberOfFiles(File dir) {
-		NumberFileNameFilter filter = new NumberFileNameFilter(); // this can be an instance var
-		if(dir.listFiles(filter).length < _maxNumberOfFiles) { _logger.info(dir.getAbsolutePath() + ":" + dir.listFiles(filter).length);
+		if(dir.listFiles(_numberFileNameFilter).length < _maxNumberOfFiles) {
 			return false;
 		}
 		return true;
 	}
 	
 	private boolean directoryHasMaxNumberOfSubdirectories(File dir) {
-		DirectoryFilter filter = new DirectoryFilter(); // this can be an instance var
-		if(dir.listFiles(filter).length < _maxNumberOfDirs) {
+		if(dir.listFiles(_directoryFilter).length < _maxNumberOfDirs) {
 			return false;
 		}
 		return true;
@@ -414,7 +423,6 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 						
 					} else {
 						
-						// _logger.info(incrementDir(parentDir).getAbsolutePath() + "/" + _initialDir);
 						return findStartDir(incrementDir(parentDir).getAbsolutePath() + "/" + _initialDir);
 						
 					}
@@ -425,6 +433,7 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 				}
 				
 			} else {
+				
 				return f;
 			}
 		}
@@ -470,15 +479,16 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 	}
 	
 	private String findStartFile(File dir) {
-		NumberFileNameFilter filter = new NumberFileNameFilter(); // this can be an instance var
-		File[] files = dir.listFiles(filter);
+		File[] files = dir.listFiles(_numberFileNameFilter);
 		
 		if(files.length > 0) {
 			Arrays.sort(files);
 			File f = files[files.length - 1];
-			// TODO jpg should not be hardcoded!
-			return incrementName(f.getName().substring(0, f.getName().lastIndexOf(".jpg")), _maxNumberOfFiles);
+			
+			return incrementName(f.getName().substring(0, f.getName().lastIndexOf(_fileExtension)), _maxNumberOfFiles);
+			
 		} else {
+			
 			return _initialFileName;
 		}
 	}
@@ -488,13 +498,13 @@ public class UrlBasedResourceDao extends AbstractUploadDao {
 	
 	public class DirectoryFilter implements FilenameFilter {
 		public boolean accept(File f, String name) {
-			return _numberRegexp.matcher(name).matches();
+			return _numberRegexpDir.matcher(name).matches();
 		}
 	}
 	
 	public class NumberFileNameFilter implements FilenameFilter {
 		public boolean accept(File f, String name) {
-			return _numberRegexpJpg.matcher(name).matches();
+			return _numberRegexpFile.matcher(name).matches();
 		}
 	}
 }

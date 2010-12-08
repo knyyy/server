@@ -144,13 +144,4 @@
     </property>
   </bean>	
   
-  <bean id="uploadClientFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
-    <constructor-arg index="0">
-      <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
-        <property name="code" value="0302" />
-        <property name="text" value="missing or invalid client" />
-      </bean>
-    </constructor-arg>
-  </bean>
-  
 </beans>

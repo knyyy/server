@@ -72,10 +72,14 @@
       </bean>
     </constructor-arg>
   </bean>
+
+  <bean id="severeErrorJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+    <constructor-arg index="0"><ref bean="severeErrorResponse" /></constructor-arg>
+  </bean>
   
   <bean id="severeErrorResponse" class="edu.ucla.cens.awserver.domain.ErrorResponse">
-     <property name="code" value="0103" />
-     <property name="text" value="a general error occurred" />
+    <property name="code" value="0103" />
+    <property name="text" value="a general error occurred" />
   </bean>
   
 </beans>
