@@ -11,13 +11,11 @@
   <bean id="imageQueryHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.ImageQueryValidator" />
   <!-- create AwRequest from data in the HttpServletRequest -->
   <bean id="imageQueryAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.ImageQueryAwRequestCreator" />
-  
-  <!-- write outbound data, post-controller
-   
-  <bean id="dataPointQueryResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.DataPointQueryResponseWriter">
+  <!-- write outbound data, post-controller -->
+  <bean id="imageQueryResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.ImageQueryResponseWriter">
     <constructor-arg index="0"><ref bean="severeErrorResponse" /></constructor-arg>
   </bean>
-  -->
+  
     
   <!-- Controller -->
   <bean id="imageQueryController" class="edu.ucla.cens.awserver.controller.ControllerImpl">
