@@ -49,24 +49,20 @@ public class ImageQueryResponseWriter extends AbstractResponseWriter {
 				File imageFile = new File(new URI(((MediaQueryAwRequest)awRequest).getMediaUrl()));
 				is = new DataInputStream(new FileInputStream(imageFile));
 				
-				int length = (int) imageFile.length(); // should never have images over 2MB
-				_logger.info(length);
+				int length = (int) imageFile.length(); // in general, this app should never have images over 2MB
 				int chunkSize = 1024;
-				int numberOfBytesToWrite = chunkSize;
+				int numberOfBytes = chunkSize;
 				byte[] bytes = new byte[chunkSize];
 				int start = 0;
 				
 				while(start < length) {
 					
 					if(start + chunkSize > length) {
-						numberOfBytesToWrite = length - start;
+						numberOfBytes = length - start;
 					}
 					
-					_logger.info(start);
-					_logger.info(numberOfBytesToWrite);
-					
-					is.read(bytes, 0, numberOfBytesToWrite);
-					os.write(bytes, 0, numberOfBytesToWrite);
+					is.read(bytes, 0, numberOfBytes);
+					os.write(bytes, 0, numberOfBytes);
 					
 					start += chunkSize;	
 				}
