@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import edu.ucla.cens.awserver.util.StringUtils;
+
 /**
  * @author selsky
  */
@@ -60,31 +62,24 @@ public abstract class AbstractGzipHttpServletRequestValidator extends AbstractHt
 			
 			is = new BufferedInputStream(new GZIPInputStream(request.getInputStream()));
 			
-			while(true) {
+			while(-1 != is.read(input, 0, chunkSize)) { // -1 is EOF
+					
+				builder.append(new String(input));
 				
-				int amountRead = is.read(input, 0, chunkSize);
-				
-				if(-1 == amountRead) { // end of file
-					
-					break;
-					
-				} else {
-					
-					builder.append(new String(input));
-				}
 			}
 			
 			if(_logger.isDebugEnabled()) {
 				_logger.debug("ungzipped input post data: " + builder);
 			}
 			
+			// The Map key values are String arrays in order to match HttpServletRequest.getParameterMap()
 			Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 			String[] keyValuePairs = builder.toString().split("&");
 			
 			for(String keyValuePair : keyValuePairs) {
 				String[] splitPair = keyValuePair.split("=");
-				String key = splitPair[0]; _logger.info(key);
-				String[] value = Arrays.copyOfRange(splitPair, 1, 2); _logger.info(value[0]);
+				String key = splitPair[0]; // _logger.info(key);
+				String[] value = new String[]{StringUtils.urlDecode(splitPair[1])}; // _logger.info(value[0]);
 				
 				parameterMap.put(key, value);
 			}

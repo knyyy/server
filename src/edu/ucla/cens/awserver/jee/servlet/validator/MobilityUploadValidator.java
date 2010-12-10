@@ -60,16 +60,18 @@ public class MobilityUploadValidator extends AbstractGzipHttpServletRequestValid
 			}
 		}
 		
-		String u = (String) request.getParameter("u");
+		// Tomcat will URL Decode the parameters 
+		
+		String u = (String) request.getParameter("u"); 
 		String p = (String) request.getParameter("p");
 		String ci = (String) request.getParameter("ci");
 		
 		// Check for abnormal lengths (buffer overflow attack)
-		// 50 is an arbitrary number for length, but for these parameters it would be very strange
+		// The max lengths are based on the column widths in the db
 		
-		if(greaterThanLength("user", "u", u, 75)
-		   || greaterThanLength("client", "ci", ci, 100)
-		   || greaterThanLength("password", "p", p, 180) // handle up to 60 %-encoded characters
+		if(greaterThanLength("user", "u", u, 15)
+		   || greaterThanLength("client", "ci", ci, 250)
+		   || greaterThanLength("password", "p", p, 100)
 		) {
 			return false;
 		}
