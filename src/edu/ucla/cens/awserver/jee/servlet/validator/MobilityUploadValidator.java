@@ -10,21 +10,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
-public class MobilityUploadValidator extends AbstractHttpServletRequestValidator {
+/**
+ * @author selsky
+ */
+public class MobilityUploadValidator extends AbstractGzipHttpServletRequestValidator {
 	private static Logger _logger = Logger.getLogger(MobilityUploadValidator.class);
 	private List<String> _parameterList;
 	
-	/**
-	 * 
-	 */
 	public MobilityUploadValidator() {
 		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"u","ci","d","p"}));
 	}
 	
-	
 	@Override
 	public boolean validate(HttpServletRequest request) {
-		Map<?,?> parameterMap = request.getParameterMap(); // String, String[]
+		
+		Map<?,?> parameterMap = requestToMap(request); // String, String[]
 		
 		// Check for missing or extra parameters
 		
@@ -79,7 +79,9 @@ public class MobilityUploadValidator extends AbstractHttpServletRequestValidator
 		
 		// The default setting for Tomcat is to disallow requests that are greater than 2MB
 		
-		return true;
+		request.setAttribute("validatedParameterMap", parameterMap);
+		
+		return true;	
 	}
-
 }
+ 

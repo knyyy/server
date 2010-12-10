@@ -2,6 +2,7 @@ package edu.ucla.cens.awserver.jee.servlet.glue;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,16 +31,18 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 	 *  and places them in a new AwRequest.
 	 */
 	public AwRequest createFrom(HttpServletRequest request) {
+		@SuppressWarnings("unchecked")
+		Map<String, String[]> parameterMap = (Map<String, String[]>) request.getAttribute("validatedParameterMap");
+		
 		String sessionId = request.getSession(false).getId(); // for upload logging to connect app logs to upload logs
 		
-		String userName = request.getParameter("u");
-		String campaignName = request.getParameter("c");
-		String password = request.getParameter("p"); 
-		String ci = request.getParameter("ci");
+		String userName = parameterMap.get("u")[0];
+		String password = parameterMap.get("p")[0]; 
+		String ci = parameterMap.get("ci")[0];;
 		String jsonData = null; 
 		try {
 			
-			String jd = request.getParameter("d");
+			String jd = parameterMap.get("d")[0];;
 			
 			if(null != jd) {
 				jsonData = URLDecoder.decode(jd, "UTF-8");
@@ -61,7 +64,6 @@ public class MobilityUploadAwRequestCreator implements AwRequestCreator {
 		awRequest.setUser(user);
 		awRequest.setClient(ci);
 		awRequest.setJsonDataAsString(jsonData);
-		awRequest.setCampaignName(campaignName);
 		
 		String requestUrl = request.getRequestURL().toString();
 		if(null != request.getQueryString()) {
