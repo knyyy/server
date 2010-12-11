@@ -2,7 +2,6 @@ package edu.ucla.cens.awserver.jee.servlet.validator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,49 +21,18 @@ public class MobilityUploadValidator extends AbstractGzipHttpServletRequestValid
 	}
 	
 	@Override
-	public boolean validate(HttpServletRequest request) {
+	public boolean validate(HttpServletRequest httpServletRequest) {
+		Map<String, String[]> parameterMap = requestToMap(httpServletRequest);
 		
-		Map<?,?> parameterMap = requestToMap(request); // String, String[]
-		
-		// Check for missing or extra parameters
-		
-		if(parameterMap.size() != _parameterList.size()) {
-			_logger.warn("an incorrect number of parameters was found on mobility upload: " + parameterMap.size());
+		if(! basicValidation(parameterMap, _parameterList)) {
 			return false;
-		}
-		
-		// Check for duplicate parameters
-		
-		Iterator<?> iterator = parameterMap.keySet().iterator();
-		
-		while(iterator.hasNext()) {
-			String key = (String) iterator.next();
-			String[] valuesForKey = (String[]) parameterMap.get(key);
-			
-			if(valuesForKey.length != 1) {
-				_logger.warn("an incorrect number of values (" + valuesForKey.length + ") was found for parameter " + key);
-				return false;
-			}
-		}
-		
-		// Check for parameters with unknown names
-		
-		iterator = parameterMap.keySet().iterator(); // there is no way to reset the iterator so just obtain a new one
-		
-		while(iterator.hasNext()) {
-			String name = (String) iterator.next();
-			if(! _parameterList.contains(name)) {
-			
-				_logger.warn("an incorrect parameter name was found: " + name);
-				return false;
-			}
 		}
 		
 		// Tomcat will URL Decode the parameters 
 		
-		String u = (String) request.getParameter("u"); 
-		String p = (String) request.getParameter("p");
-		String ci = (String) request.getParameter("ci");
+		String u = (String) httpServletRequest.getParameter("u"); 
+		String p = (String) httpServletRequest.getParameter("p");
+		String ci = (String) httpServletRequest.getParameter("ci");
 		
 		// Check for abnormal lengths (buffer overflow attack)
 		// The max lengths are based on the column widths in the db
@@ -73,6 +41,7 @@ public class MobilityUploadValidator extends AbstractGzipHttpServletRequestValid
 		   || greaterThanLength("client", "ci", ci, 250)
 		   || greaterThanLength("password", "p", p, 100)
 		) {
+			_logger.warn("found an input parameter that exceeds its allowed length");
 			return false;
 		}
 		
@@ -81,7 +50,7 @@ public class MobilityUploadValidator extends AbstractGzipHttpServletRequestValid
 		
 		// The default setting for Tomcat is to disallow requests that are greater than 2MB
 		
-		request.setAttribute("validatedParameterMap", parameterMap);
+		httpServletRequest.setAttribute("validatedParameterMap", parameterMap);
 		
 		return true;	
 	}

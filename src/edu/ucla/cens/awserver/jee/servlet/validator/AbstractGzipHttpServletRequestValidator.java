@@ -3,7 +3,6 @@ package edu.ucla.cens.awserver.jee.servlet.validator;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,11 +24,12 @@ public abstract class AbstractGzipHttpServletRequestValidator extends AbstractHt
 	 * If the request contains a gzipped input stream, converts it to a parameter map with String keys and String[] values (as in 
 	 * the standard Servlet API). If the request is not gzipped, returns request.getParameterMap().  
 	 */
-	protected Map<?,?> requestToMap(HttpServletRequest request) {
+	@SuppressWarnings("unchecked")
+	protected Map<String, String[]> requestToMap(HttpServletRequest request) {
 		
 		if(! isGzipped(request)) {
 			
-			return request.getParameterMap();
+			return (Map<String, String[]>) request.getParameterMap();
 			
 		} else {
 			
@@ -50,7 +50,7 @@ public abstract class AbstractGzipHttpServletRequestValidator extends AbstractHt
 		return false;
 	}
 	
-	private Map<?,?> map(HttpServletRequest request) {
+	private Map<String, String[]> map(HttpServletRequest request) {
 		
 		InputStream is = null;
 		
@@ -79,6 +79,9 @@ public abstract class AbstractGzipHttpServletRequestValidator extends AbstractHt
 			for(String keyValuePair : keyValuePairs) {
 				String[] splitPair = keyValuePair.split("=");
 				String key = splitPair[0]; // _logger.info(key);
+				// This only works for keys that map to one value which is ok for the current survey and mobility APIs,  
+				// but it may break in the future because HTTP allows multiple values for a single key (that's why 
+				// there is a values array)
 				String[] value = new String[]{StringUtils.urlDecode(splitPair[1])}; // _logger.info(value[0]);
 				
 				parameterMap.put(key, value);

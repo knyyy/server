@@ -1,7 +1,5 @@
 package edu.ucla.cens.awserver.jee.servlet.validator;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +17,7 @@ import edu.ucla.cens.awserver.domain.User;
 import edu.ucla.cens.awserver.domain.UserImpl;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.MediaUploadAwRequest;
+import edu.ucla.cens.awserver.util.StringUtils;
 
 /**
  * Validates a multipart/form-data POST for media upload using the Apache Commons library.
@@ -80,58 +79,50 @@ public class MediaUploadValidator extends AbstractHttpServletRequestValidator {
 		
 		for(int i = 0; i < numberOfUploadedItems; i++) {
 			FileItem fi = (FileItem) uploadedItems.get(i);
+			String tmp = null;
 			
 			if(fi.isFormField()) {
 				String name = fi.getFieldName();
+				
 				if(! _parameterSet.contains(name)) {
 					
 					_logger.warn("an unknown parameter was found in a media upload: " + name);
 					return false;
 				}
 				
+				tmp = StringUtils.urlDecode(fi.getString());
+				
 				if("c".equals(name)) {
 					
-					if(greaterThanLength("campaign name", "c", fi.getString(), 750)) {
+					if(greaterThanLength("campaign name", "c", tmp, 250)) {
 						return false;
 					}
 					
-					awRequest.setCampaignName(fi.getString());
+					awRequest.setCampaignName(tmp);
 				}
 				
 				if("ci".equals(name)) {
 					
-					if(greaterThanLength("client", "ci", fi.getString(), 600)) {
+					if(greaterThanLength("client", "ci", tmp, 250)) {
 						return false;
 					}
 					
-					awRequest.setClient(fi.getString());
+					awRequest.setClient(tmp);
 				}
 				
 				if("i".equals(name)) {
 					
-					if(greaterThanLength("id", "i", fi.getString(), 36)) {
+					if(greaterThanLength("id", "i", tmp, 36)) {
 						return false;
 					}
 					
-					awRequest.setMediaId(fi.getString());
+					awRequest.setMediaId(tmp);
 				}
 				
 				if("p".equals(name)) {
 					
-					if(greaterThanLength("password", "p", fi.getString(), 180)) {
+					if(greaterThanLength("password", "p", tmp, 100)) {
 						return false;
-					}
-					
-					// _logger.debug("'" + fi.getString() + "'");
-					
-					String tmp = null;
-					try {
-					
-						tmp = URLDecoder.decode(fi.getString("UTF-8"), "UTF-8");
-					
-					} catch(UnsupportedEncodingException uee) {
-						
-						_logger.error(uee.getMessage());
 					}
 					
 					user.setPassword(tmp);
@@ -140,11 +131,11 @@ public class MediaUploadValidator extends AbstractHttpServletRequestValidator {
 				
 				if("u".equals(name)) {
 					
-					if(greaterThanLength("user name", "u", fi.getString(), 750)) {
+					if(greaterThanLength("user name", "u", tmp, 750)) {
 						return false;
 					}
 					
-					user.setUserName(fi.getString());
+					user.setUserName(tmp);
 				}
 				
 			} else { // it's an attached file 
@@ -160,11 +151,11 @@ public class MediaUploadValidator extends AbstractHttpServletRequestValidator {
 					return false;
 				}
 				
-				byte[] mediaBytes = fi.get();
+				byte[] mediaBytes = fi.get(); // converts the stream to a byte array
 				if(_logger.isDebugEnabled()) {
 					_logger.debug("attempting upload of a file of " + mediaBytes.length + " bytes");
 				}
-				awRequest.setMedia(mediaBytes); // converts the stream to a byte array
+				awRequest.setMedia(mediaBytes); 
 			}
 		}
 		

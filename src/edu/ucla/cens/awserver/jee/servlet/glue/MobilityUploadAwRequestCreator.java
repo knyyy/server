@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 
 import edu.ucla.cens.awserver.domain.UserImpl;
@@ -17,7 +16,7 @@ import edu.ucla.cens.awserver.request.UploadAwRequest;
  * @author selsky
  */
 public class MobilityUploadAwRequestCreator implements AwRequestCreator {
-	private static Logger _logger = Logger.getLogger(MobilityUploadAwRequestCreator.class);
+	// private static Logger _logger = Logger.getLogger(MobilityUploadAwRequestCreator.class);
 	
 	/**
 	 * Default no-arg constructor. Simply creates an instance of this class.

@@ -25,12 +25,8 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"s","e","u","c","ci","i","t","cv"}));
 	}
 	
-	/**
-	 * 
-	 */
 	public boolean validate(HttpServletRequest httpServletRequest) {
-		
-		Map<?,?> parameterMap = httpServletRequest.getParameterMap(); // String, String[]
+		Map<String,String[]> parameterMap = getParameterMap(httpServletRequest); 
 		
 		// Check for missing or extra parameters
 		if(parameterMap.size() != _parameterList.size()) {				
@@ -38,10 +34,7 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 			return false;
 		}
 		
-		// ------- This could all be moved to a separate class
-		
-		// Check for duplicate parameters
-		
+		// Check for duplicate parameter values (except for "i")
 		Iterator<?> iterator = parameterMap.keySet().iterator();
 		
 		while(iterator.hasNext()) {
@@ -55,19 +48,9 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 		}
 		
 		// Check for parameters with unknown names
-		
-		iterator = parameterMap.keySet().iterator(); // there is no way to reset the iterator so just obtain a new one
-		
-		while(iterator.hasNext()) {
-			String name = (String) iterator.next();
-			if(! _parameterList.contains(name)) {
-			
-				_logger.warn("an incorrect parameter name was found: " + name);
-				return false;
-			}
+		if(containsUnknownParameter(parameterMap, _parameterList)) {
+			return false;
 		}
-		
-		// -------- end move to a separate class
 		
 		String s = (String) httpServletRequest.getParameter("s");
 		String e = (String) httpServletRequest.getParameter("e");
@@ -77,26 +60,25 @@ public class DataPointQueryValidator extends AbstractHttpServletRequestValidator
 		String t = (String) httpServletRequest.getParameter("t");
 		String cv = (String) httpServletRequest.getParameter("cv");
 		
-		String[] eyes = httpServletRequest.getParameterValues("i");
+		String[] is = httpServletRequest.getParameterValues("i");
 		
 		// Check for abnormal lengths (buffer overflow attack)
-		// The lengths are pretty arbitrary, but values exceeded them would be very strange
 		
-		if(greaterThanLength("startDate", "s", s, 50) 
-		   || greaterThanLength("endDate", "e", e, 50)
+		if(greaterThanLength("startDate", "s", s, 10) 
+		   || greaterThanLength("endDate", "e", e, 10)
 		   || greaterThanLength("campaignName", "c", c, 250)
-		   || greaterThanLength("campaignVersion", "cv", cv, 250)
-		   || greaterThanLength("client", "ci",ci, 500)		   
-		   || greaterThanLength("authToken", "t", t, 50)
-		   || greaterThanLength("userName", "u", u, 75)) {
+		   || greaterThanLength("campaignVersion", "cv", cv, 500)
+		   || greaterThanLength("client", "ci",ci, 250)		   
+		   || greaterThanLength("authToken", "t", t, 36)
+		   || greaterThanLength("userName", "u", u, 15)) {
 			
 			_logger.warn("found an input parameter that exceeds its allowed length");
 			return false;
 		}
 		
 		int x = 0;
-		for(String eye : eyes) { 
-			if(greaterThanLength("dataPointId", "i[" + x + "]", eye, 250)) {
+		for(String i : is) { 
+			if(greaterThanLength("dataPointId", "i[" + x + "]", i, 250)) {
 				_logger.warn("found an input parameter that exceeds its allowed length");
 				return false;
 			}

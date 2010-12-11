@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,7 +28,7 @@ import edu.ucla.cens.awserver.util.StringUtils;
  * @author selsky
  */
 @SuppressWarnings("serial") 
-public class AwDataServlet extends AbstractAwHttpServlet {
+public class AwDataServlet extends HttpServlet {
 	private static Logger _logger = Logger.getLogger(AwDataServlet.class);
 	
 	private AwRequestCreator _awRequestCreator;
