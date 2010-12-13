@@ -29,11 +29,11 @@ public class SurveyUploadValidator extends AbstractGzipHttpServletRequestValidat
 			return false;
 		}
 				
-		String u = (String) httpServletRequest.getParameter("u");
-		String p = (String) httpServletRequest.getParameter("p");
-		String ci = (String) httpServletRequest.getParameter("ci");
-		String c = (String) httpServletRequest.getParameter("c");
-		String cv = (String) httpServletRequest.getParameter("cv");
+		String u = parameterMap.get("u")[0];
+		String p = parameterMap.get("p")[0];
+		String ci = parameterMap.get("ci")[0];
+		String c = parameterMap.get("c")[0];
+		String cv = parameterMap.get("cv")[0];
 		
 		// Check for abnormal lengths (buffer overflow attack)
 		// The max lengths are based on the column widths in the db  

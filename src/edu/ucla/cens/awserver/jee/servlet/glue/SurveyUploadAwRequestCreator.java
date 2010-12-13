@@ -2,6 +2,7 @@ package edu.ucla.cens.awserver.jee.servlet.glue;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,32 +28,20 @@ public class SurveyUploadAwRequestCreator implements AwRequestCreator {
     }
     
     /**
-     *  Pulls the u (userName), t (type), phv (phone version), prv (protocol version), and d (json data) parameters out of the 
-     *  HttpServletRequest and places them in a new AwRequest. Also places the subdomain from the request URL into the AwRequest.
-     *  Validation of the data is performed within a controller.
+     * Creates an AwRequest from the validatedParamterMap found in the HttpServletRequest.
      */
     public AwRequest createFrom(HttpServletRequest request) {
+    	@SuppressWarnings("unchecked")
+		Map<String, String[]> parameterMap = (Map<String, String[]>) request.getAttribute("validatedParameterMap");
+		
         String sessionId = request.getSession(false).getId(); // for upload logging to connect app logs to uploads
         
-        String userName = request.getParameter("u");
-        String campaignName = request.getParameter("c");
-        String password = request.getParameter("p");
-        String client = request.getParameter("ci");
-        String campaignVersion = request.getParameter("cv");
-        
-        String jsonData = null; 
-        try {
-            
-            String jd = request.getParameter("d");
-            
-            if(null != jd) {
-                jsonData = URLDecoder.decode(jd, "UTF-8");
-            }
-            
-        } catch(UnsupportedEncodingException uee) { // if UTF-8 is not recognized we have big problems
-            
-            throw new IllegalStateException(uee);
-        }
+        String userName = parameterMap.get("u")[0];
+        String campaignName = parameterMap.get("c")[0];
+        String password = parameterMap.get("p")[0];
+        String client = parameterMap.get("ci")[0];
+        String campaignVersion = parameterMap.get("cv")[0];
+        String jsonData = parameterMap.get("d")[0]; 
         
         UserImpl user = new UserImpl();
         user.setUserName(userName);
