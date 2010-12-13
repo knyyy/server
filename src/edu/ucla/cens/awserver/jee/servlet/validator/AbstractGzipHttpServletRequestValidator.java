@@ -1,6 +1,7 @@
 package edu.ucla.cens.awserver.jee.servlet.validator;
 
 import java.io.BufferedInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -72,25 +73,36 @@ public abstract class AbstractGzipHttpServletRequestValidator extends AbstractHt
 				_logger.debug("ungzipped input post data: " + builder);
 			}
 			
-			// The Map key values are String arrays in order to match HttpServletRequest.getParameterMap()
 			Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-			String[] keyValuePairs = builder.toString().split("&");
 			
-			for(String keyValuePair : keyValuePairs) {
-				String[] splitPair = keyValuePair.split("=");
-				String key = splitPair[0]; // _logger.info(key);
-				// This only works for keys that map to one value which is ok for the current survey and mobility APIs,  
-				// but it may break in the future because HTTP allows multiple values for a single key (that's why 
-				// there is a values array)
-				String[] value = new String[]{StringUtils.urlDecode(splitPair[1])}; // _logger.info(value[0]);
+			if(0 != builder.toString().length()) {
 				
-				parameterMap.put(key, value);
+				// The Map key values are String arrays in order to match HttpServletRequest.getParameterMap()
+				
+				String[] keyValuePairs = builder.toString().split("&");
+				
+				for(String keyValuePair : keyValuePairs) {
+					String[] splitPair = keyValuePair.split("=");
+					String key = splitPair[0]; // _logger.info(key);
+					// This only works for keys that map to one value which is ok for the current survey and mobility APIs,  
+					// but it may break in the future because HTTP allows multiple values for a single key (that's why 
+					// there is a values array)
+					String[] value = new String[]{StringUtils.urlDecode(splitPair[1])}; // _logger.info(value[0]);
+					
+					parameterMap.put(key, value);
+				}
 			}
 			
 			return parameterMap;
 			
+		} catch (EOFException eofe) {
+			
+			_logger.error("found empty gzipped upload", eofe);
+			throw new IllegalStateException(eofe);
+			
 		} catch (IOException ioe) {
 			
+			_logger.error("error reading input stream", ioe);
 			throw new IllegalStateException(ioe);
 			
 		} finally {
