@@ -45,7 +45,7 @@ public class QueryPromptIdValidationService extends AbstractAnnotatingService {
 		for(String promptId : promptIds) {
 			List<String> configMetadataPromptIds = config.getMetadataPromptIds(promptId);
 			
-			if(! configMetadataPromptIds.contains(promptId)) {
+			if(configMetadataPromptIds.contains(promptId)) {
 				getAnnotator().annotate(req, "promptId " +  promptId + " is a metadata promptId and disallowed");
 				return;
 			}	
