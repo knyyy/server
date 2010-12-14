@@ -35,6 +35,11 @@ public class JsonMsgSurveyLaunchContextValidator extends AbstractAnnotatingJsonO
 				getAnnotator().annotate(awRequest, "launch_time from survey_launch_context is null");
 				return false;
 			}
+			
+		} else {
+			
+			getAnnotator().annotate(awRequest, "missing survey_launch_context");
+			return false;
 		}
 		
 		return true;
