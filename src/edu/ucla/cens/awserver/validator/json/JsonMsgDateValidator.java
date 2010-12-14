@@ -36,7 +36,7 @@ public class JsonMsgDateValidator extends AbstractAnnotatingJsonObjectValidator 
 			return false;
 		}
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		sdf.setLenient(false); // enforce valid dates 
 		
 		try {
