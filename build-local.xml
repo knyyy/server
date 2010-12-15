@@ -86,11 +86,13 @@
   <target name="dist" depends="javac" description="Compiles Java files and creates WAR.">
     <mkdir dir="${dist}"/>
     <echo message="Warning: Bundling of dependencies will not work if jars are organized in subdirs in component repository."/>
-    <war webxml="${resources}/WEB-INF/web.xml" destfile="${dist}/${ant.project.name}-${version}.war">
+    <war webxml="${resources}/WEB-INF/web-local.xml" destfile="${dist}/${ant.project.name}-${version}.war">
       <classes dir="${build}/classes"/>
       <lib refid="run-dependencies"/>
       <webinf dir="${resources}/WEB-INF">
-        <exclude name="web.xml"/>
+        <exclude name="web-local.xml"/>
+      	<exclude name="web-remote.xml"/>
+      	<exclude name="spring/util-system-remote.xml"/>
       </webinf>
       <metainf dir="${resources}/META-INF">
         <exclude name="MANIFEST.MF"/>

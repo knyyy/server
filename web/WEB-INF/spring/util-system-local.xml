@@ -41,14 +41,9 @@
   
   <!-- Allow queries against data points that are not prompt ids -->
   <util:list id="dataPointAPISpecialIds">
-    <!-- these are now user stat queries
-    <value>hours_since_last_survey</value>
-    <value>hours_since_last_update</value>
-    <value>percent_successful_location_updates</value>
-    -->
     <value>completed_surveys_per_day</value>
     <value>mobility_modes_per_day</value>
-    <!-- other mobility special ids to be added later once aggregation jobs are in place -->
+    <value>mobility</value>
   </util:list>
 
 </beans>
