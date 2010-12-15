@@ -36,6 +36,8 @@ public class UserBin extends TimerTask {
 	 * TODO Enforce period relative to lifetime?
 	 */
 	public UserBin(int lifetime, int executionPeriod) {
+		_logger.info("users will live for " + lifetime + " milliseconds and the executioner will run every " + executionPeriod 
+			+ " milliseconds");
 		_lifetime = lifetime;
 		_users = new ConcurrentHashMap<String, UserTime> ();
 		_executioner = new Timer("user bin user expiration process", true);
