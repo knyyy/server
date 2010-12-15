@@ -31,7 +31,7 @@ public class RetrieveConfigAwRequestCreator implements AwRequestCreator {
 		awRequest.setCampaignName(campaignName);
 		awRequest.setClient(client);
 		awRequest.setUserToken(userToken);
-		
+				
 		return awRequest;
 	}
 }
