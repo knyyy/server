@@ -33,7 +33,7 @@ public abstract class AbstractResponseWriter implements ResponseWriter {
 			throw new IllegalArgumentException("an ErrorResponse is required");
 		}
 		_errorResponse = errorResponse;
-		_successJson = "{\"result\",\"success\"}";
+		_successJson = "{\"result\":\"success\"}";
 	}
 	
 	/**
