@@ -2,6 +2,7 @@ package edu.ucla.cens.awserver.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
  * @author selsky
  */
 public class Configuration {
+	// private static Logger _logger = Logger.getLogger(Configuration.class);
 	private String _campaignName;
 	private String _campaignVersion;
 	private Map<String, Survey> _surveyMap;
@@ -108,11 +110,21 @@ public class Configuration {
 	 */
 	public String getSurveyIdForPromptId(String promptId) {
 		Set<String> keys = _surveyMap.keySet();
-		for(String key : keys) {
+		for(String key : keys) { 
 			Survey s = _surveyMap.get(key);
-			Map<String, SurveyItem> itemMap = s.getSurveyItemMap();
-			if(itemMap.containsKey(promptId)) {
-				return key;
+			Map<String, SurveyItem> itemMap = s.getSurveyItemMap(); 
+			Set<String> itemKeys = itemMap.keySet();
+			for(String itemKey : itemKeys) {
+				SurveyItem si = itemMap.get(itemKey);
+				if(si instanceof RepeatableSet) {
+					if(((RepeatableSet)si).getPromptMap().keySet().contains(promptId)) {
+						return key;
+					}
+				} else {
+					if(itemKey.equals(promptId)) {
+						return key;
+					}
+				}
 			}
 		}
 		return null;
@@ -133,7 +145,16 @@ public class Configuration {
 					if(((Prompt) si).getDisplayType().equals("metadata")) {
 						list.add(si.getId());
 					}
-				}
+				} else {
+					Map<String, Prompt> promptMap = ((RepeatableSet)si).getPromptMap();
+					Iterator<String> rsPromptKeyIterator = promptMap.keySet().iterator();
+					while(rsPromptKeyIterator.hasNext()) {
+						Prompt p = promptMap.get(rsPromptKeyIterator.next()); 
+						if(p.getDisplayType().equals("metadata")) {
+							list.add(p.getId());
+						}
+					}
+ 				}
 			}
 		}
 		return list;

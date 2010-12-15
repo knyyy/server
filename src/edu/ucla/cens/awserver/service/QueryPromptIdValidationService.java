@@ -15,6 +15,7 @@ import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
  * @author selsky
  */
 public class QueryPromptIdValidationService extends AbstractAnnotatingService {
+	// private static Logger _logger = Logger.getLogger(QueryPromptIdValidationService.class);
 	private ConfigurationCacheService _configurationCacheService;
 	
 	public QueryPromptIdValidationService(AwRequestAnnotator annotator, ConfigurationCacheService configurationCacheService) {
@@ -36,7 +37,7 @@ public class QueryPromptIdValidationService extends AbstractAnnotatingService {
 	public void execute(AwRequest awRequest) {
 		DataPointQueryAwRequest req = (DataPointQueryAwRequest) awRequest;
 		
-		String[] promptIds = req.getDataPointIds();
+		String[] promptIds = req.getDataPointIds(); 
 		String campaignName = req.getCampaignName();
 		String campaignVersion = req.getCampaignVersion();
 		
