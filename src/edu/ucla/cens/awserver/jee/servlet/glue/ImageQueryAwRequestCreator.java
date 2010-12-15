@@ -2,6 +2,8 @@ package edu.ucla.cens.awserver.jee.servlet.glue;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.NDC;
+
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.request.MediaQueryAwRequest;
 
@@ -33,6 +35,9 @@ public class ImageQueryAwRequestCreator implements AwRequestCreator {
 		awRequest.setCampaignName(campaignName);
 		awRequest.setMediaId(imageId);
 		awRequest.setCampaignVersion(campaignVersion);
+		
+        NDC.push("ci=" + client); // push the client string into the Log4J NDC for the currently executing thread - this means that 
+                                  // it will be in every log message for the thread
 		
 		return awRequest;
 	}
