@@ -1,4 +1,4 @@
-package edu.ucla.cens.awserver.fileupload;
+package edu.ucla.cens.awserver.jee.fileupload;
 
 import javax.servlet.ServletContext;
 
