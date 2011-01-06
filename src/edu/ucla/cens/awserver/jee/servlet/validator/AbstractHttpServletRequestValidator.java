@@ -24,7 +24,7 @@ public abstract class AbstractHttpServletRequestValidator implements HttpServlet
 	protected boolean basicValidation(Map<String, String[]> parameterMap, List<String> nameList) {
 		// Check for missing or extra parameters
 		if(parameterMap.size() != nameList.size()) {
-			_logger.warn("an incorrect number of parameters was found on phone survey upload: " + parameterMap.size());
+			_logger.warn("incorrect number of parameters: " + nameList.size() + " expected, " + parameterMap.size() + " found");
 			return false;
 		}
 		
