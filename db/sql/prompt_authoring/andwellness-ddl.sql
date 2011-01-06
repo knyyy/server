@@ -155,9 +155,8 @@ CREATE TABLE prompt_response (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
--- Points a UUID to a URL of a media resource (such as an image). Most
--- media resources are bound to a prompt_response, but they are 
--- bound asynchronously so there is no explicit link between the two tables.
+-- Points a UUID to a URL of a media resource (such as an image). The  
+-- UUID is an implicit link into the prompt_response table.
 -- --------------------------------------------------------------------
 CREATE TABLE url_based_resource (
     id  integer unsigned NOT NULL auto_increment,
