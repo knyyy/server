@@ -5,6 +5,8 @@ package edu.ucla.cens.genjson;
  * 
  * TODO change to an enum factory?
  * 
+ * Check out the AndWellnessDataGenerator project for components that create survey messages.
+ * 
  * @author selsky
  */
 public class JsonMessageCreatorFactory {
@@ -26,32 +28,10 @@ public class JsonMessageCreatorFactory {
 		} else if ("mobility:mode_features".equals(messageCreatorName)){
 			
 			return new MobilityModeFeaturesJsonMessageCreator();
-			
-		} else if ("prompt:0".equals(messageCreatorName)) {
-			
-			return new PromptGroupZeroJsonMessageCreator();
-			
-		} else if ("prompt:1".equals(messageCreatorName)) {
-			
-			return new PromptGroupOneJsonMessageCreator();
-			
-		} else if ("prompt:2".equals(messageCreatorName)) {
-			
-			return new PromptGroupTwoJsonMessageCreator();
-			
-		} else if ("prompt:3".equals(messageCreatorName)) {
-			
-			return new PromptGroupThreeJsonMessageCreator();
-			
-		} else if ("prompt:4".equals(messageCreatorName)) {
-			
-			return new PromptGroupFourJsonMessageCreator();
-			
+
 		} else {
 			
 			throw new IllegalArgumentException("cannot create JSON messages, invalid message type: " + messageCreatorName);
 		}
-		 
 	}
-	
 }
