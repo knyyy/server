@@ -23,11 +23,6 @@
     <constructor-arg index="1"><ref bean="userNameFailedJsonRequestAnnotator" /></constructor-arg>
   </bean>
   
-  <bean id="uploadJsonDataExistsValidator" class="edu.ucla.cens.awserver.validator.NonEmptyStringAnnotatingValidator">
-    <constructor-arg index="0"><ref bean="uploadJsonDataFailedJsonRequestAnnotator" /></constructor-arg>
-    <constructor-arg index="1"><value>jsonDataAsString</value></constructor-arg>
-  </bean>
-  
   <bean id="userNameFailedJsonRequestAnnotator" class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
