@@ -82,9 +82,9 @@ public class MobilityUploadDao extends AbstractUploadDao {
 		
 		try { // handle TransactionExceptions
 			
-			try { // handle DataAccessExceptions
+			for(DataPacket dataPacket : dataPackets) { 
 				
-				for(DataPacket dataPacket : dataPackets) {
+				 try { // handle duplicates and other DataAccessExceptions 
 						
 					currentDataPacket = dataPacket;
 					
@@ -113,37 +113,38 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					}
 					
 					savepoint = status.createSavepoint();
-				}
 				
-			} catch (DataIntegrityViolationException dive) { 
+				
+				} catch (DataIntegrityViolationException dive) { 
+						
+					if(isDuplicate(dive)) {
+						
+						if(_logger.isDebugEnabled()) {
+							_logger.info("found a duplicate mobility message");
+						}
+						handleDuplicate(awRequest, index);
+						status.rollbackToSavepoint(savepoint);
+						
+					} else {
 					
-				if(isDuplicate(dive)) {
-					
-					if(_logger.isDebugEnabled()) {
-						_logger.info("found a duplicate mobility message");
+						// some other integrity violation occurred - bad!! All of the data to be inserted must be validated
+						// before this DAO runs so there is either missing validation or somehow an auto_incremented key
+						// has been duplicated
+						
+						_logger.error("caught DataAccessException", dive);
+						logErrorDetails(currentDataPacket, userId, client);
+						rollback(transactionManager, status, currentDataPacket, userId, client);
+						throw new DataAccessException(dive);
 					}
-					handleDuplicate(awRequest, index);
-					status.rollbackToSavepoint(savepoint);
 					
-				} else {
-				
-					// some other integrity violation occurred - bad!! All of the data to be inserted must be validated
-					// before this DAO runs so there is either missing validation or somehow an auto_incremented key
-					// has been duplicated
+				} catch (org.springframework.dao.DataAccessException dae) { // some other database problem happened that prevented
+					                                                        // the SQL from completing normally
 					
-					_logger.error("caught DataAccessException", dive);
+					_logger.error("caught DataAccessException", dae);
 					logErrorDetails(currentDataPacket, userId, client);
 					rollback(transactionManager, status, currentDataPacket, userId, client);
-					throw new DataAccessException(dive);
+					throw new DataAccessException(dae);
 				}
-				
-			} catch (org.springframework.dao.DataAccessException dae) { // some other database problem happened that prevented
-				                                                        // the SQL from completing normally
-				
-				_logger.error("caught DataAccessException", dae);
-				logErrorDetails(currentDataPacket, userId, client);
-				rollback(transactionManager, status, currentDataPacket, userId, client);
-				throw new DataAccessException(dae);
 			}
 		
 			transactionManager.commit(status);

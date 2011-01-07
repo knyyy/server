@@ -62,8 +62,6 @@ public class SurveyUploadDao extends AbstractUploadDao {
 	 * DataPackets where each survey contains a list of prompt response DataPackets. The entire survey upload is treated as one
 	 * transaction. Savepoints are used to gracefully skip over duplicate survey uploads.
 	 * 
-	 * TODO this method is too big and needs to be refactored
-	 * 
      * @throws DataAccessException if any Spring TransactionException or DataAccessException (except for a 
 	 *         DataIntegrityViolationException denoting duplicates) occurs 
 	 * @throws IllegalArgumentException if a List of DataPackets is not present as an attribute on the AwRequest	 
@@ -117,9 +115,9 @@ public class SurveyUploadDao extends AbstractUploadDao {
 		
 		try { // handle TransactionExceptions
 			
-			try { // handle DataAccessExceptions
+			for(; surveyIndex < numberOfSurveys; surveyIndex++) { 
 				
-				for(; surveyIndex < numberOfSurveys; surveyIndex++) {
+				 try { // handle DataAccessExceptions
 					
 					final SurveyDataPacket surveyDataPacket = (SurveyDataPacket) surveys.get(surveyIndex);
 					currentSurveyDataPacket = surveyDataPacket; // this is annoying, but the currentSurveyDataPacket is used for 
@@ -200,39 +198,37 @@ public class SurveyUploadDao extends AbstractUploadDao {
 							}
 						);
 					}
-				}
 				
-			} catch (DataIntegrityViolationException dive) { // a unique index exists only on the survey_response table
-				
-				if(isDuplicate(dive)) {
+				} catch (DataIntegrityViolationException dive) { // a unique index exists only on the survey_response table
 					
-					if(_logger.isDebugEnabled()) {
+					if(isDuplicate(dive)) {
+						
 						_logger.info("found a duplicate survey upload message");
+						
+						handleDuplicate(awRequest, surveyIndex);
+						status.rollbackToSavepoint(savepoint);
+						
+					} else {
+					
+						// some other integrity violation occurred - bad!! All of the data to be inserted must be validated
+						// before this DAO runs so there is either missing validation or somehow an auto_incremented key
+						// has been duplicated
+						
+						_logger.error("caught DataAccessException", dive);
+						logErrorDetails(currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId, client);
+						rollback(transactionManager, status, currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId, client);
+						throw new DataAccessException(dive);
 					}
+						
+				} catch (org.springframework.dao.DataAccessException dae) { // some other database problem happened that prevented
+					                                                        // the SQL from completing normally
 					
-					handleDuplicate(awRequest, surveyIndex);
-					_logger.info("rolling back to savepoint because a duplicate was found");
-					status.rollbackToSavepoint(savepoint);
-					
-				} else {
-				
-					// some other integrity violation occurred - bad!! All of the data to be inserted must be validated
-					// before this DAO runs so there is either missing validation or somehow an auto_incremented key
-					// has been duplicated
-					
-					_logger.error("caught DataAccessException", dive);
-					logErrorDetails(currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId, client);
+					_logger.error("caught DataAccessException", dae);
+					logErrorDetails(currentPromptResponseDataPacket, userId, campaignConfigurationId, currentSurveyResponseId, client);
 					rollback(transactionManager, status, currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId, client);
-					throw new DataAccessException(dive);
+					throw new DataAccessException(dae);
 				}
-					
-			} catch (org.springframework.dao.DataAccessException dae) { // some other database problem happened that prevented
-				                                                        // the SQL from completing normally
 				
-				_logger.error("caught DataAccessException", dae);
-				logErrorDetails(currentPromptResponseDataPacket, userId, campaignConfigurationId, currentSurveyResponseId, client);
-				rollback(transactionManager, status, currentSurveyDataPacket, userId, campaignConfigurationId, currentSurveyResponseId, client);
-				throw new DataAccessException(dae);
 			}
 			
 			// Finally, commit the transaction
