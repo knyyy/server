@@ -90,17 +90,17 @@ public class DataPointQueryService extends AbstractDaoService {
 					
 					if(null != value) {
 						
-						Integer integer = toInt(value);
+						Number number = toNumber(value);
 						
-						if(null != integer) {
-							result.setDisplayValue(integer);
+						if(null != number) {
+							result.setDisplayValue(number);
 						} else {
 							result.setDisplayValue(value);
 						}
 						
-					} else {
-						// single_choice response values are always integers based on our specification
-						result.setDisplayValue(toInt(result.getResponse()));
+					} else { // just use the response if there is no display value
+						
+						result.setDisplayValue(toNumber(result.getResponse()));
 					}
 					
 				} else if(PromptTypeUtils.isMultiChoiceType(result.getPromptType())) {
@@ -143,7 +143,7 @@ public class DataPointQueryService extends AbstractDaoService {
 					
 					if(PromptTypeUtils.isNumberPromptType(result.getPromptType())) { // check for a number to avoid numbers being
 						                                                             // quoted in the JSON output
-						result.setDisplayValue(toInt(result.getResponse())); 
+						result.setDisplayValue(toNumber(result.getResponse())); 
 						
 					} else {
 						
@@ -165,17 +165,17 @@ public class DataPointQueryService extends AbstractDaoService {
 					
 					if(null != value) {
 						
-						Integer integer = toInt(value);
+						Number number = toNumber(value);
 						
-						if(null != integer) {
-							result.setDisplayValue(integer);
+						if(null != number) {
+							result.setDisplayValue(number);
 						} else {
 							result.setDisplayValue(value);
 						}
 						
 					} else {
 						// single_choice response values are always integers based on our specification
-						result.setDisplayValue(toInt(result.getResponse()));
+						result.setDisplayValue(toNumber(result.getResponse()));
 					}
 				
 				} else if (PromptTypeUtils.isMultiChoiceType(result.getPromptType())) {
@@ -218,7 +218,7 @@ public class DataPointQueryService extends AbstractDaoService {
 					
 					if(PromptTypeUtils.isNumberPromptType(result.getPromptType())) { // check for a number to avoid numbers being
                                                                                      // quoted in the JSON output
-						result.setDisplayValue(toInt(result.getResponse())); 
+						result.setDisplayValue(toNumber(result.getResponse())); 
 
 					} else {
 
@@ -233,22 +233,25 @@ public class DataPointQueryService extends AbstractDaoService {
 		}
 	}
 	
-	private Integer toInt(String string) {
-		try {
-			
-			return Integer.parseInt(string);
-			
-		} catch(NumberFormatException nfe) { /* not a problem for the purpose here */ }
-		
-		return null;
-	}
-	
-	private Integer toInt(Object object) {
+	private Number toNumber(Object object) {
 		try {
 			
 			return Integer.parseInt(String.valueOf(object));
 			
-		} catch(NumberFormatException nfe) { /* not a problem for the purpose here */ }
+		} catch(NumberFormatException nfe) {  
+			
+			// ok, maybe it's a float
+			
+			try {
+				
+				return Float.parseFloat(String.valueOf(object));
+				
+			} catch (NumberFormatException nfe2) {
+				
+				_logger.warn("found value that is unparseable as a number: " + object);
+			
+			}
+		}
 		
 		return null;
 	}
