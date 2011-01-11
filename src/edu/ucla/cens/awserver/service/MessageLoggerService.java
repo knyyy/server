@@ -44,7 +44,7 @@ public class MessageLoggerService implements Service {
 	 * (if the request failed), and logs a statistic message to the upload logger. 
 	 */
 	public void execute(AwRequest awRequest) {
-		_logger.info("beginning to log files and stats about a device upload");
+		_logger.info("beginning to log files and stats about an upload");
 		
 		if(awRequest.getUser().isLoggedIn()) { // avoid filling the filesystem up with junk from non-logged in users
 			logUploadToFilesystem(awRequest);
@@ -52,7 +52,7 @@ public class MessageLoggerService implements Service {
 		
 		logUploadStats(awRequest);
 		
-		_logger.info("finished with logging files and stats about a device upload");
+		_logger.info("finished with logging files and stats about an upload");
 	}
 	
 	private void logUploadStats(AwRequest awRequest) {
