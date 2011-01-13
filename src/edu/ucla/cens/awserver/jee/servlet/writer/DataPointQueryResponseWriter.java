@@ -18,6 +18,7 @@ import edu.ucla.cens.awserver.domain.DataPointQueryResult;
 import edu.ucla.cens.awserver.domain.DataPointQueryResultComparator;
 import edu.ucla.cens.awserver.domain.ErrorResponse;
 import edu.ucla.cens.awserver.request.AwRequest;
+import edu.ucla.cens.awserver.util.DateUtils;
 
 /**
  * @author selsky
@@ -42,14 +43,15 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 			response.setContentType("application/json");
 			JSONObject rootObject = new JSONObject();
 			
-			// Build the appropriate response 
+			// Convert the results to JSON for output. 
 			if(! awRequest.isFailedRequest()) {
 				
 				rootObject.put("result", "success");
 				
-				// Convert the results to JSON for output.
 				@SuppressWarnings("unchecked")
 				List<DataPointQueryResult> results =  (List<DataPointQueryResult>) awRequest.getResultList();
+				
+				generateUtcTimestamps(results);
 				Collections.sort(results, new DataPointQueryResultComparator()); // sort by surveyId and displayType so metadata
 				                                                                 // entries are attached to the output correctly
 				
@@ -59,6 +61,7 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 				
 				JSONArray resultArray = new JSONArray();
 				String currentSurveyId = results.size() > 0 ? results.get(0).getSurveyId() : null;
+				String currentTimestamp = results.size() > 0 ? results.get(0).getTimestamp() : null;
 				JSONArray metadataArray = null;
 				
 				for(int i = 0; i < results.size(); i++) {
@@ -68,15 +71,17 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 					if(! currentSurveyId.equals(results.get(i).getSurveyId()) ) {
 						currentSurveyId = results.get(i).getSurveyId();
 						metadataArray = null;
+					} else if (! currentTimestamp.equals(results.get(i).getTimestamp())) {
+						currentTimestamp = results.get(i).getTimestamp();
+						metadataArray = null;
 					}
 						
 					DataPointQueryResult result = results.get(i);
 					
 					// The flow of this JSON serialization and the sort above rely on a few system facts:
-					// 1. Only one dataPointId (promptId) can be queried at a time 
-					// 2. All promptIds in a configuration are unique
-					// 3. Any other promptIds in the results with the same surveyId will be metadata promptIds
-					// 4. Queries against non-metadata promptIds are disallowed
+					// 1. All promptIds in a configuration are unique
+					// 2. Any other promptIds in the results with the same surveyId will be metadata promptIds
+					// 3. Queries against non-metadata promptIds are disallowed
 					
 					if(! "metadata".equals(result.getDisplayType())) {
 						
@@ -95,6 +100,7 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 						}
 						entry.put("timestamp", result.getTimestamp());
 						entry.put("tz", result.getTimezone());
+						entry.put("utc_timestamp", result.getUtcTimestamp());
 						entry.put("latitude", result.getLatitude());
 						entry.put("longitude", result.getLongitude());
 						entry.put("type", result.getDisplayType());
@@ -162,6 +168,12 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 					_logger.error("caught IOException when attempting to free resources", ioe);
 				}
 			}
+		}
+	}
+	
+	private void generateUtcTimestamps(List<DataPointQueryResult> results) {
+		for(DataPointQueryResult result : results) {
+			result.setUtcTimestamp(DateUtils.timestampStringToUtc(result.getTimestamp(), result.getTimezone()));
 		}
 	}
 }

@@ -1,10 +1,12 @@
 package edu.ucla.cens.awserver.domain;
 
 import java.util.Comparator;
+import java.util.TimeZone;
 
 /**
- * Comparator to allow lists of DataPointQueryResults to be sorted by surveyId and displayType. This comparator is inconsistent
- * with typical implementations of equals() where the equality is determined by all of a class's instance variables.
+ * Comparator to allow lists of DataPointQueryResults to be sorted by surveyId, timezone, timestamp, and displayType. This 
+ * comparator is inconsistent with typical implementations of equals() where the equality is determined by all of a class's 
+ * instance variables. The sort performed here cannot be performed by an SQL ORDER BY because there are no 
  * 
  * @author selsky
  */
@@ -26,13 +28,22 @@ public class DataPointQueryResultComparator implements Comparator<DataPointQuery
 		
 		if(0 == x) {
 			
-			// metadata items are greater than any display type and all other display types are treated equally
-			if("metadata".equals(a.getDisplayType())) {
-				return 1;
-			} else if("metadata".equals(b.getDisplayType())) {
-				return -1;
+			int y = a.getUtcTimestamp().compareTo(b.getUtcTimestamp()); // ok to lexicographically compare ISO timestamps
+			
+			if(0 == y) {
+				
+				// metadata items are greater than any display type and all other display types are treated equally
+				if("metadata".equals(a.getDisplayType())) {
+					return 1;
+				} else if("metadata".equals(b.getDisplayType())) {
+					return -1;
+				} else {
+					return 0;
+				}
+				
 			} else {
-				return 0;
+				
+				return y;
 			}
 		}
 		

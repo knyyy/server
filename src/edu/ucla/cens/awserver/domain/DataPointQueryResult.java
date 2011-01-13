@@ -19,6 +19,7 @@ public class DataPointQueryResult {
 	private Object _displayValue;
 	private String _unit;
 	private String _displayType;
+	private String _utcTimestamp;
 	
 	public String getDisplayType() {
 		return _displayType;
@@ -143,7 +144,15 @@ public class DataPointQueryResult {
 	public void setDisplayValue(Object displayValue) {
 		_displayValue = displayValue;
 	}
-	
+
+	public String getUtcTimestamp() {
+		return _utcTimestamp;
+	}
+
+	public void setUtcTimestamp(String utcTimestamp) {
+		_utcTimestamp = utcTimestamp;
+	}
+
 	@Override
 	public String toString() {
 		return "DataPointQueryResult [_displayLabel=" + _displayLabel
@@ -155,6 +164,6 @@ public class DataPointQueryResult {
 				+ ", _repeatableSetIteration=" + _repeatableSetIteration
 				+ ", _response=" + _response + ", _surveyId=" + _surveyId
 				+ ", _timestamp=" + _timestamp + ", _timezone=" + _timezone
-				+ ", _unit=" + _unit + "]";
-	}		
+				+ ", _unit=" + _unit + ", _utcTimestamp=" + _utcTimestamp + "]";
+	}
 }
