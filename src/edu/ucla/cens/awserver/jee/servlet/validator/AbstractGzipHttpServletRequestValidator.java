@@ -60,12 +60,13 @@ public abstract class AbstractGzipHttpServletRequestValidator extends AbstractHt
 			int chunkSize = 1024;
 			byte[] input = new byte[chunkSize];
 			StringBuilder builder = new StringBuilder();
+			int readLen = 0;
 			
 			is = new BufferedInputStream(new GZIPInputStream(request.getInputStream()));
 			
-			while(-1 != is.read(input, 0, chunkSize)) { // -1 is EOF
+			while((readLen = is.read(input, 0, chunkSize)) != -1) { // -1 is EOF
 					
-				builder.append(new String(input));
+				builder.append(new String(input, 0, readLen));
 				
 			}
 			
