@@ -1,12 +1,11 @@
 package edu.ucla.cens.awserver.domain;
 
 import java.util.Comparator;
-import java.util.TimeZone;
 
 /**
- * Comparator to allow lists of DataPointQueryResults to be sorted by surveyId, timezone, timestamp, and displayType. This 
+ * Comparator to allow lists of DataPointQueryResults to be sorted by surveyId, UTC timestamp, and displayType. This 
  * comparator is inconsistent with typical implementations of equals() where the equality is determined by all of a class's 
- * instance variables. The sort performed here cannot be performed by an SQL ORDER BY because there are no 
+ * instance variables.
  * 
  * @author selsky
  */

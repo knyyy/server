@@ -52,8 +52,9 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 				List<DataPointQueryResult> results =  (List<DataPointQueryResult>) awRequest.getResultList();
 				
 				generateUtcTimestamps(results);
-				Collections.sort(results, new DataPointQueryResultComparator()); // sort by surveyId and displayType so metadata
-				                                                                 // entries are attached to the output correctly
+				Collections.sort(results, new DataPointQueryResultComparator()); // sort by surveyId, UTC timestamp, and displayType 
+				                                                                 // so metadata entries are attached to the output 
+				                                                                 // correctly
 				
 				if(_logger.isDebugEnabled()) {
 					_logger.debug(results);

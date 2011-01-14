@@ -128,14 +128,6 @@ public class DateUtils {
 	public static String timestampStringToUtc(String timestamp, String timezoneId) {
 		final String dateFormatString = "yyyy-MM-dd HH:mm:ss";
 		
-//		DateFormat indfm = new SimpleDateFormat("MM/dd/yyyy HH'h'mm");
-//		indfm.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
-//		Date purchaseDate = dfm.parse("12/31/2007 20h15");
-//
-//		DateFormat outdfm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//		outdfm.setTimeZone(TimeZone.getTimeZone("GMT"));
-//		csvfile.println(outdfm.format(purchaseDate) +" GMT");
-		
 		DateFormat inputDateFormat = new SimpleDateFormat(dateFormatString);
 		inputDateFormat.setLenient(false);
 		// if timezoneId is not understood, GMT will be returned by TimeZone.getTimeZone(timezoneId)
