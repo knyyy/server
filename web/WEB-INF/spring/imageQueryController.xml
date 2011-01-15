@@ -22,7 +22,9 @@
     <constructor-arg index="0">
       <list>
         <ref bean="tokenBasedAuthenticationService" />
-        <ref bean="userInQueryValidationService" />
+        <ref bean="campaignAccessCheckService" />
+        <ref bean="userRoleCheckService" />
+        <ref bean="campaignUserCheckService" />
         <ref bean="findCampaignForMediaIdService" />
         <ref bean="findUrlForMediaIdService" />
       </list>

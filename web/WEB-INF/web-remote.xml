@@ -412,6 +412,40 @@
     <url-pattern>/q/i</url-pattern>
   </servlet-mapping>
   
+  <!--  Handle mobility data point queries -->
+  <servlet>
+    <description>
+      runs mobility data point queries 
+    </description>
+    <servlet-name>MobilityDataPointQueryServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids.    
+    -->
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>mobilityDataPointQueryController</param-value>
+    </init-param>
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>mobilityDataPointQueryAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>mobilityDataPointQueryHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>mobilityDataPointQueryResponseWriter</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MobilityDataPointQueryServlet</servlet-name>
+    <url-pattern>/q/m</url-pattern>
+  </servlet-mapping>
+  
+  
   <!-- For AW 2.x and up, the server app is effectively headless. There is probably a better way to return headers only.
        empty.html is returned in order override the default Tomcat error pages. It is rarely a good idea to give away 
        information about the app server and the Tomcat pages do just that. -->
