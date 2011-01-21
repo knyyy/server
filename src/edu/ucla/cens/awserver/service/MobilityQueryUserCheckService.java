@@ -1,7 +1,6 @@
 package edu.ucla.cens.awserver.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;

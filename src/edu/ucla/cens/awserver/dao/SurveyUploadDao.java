@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -44,9 +43,9 @@ public class SurveyUploadDao extends AbstractUploadDao {
 	
 	private final String _insertSurveyResponse = "INSERT into survey_response" +
 								           		 " (user_id, campaign_configuration_id, msg_timestamp, epoch_millis," +
-								           		 " phone_timezone, latitude, longitude, accuracy, provider, survey_id, survey," +
+								           		 " phone_timezone, location_status, location, survey_id, survey," +
 								           		 " client, upload_timestamp, launch_context) " +
-										         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+										         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	private final String _insertPromptResponse = "INSERT into prompt_response" +
 	                                             " (survey_response_id, repeatable_set_id, repeatable_set_iteration," +
@@ -140,23 +139,25 @@ public class SurveyUploadDao extends AbstractUploadDao {
 								ps.setTimestamp(3, Timestamp.valueOf(surveyDataPacket.getDate()));
 								ps.setLong(4, surveyDataPacket.getEpochTime());
 								ps.setString(5, surveyDataPacket.getTimezone());
-								if(surveyDataPacket.getLatitude().isNaN()) {
-									ps.setNull(6, Types.DOUBLE);
-								} else {
-									ps.setDouble(6, surveyDataPacket.getLatitude());
-								}
-								if(surveyDataPacket.getLongitude().isNaN()) { 
-									ps.setNull(7, Types.DOUBLE);
-								} else {
-									ps.setDouble(7, surveyDataPacket.getLongitude());
-								}
-								ps.setDouble(8, surveyDataPacket.getAccuracy());
-								ps.setString(9, surveyDataPacket.getProvider());
-								ps.setString(10, surveyDataPacket.getSurveyId());
-								ps.setString(11, surveyDataPacket.getSurvey());
-								ps.setString(12, client);
-								ps.setTimestamp(13, new Timestamp(System.currentTimeMillis()));
-								ps.setString(14, surveyDataPacket.getLaunchContext());
+//								if(surveyDataPacket.getLatitude().isNaN()) {
+//									ps.setNull(6, Types.DOUBLE);
+//								} else {
+//									ps.setDouble(6, surveyDataPacket.getLatitude());
+//								}
+//								if(surveyDataPacket.getLongitude().isNaN()) { 
+//									ps.setNull(7, Types.DOUBLE);
+//								} else {
+//									ps.setDouble(7, surveyDataPacket.getLongitude());
+//								}
+//								ps.setDouble(8, surveyDataPacket.getAccuracy());
+//								ps.setString(9, surveyDataPacket.getProvider());
+								ps.setString(6, surveyDataPacket.getLocationStatus());
+								ps.setString(7, surveyDataPacket.getLocation());
+								ps.setString(8, surveyDataPacket.getSurveyId());
+								ps.setString(9, surveyDataPacket.getSurvey());
+								ps.setString(10, client);
+								ps.setTimestamp(11, new Timestamp(System.currentTimeMillis()));
+								ps.setString(12, surveyDataPacket.getLaunchContext());
 								return ps;
 							}
 						},
@@ -272,8 +273,8 @@ public class SurveyUploadDao extends AbstractUploadDao {
 			
 			_logger.error("an error occurred when atempting to run this SQL '" + _insertSurveyResponse + "' with the following "
 				+ "parameters: " + userId + ", " + campaignConfigurationId + ", " + sdp.getDate() + " , " + sdp.getEpochTime()
-				+  ", " + sdp.getTimezone() + ", " + sdp.getLatitude() + ", " + sdp.getLongitude() + ", " + sdp.getAccuracy() 
-				+ ", " + sdp.getProvider() + ", " + sdp.getSurveyId() + ", " + sdp.getSurvey() + ", " + client);
+				+  ", " + sdp.getTimezone() + ", " + sdp.getLocationStatus() + ", " + sdp.getLocation() + ", " + sdp.getSurveyId() 
+				+ ", " + sdp.getSurvey() + ", " + client);
 			
 		} else {
 			

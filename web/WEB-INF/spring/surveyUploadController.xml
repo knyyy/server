@@ -1,5 +1,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
   <!--  
@@ -78,11 +79,8 @@
         <ref bean="jsonMsgDateValidator" />
         <ref bean="jsonMsgTimeValidator" />
         <ref bean="jsonMsgTimezoneValidator" />
-        <ref bean="jsonMsgLocationValidator" />
-        <ref bean="jsonMsgLatitudeValidator" />
-        <ref bean="jsonMsgLongitudeValidator" />
-        <ref bean="jsonMsgLocationAccuracyValidator" />
-        <ref bean="jsonMsgLocationProviderValidator" />
+        <ref bean="jsonMsgLocationStatusValidator" />
+        <ref bean="jsonMsgSurveyLocationValidator" />
         <ref bean="jsonMsgSurveyIdValidator" />
         <ref bean="jsonMsgSurveyResponsesExistValidator" />
         <ref bean="jsonMsgSurveyLaunchContextValidator" />
@@ -92,7 +90,6 @@
     <constructor-arg index="1"><ref bean="jsonMsgEmptyArrayAnnotator" /></constructor-arg>
     <constructor-arg index="2"><ref bean="jsonMsgIncorrectArrayAnnotator" /></constructor-arg>
   </bean>
-  
   
   <bean id="campaignNameVersionValidator" class="edu.ucla.cens.awserver.validator.survey.CampaignNameVersionValidator">
      <constructor-arg index="0">
@@ -165,6 +162,67 @@
           <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
             <property name="code" value="0606" />
             <property name="text" value="missing or incorrect survey_launch_context in survey message" />
+          </bean>
+        </constructor-arg>  
+      </bean>
+    </constructor-arg>
+  </bean>
+  
+  <bean id="jsonMsgLocationStatusValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgValueInListValidator">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+        <constructor-arg index="0">
+          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+            <property name="code" value="0408" />
+            <property name="text" value="invalid location status" />
+          </bean>
+        </constructor-arg>  
+      </bean>
+    </constructor-arg>
+    <constructor-arg index="1">
+      <value>location_status</value>
+    </constructor-arg>
+    <constructor-arg index="2">
+      <ref bean="locationStatuses" />
+    </constructor-arg>
+  </bean>
+  
+   <util:list id="locationStatuses">
+    <value>unavailable</value>
+    <value>valid</value>
+    <value>inaccurate</value>
+    <value>stale</value>
+  </util:list>
+  
+  <bean id="jsonMsgSurveyLocationValidator" class="edu.ucla.cens.awserver.validator.survey.JsonMsgSurveyLocationValidator">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+        <constructor-arg index="0">
+          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+            <property name="code" value="0409" />
+            <property name="text" value="location existence problem" />
+          </bean>
+        </constructor-arg>  
+      </bean>
+    </constructor-arg>
+    <constructor-arg index="1">
+      <list>
+        <ref bean="jsonMsgLatitudeValidator" />
+        <ref bean="jsonMsgLongitudeValidator" />
+        <ref bean="jsonMsgLocationAccuracyValidator" />
+        <ref bean="jsonMsgLocationProviderValidator" />
+        <ref bean="jsonMsgLocationTimestampValidator" />
+      </list>
+    </constructor-arg>
+  </bean>      
+  
+  <bean id="jsonMsgLocationTimestampValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgLocationTimestampValidator">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+        <constructor-arg index="0">
+          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+            <property name="code" value="0410" />
+            <property name="text" value="missing or invalid timestamp" />
           </bean>
         </constructor-arg>  
       </bean>

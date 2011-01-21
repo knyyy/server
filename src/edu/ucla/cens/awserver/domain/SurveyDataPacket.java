@@ -9,12 +9,58 @@ import java.util.List;
  * 
  * @author selsky
  */
-public class SurveyDataPacket extends MetadataDataPacket {
+public class SurveyDataPacket implements DataPacket {
+	// fields shared with mobility
+	private String _date;
+	private long _epochTime;
+	private String _timezone;
+	private String _locationStatus;
+	private String _location; // a JSON string
 	private String _survey;
 	private String _surveyId;
-	private String _launchContext;
+	private String _launchContext; // a JSON string
 	private List<PromptResponseDataPacket> _responses;
-	private int _surveyResponseKey = -1;
+//	private int _surveyResponseKey = -1;
+
+	public String getLocationStatus() {
+		return _locationStatus;
+	}
+
+	public void setLocationStatus(String locationStatus) {
+		_locationStatus = locationStatus;
+	}
+	
+	public String getLocation() {
+		return _location;
+	}
+
+	public void setLocation(String location) {
+		_location = location;
+	}
+	
+	public String getDate() {
+		return _date;
+	}
+
+	public void setDate(String date) {
+		_date = date;
+	}
+
+	public long getEpochTime() {
+		return _epochTime;
+	}
+
+	public void setEpochTime(long time) {
+		_epochTime = time;
+	}
+
+	public String getTimezone() {
+		return _timezone;
+	}
+
+	public void setTimezone(String timezone) {
+		_timezone = timezone;
+	}
 	
 	public String getLaunchContext() {
 		return _launchContext;
@@ -47,20 +93,23 @@ public class SurveyDataPacket extends MetadataDataPacket {
 	public void setResponses(List<PromptResponseDataPacket> responses) {
 		_responses = responses;
 	}
-	
-	public int getSurveyResponseKey() {
-		return _surveyResponseKey;
-	}
-
-	public void setSurveyResponseKey(int surveyResponseKey) {
-		_surveyResponseKey = surveyResponseKey;
-	}
 
 	@Override
 	public String toString() {
-		return "SurveyDataPacket [_launchContext=" + _launchContext
-				+ ", _responses=" + _responses + ", _survey=" + _survey
-				+ ", _surveyId=" + _surveyId + ", _surveyResponseKey="
-				+ _surveyResponseKey + ", toString()=" + super.toString() + "]";
+		return "SurveyDataPacket [_date=" + _date + ", _epochTime="
+				+ _epochTime + ", _launchContext=" + _launchContext
+				+ ", _location=" + _location + ", _locationStatus="
+				+ _locationStatus + ", _responses=" + _responses + ", _survey="
+				+ _survey + ", _surveyId=" + _surveyId + ", _timezone="
+				+ _timezone + "]";
 	}
+	
+//	public int getSurveyResponseKey() {
+//		return _surveyResponseKey;
+//	}
+//
+//	public void setSurveyResponseKey(int surveyResponseKey) {
+//		_surveyResponseKey = surveyResponseKey;
+//	}
+	
 }

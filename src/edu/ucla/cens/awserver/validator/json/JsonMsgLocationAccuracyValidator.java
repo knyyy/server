@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.util.JsonUtils;
+import edu.ucla.cens.awserver.util.StringUtils;
 import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
 
 /**
@@ -21,16 +22,12 @@ public class JsonMsgLocationAccuracyValidator extends AbstractAnnotatingJsonObje
 		super(awRequestAnnotator);
 	}
 	
-	/**
-	 * @return true if the value returned from the AwRequest for the key "date" exists and is of the form yyyy-MM-dd hh:mm:ss.
-	 * @return false otherwise
-	 */
 	public boolean validate(AwRequest awRequest, JSONObject jsonObject) {
 		JSONObject object = JsonUtils.getJsonObjectFromJsonObject(jsonObject, "location");
 		String accuracy = JsonUtils.getStringFromJsonObject(object, _key); // annoyingly, the JSON lib does not have a getFloat(..)
 		
-		if(null == accuracy) {
-			getAnnotator().annotate(awRequest, "accuracy in message is null");
+		if(StringUtils.isEmptyOrWhitespaceOnly(accuracy)) {
+			getAnnotator().annotate(awRequest, "missing accuracy");
 			return false;
 		}
 		

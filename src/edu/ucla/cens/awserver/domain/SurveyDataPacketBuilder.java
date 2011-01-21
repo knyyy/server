@@ -16,7 +16,7 @@ import edu.ucla.cens.awserver.util.JsonUtils;
 /**
  * @author selsky
  */
-public class SurveyDataPacketBuilder extends AbstractDataPacketBuilder {
+public class SurveyDataPacketBuilder implements DataPacketBuilder {
 	private static Logger _logger = Logger.getLogger(SurveyDataPacketBuilder.class);
 	private CacheService _configurationCacheService;
 	
@@ -34,10 +34,16 @@ public class SurveyDataPacketBuilder extends AbstractDataPacketBuilder {
 		SurveyDataPacket surveyDataPacket = new SurveyDataPacket();
 		List<PromptResponseDataPacket> promptResponseDataPackets  = new ArrayList<PromptResponseDataPacket>();
 		
-		createCommonFields(source, surveyDataPacket);
+		surveyDataPacket.setLocationStatus(JsonUtils.getStringFromJsonObject(source, "location_status"));
+		JSONObject location = JsonUtils.getJsonObjectFromJsonObject(source, "location");
+		surveyDataPacket.setLocation(location == null ? null : location.toString());
+		surveyDataPacket.setDate(JsonUtils.getStringFromJsonObject(source, "date"));
+		surveyDataPacket.setEpochTime(JsonUtils.getLongFromJsonObject(source, "time"));
+		surveyDataPacket.setTimezone(JsonUtils.getStringFromJsonObject(source, "timezone"));
 		String surveyId = JsonUtils.getStringFromJsonObject(source, "survey_id");
 		surveyDataPacket.setSurveyId(surveyId);
 		surveyDataPacket.setLaunchContext(JsonUtils.getJsonObjectFromJsonObject(source, "survey_launch_context").toString());
+		
 		surveyDataPacket.setSurvey(source.toString()); // the whole JSONObject is stored in order to avoid having to recreate
 		                                               // it after the fact
 		
