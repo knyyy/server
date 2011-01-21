@@ -6,8 +6,8 @@ package edu.ucla.cens.awserver.domain;
 public class DataPointQueryResult {
 	private Object _response;
 	private Integer _repeatableSetIteration;
-	private Double _latitude;
-	private Double _longitude;
+	private String _locationStatus;
+	private String _location;
 	private String _timestamp;
 	private String _timezone;
 	private String _surveyId;
@@ -21,6 +21,22 @@ public class DataPointQueryResult {
 	private String _displayType;
 	private String _utcTimestamp;
 	
+	public String getLocationStatus() {
+		return _locationStatus;
+	}
+
+	public void setLocationStatus(String locationStatus) {
+		_locationStatus = locationStatus;
+	}
+
+	public String getLocation() {
+		return _location;
+	}
+
+	public void setLocation(String location) {
+		_location = location;
+	}
+
 	public String getDisplayType() {
 		return _displayType;
 	}
@@ -51,22 +67,6 @@ public class DataPointQueryResult {
 	
 	public void setRepeatableSetIteration(Integer repeatableSetIteration) {
 		_repeatableSetIteration = repeatableSetIteration;
-	}
-	
-	public Double getLatitude() {
-		return _latitude;
-	}
-	
-	public void setLatitude(Double latitude) {
-		_latitude = latitude;
-	}
-	
-	public Double getLongitude() {
-		return _longitude;
-	}
-	
-	public void setLongitude(Double longitude) {
-		_longitude = longitude;
 	}
 	
 	public String getTimestamp() {
@@ -151,19 +151,5 @@ public class DataPointQueryResult {
 
 	public void setUtcTimestamp(String utcTimestamp) {
 		_utcTimestamp = utcTimestamp;
-	}
-
-	@Override
-	public String toString() {
-		return "DataPointQueryResult [_displayLabel=" + _displayLabel
-				+ ", _displayType=" + _displayType + ", _displayValue="
-				+ _displayValue + ", _isMetadata=" + _isMetadata
-				+ ", _latitude=" + _latitude + ", _longitude=" + _longitude
-				+ ", _promptId=" + _promptId + ", _promptType=" + _promptType
-				+ ", _repeatableSetId=" + _repeatableSetId
-				+ ", _repeatableSetIteration=" + _repeatableSetIteration
-				+ ", _response=" + _response + ", _surveyId=" + _surveyId
-				+ ", _timestamp=" + _timestamp + ", _timezone=" + _timezone
-				+ ", _unit=" + _unit + ", _utcTimestamp=" + _utcTimestamp + "]";
 	}
 }

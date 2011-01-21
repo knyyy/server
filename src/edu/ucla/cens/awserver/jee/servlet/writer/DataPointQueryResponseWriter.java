@@ -102,8 +102,10 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 						entry.put("timestamp", result.getTimestamp());
 						entry.put("tz", result.getTimezone());
 						entry.put("utc_timestamp", result.getUtcTimestamp());
-						entry.put("latitude", result.getLatitude());
-						entry.put("longitude", result.getLongitude());
+						entry.put("location_status", result.getLocationStatus());
+						if(null != result.getLocation()) {
+							entry.put("location", new JSONObject(result.getLocation()));
+						}
 						entry.put("type", result.getDisplayType());
 						if(null != result.getRepeatableSetIteration()) {
 							entry.put("iteration", result.getRepeatableSetIteration());

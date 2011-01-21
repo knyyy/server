@@ -21,7 +21,7 @@ public class DataPointQueryDao extends AbstractDao {
 	private static Logger _logger = Logger.getLogger(DataPointQueryDao.class);
 	
 	private String _select = "SELECT pr.prompt_id, pr.prompt_type, pr.response, pr.repeatable_set_iteration, pr.repeatable_set_id,"
-			            + " sr.msg_timestamp, sr.phone_timezone, sr.latitude, sr.longitude, sr.survey_id"
+			            + " sr.msg_timestamp, sr.phone_timezone, sr.location_status, sr.location, sr.survey_id"
 	                    + " FROM prompt_response pr, survey_response sr, user u, campaign_configuration cc, campaign c"
 	                    + " WHERE pr.survey_response_id = sr.id"
 	                    + " AND u.login_id = ?"
@@ -110,21 +110,8 @@ public class DataPointQueryDao extends AbstractDao {
 			result.setRepeatableSetId(rs.getString(5));
 			result.setTimestamp(rs.getString(6));
 			result.setTimezone(rs.getString(7));
-			
-			o = rs.getObject(8);
-			if(null == o) {
-				result.setLatitude(null);
-			} else {
-				result.setLatitude(rs.getDouble(8));
-			}
-			
-			o = rs.getObject(9);
-			if(null == o) {
-				result.setLongitude(null);
-			} else {
-				result.setLongitude(rs.getDouble(9));
-			}
-			
+			result.setLocationStatus(rs.getString(8));
+			result.setLocation(rs.getString(9));
 			result.setSurveyId(rs.getString(10));
 			return result;
 		}
