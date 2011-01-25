@@ -26,7 +26,8 @@ public class MobilityModeOnlyJsonMessageCreator implements JsonMessageCreator {
 //	        "latitude":38.8977,
 //	        "longitude":-77.0366,
 //          "accuracy":0.9283213,
-//          "provider":"GPS"
+//          "provider":"GPS",
+//          "timestamp":"2009-11-03 10:18:33"
 //	    },
 //	    "mode":"still" 
 //	}
@@ -60,6 +61,7 @@ public class MobilityModeOnlyJsonMessageCreator implements JsonMessageCreator {
 			location.put("longitude", longitude);
 			location.put("accuracy", ValueCreator.randomPositiveFloat());
 			location.put("provider", ValueCreator.randomProvider());
+			location.put("timestamp", ValueCreator.date());
 			
 			map.put("location", location);
 			jsonArray.put(map);

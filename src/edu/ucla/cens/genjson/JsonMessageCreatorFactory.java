@@ -25,9 +25,9 @@ public class JsonMessageCreatorFactory {
 			
 			return new MobilityModeOnlyJsonMessageCreator();
 			
-		} else if ("mobility:mode_features".equals(messageCreatorName)){
+		} else if ("mobility:mode_extended".equals(messageCreatorName)){
 			
-			return new MobilityModeFeaturesJsonMessageCreator();
+			return new MobilityModeExtendedJsonMessageCreator();
 
 		} else {
 			

@@ -15,6 +15,7 @@ public class ValueCreator {
 	// Favor still for testing
 	private static String[] _modes = {"still", "still", "still", "walk", "run", "bike", "drive"};
 	private static String[] _providers = {"null", "GPS", "network"};
+	private static char[] chars = "abcdefghijklmnopqrstuvwxyz 0123456789".toCharArray();
 	
 	private ValueCreator() { };
 	
@@ -62,6 +63,10 @@ public class ValueCreator {
 		return Math.abs(_random.nextDouble());
 	}
 	
+	public static double randomDouble() {
+		return _random.nextDouble();
+	}
+	
 	public static boolean randomBoolean() {
 		return _random.nextBoolean(); 
 	}
@@ -98,4 +103,15 @@ public class ValueCreator {
 	public static String randomProvider() {
 		return _providers[Math.abs(_random.nextInt() % 3)];
 	}
+	
+	public static String randomString(int length) {
+    	int numberOfChars = chars.length;
+    	StringBuilder builder = new StringBuilder();
+    	
+    	for(int i = 0; i < length; i++) {
+    		builder.append(chars[ValueCreator.randomPositiveIntModulus(numberOfChars)]);
+    	}
+    	
+    	return builder.toString();
+    }
 }
