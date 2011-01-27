@@ -55,11 +55,6 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 				Collections.sort(results, new DataPointQueryResultComparator()); // sort by surveyId, UTC timestamp, and displayType 
 				                                                                 // so metadata entries are attached to the output 
 				                                                                 // correctly
-				
-				if(_logger.isDebugEnabled()) {
-					_logger.debug(results);
-				}
-				
 				JSONArray resultArray = new JSONArray();
 				String currentSurveyId = results.size() > 0 ? results.get(0).getSurveyId() : null;
 				String currentTimestamp = results.size() > 0 ? results.get(0).getTimestamp() : null;
