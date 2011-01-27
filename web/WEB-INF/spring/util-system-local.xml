@@ -39,11 +39,4 @@
     <entry key="system.imageDir" value="/Users/selsky/opt/aw2/userdata/images" />
   </util:map>
   
-  <!-- Allow queries against data points that are not prompt ids -->
-  <util:list id="dataPointAPISpecialIds">
-    <value>completed_surveys_per_day</value>
-    <value>mobility_modes_per_day</value>
-    <value>mobility</value>
-  </util:list>
-
 </beans>

@@ -444,6 +444,40 @@
     <servlet-name>MobilityDataPointQueryServlet</servlet-name>
     <url-pattern>/q/m</url-pattern>
   </servlet-mapping>
+
+
+  <!--  Handle data point function queries -->
+  <servlet>
+    <description>
+      runs data point function queries 
+    </description>
+    <servlet-name>DataPointFunctionQueryServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids.    
+    -->
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>dataPointFunctionQueryController</param-value>
+    </init-param>
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>dataPointFunctionQueryAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>dataPointFunctionQueryHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>dataPointFunctionQueryResponseWriter</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DataPointFunctionQueryServlet</servlet-name>
+    <url-pattern>/q/dpf</url-pattern>
+  </servlet-mapping>
   
   <!-- For AW 2.x and up, the server app is effectively headless. There is probably a better way to return headers only.
        empty.html is returned in order override the default Tomcat error pages. It is rarely a good idea to give away 
