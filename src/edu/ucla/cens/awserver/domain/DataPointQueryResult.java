@@ -152,4 +152,19 @@ public class DataPointQueryResult {
 	public void setUtcTimestamp(String utcTimestamp) {
 		_utcTimestamp = utcTimestamp;
 	}
+
+	@Override
+	public String toString() {
+		return "DataPointQueryResult [_displayLabel=" + _displayLabel
+				+ ", _displayType=" + _displayType + ", _displayValue="
+				+ _displayValue + ", _isMetadata=" + _isMetadata
+				+ ", _location=" + _location + ", _locationStatus="
+				+ _locationStatus + ", _promptId=" + _promptId
+				+ ", _promptType=" + _promptType + ", _repeatableSetId="
+				+ _repeatableSetId + ", _repeatableSetIteration="
+				+ _repeatableSetIteration + ", _response=" + _response
+				+ ", _surveyId=" + _surveyId + ", _timestamp=" + _timestamp
+				+ ", _timezone=" + _timezone + ", _unit=" + _unit
+				+ ", _utcTimestamp=" + _utcTimestamp + "]";
+	}
 }
