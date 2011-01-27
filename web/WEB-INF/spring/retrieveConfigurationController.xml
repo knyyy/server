@@ -14,7 +14,7 @@
   <!-- write output -->
   <bean id="retrieveConfigResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.RetrieveConfigResponseWriter">
     <constructor-arg index="0">
-      <ref bean="dataPointAPISpecialIds" />
+      <ref bean="dataPointFunctionQueryFunctionNames" />
     </constructor-arg>
     <constructor-arg index="1"><ref bean="severeErrorResponse" /></constructor-arg>
   </bean>  
