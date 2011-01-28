@@ -46,16 +46,16 @@ public class MobilitySubtypeDataPacketBuilderService implements Service {
 //		String requestType = "mobility"; // awRequest.getRequestType();
 //		
 //		// TODO eventually this could be made smarter (more generic) - it should just be able to loop through the map without
-//		// needing to know actual key values. 
+//		// needing to know actual key values i.e., the subtype values should be the keys in the map 
 		for(int i = 0; i < length; i++) {
 //			
 //			String builderName = "prompt";
 //				
 				String subtype = JsonUtils.getStringFromJsonObject(JsonUtils.getJsonObjectFromJsonArray(jsonArray, i), "subtype");
 				
-				if("mode_features".equals(subtype)) {
+				if("sensor_data".equals(subtype)) {
 					
-					builderName = "mobility-mode_features";
+					builderName = "mobility-sensor_data";
 					
 				} else if("mode_only".equals(subtype)) {
 					

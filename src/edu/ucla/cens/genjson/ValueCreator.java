@@ -16,6 +16,8 @@ public class ValueCreator {
 	private static String[] _modes = {"still", "still", "still", "walk", "run", "bike", "drive"};
 	private static String[] _providers = {"null", "GPS", "network"};
 	private static char[] chars = "abcdefghijklmnopqrstuvwxyz 0123456789".toCharArray();
+	private static String[] _locationStatuses = {"valid", "unavailable","inaccurate", "stale"};
+	private static char[] _hexChars = "0123456789ABCDEF".toCharArray(); 
 	
 	private ValueCreator() { };
 	
@@ -101,17 +103,35 @@ public class ValueCreator {
 	}
 	
 	public static String randomProvider() {
-		return _providers[Math.abs(_random.nextInt() % 3)];
+		return _providers[randomPositiveIntModulus(2)];
 	}
 	
 	public static String randomString(int length) {
-    	int numberOfChars = chars.length;
     	StringBuilder builder = new StringBuilder();
     	
     	for(int i = 0; i < length; i++) {
-    		builder.append(chars[ValueCreator.randomPositiveIntModulus(numberOfChars)]);
+    		builder.append(chars[randomPositiveIntModulus(chars.length - 1)]);
     	}
     	
     	return builder.toString();
     }
+	
+	public static String randomLocationStatus() {
+		return _locationStatuses[randomPositiveIntModulus(3)];
+	}
+	
+	public static String randomMacAddress() {
+		StringBuilder builder = new StringBuilder();
+		
+		for(int i = 0; i < 6; i++) {
+			builder.append(_hexChars[randomPositiveIntModulus(_hexChars.length)])
+			   .append( _hexChars[randomPositiveIntModulus(_hexChars.length)]);
+			
+			if(i < 5) {
+				builder.append(":");
+			}
+		}
+		
+		return builder.toString();
+	}
 }

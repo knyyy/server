@@ -80,7 +80,7 @@
         <ref bean="jsonMsgTimeValidator" />
         <ref bean="jsonMsgTimezoneValidator" />
         <ref bean="jsonMsgLocationStatusValidator" />
-        <ref bean="jsonMsgSurveyLocationValidator" />
+        <ref bean="jsonMsgLocationValidator" />
         <ref bean="jsonMsgSurveyIdValidator" />
         <ref bean="jsonMsgSurveyResponsesExistValidator" />
         <ref bean="jsonMsgSurveyLaunchContextValidator" />
@@ -194,7 +194,7 @@
     <value>stale</value>
   </util:list>
   
-  <bean id="jsonMsgSurveyLocationValidator" class="edu.ucla.cens.awserver.validator.survey.JsonMsgSurveyLocationValidator">
+  <bean id="jsonMsgLocationValidator" class="edu.ucla.cens.awserver.validator.survey.JsonMsgLocationValidator">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
         <constructor-arg index="0">

@@ -13,14 +13,14 @@ import edu.ucla.cens.awserver.validator.json.AbstractAnnotatingJsonObjectValidat
 /** 
  * @author selsky
  */
-public class JsonMsgSurveyLocationValidator extends AbstractAnnotatingJsonObjectValidator {
-	private static Logger _logger = Logger.getLogger(JsonMsgSurveyLocationValidator.class);
+public class JsonMsgLocationValidator extends AbstractAnnotatingJsonObjectValidator {
+	private static Logger _logger = Logger.getLogger(JsonMsgLocationValidator.class);
 	// TODO should be using a List of interfaces, not abstract classes
 	// and should also refactor the whole Annotator idea. Could use an interface with annotate() instead of 
 	// having to use getAnnotator().annotate(). 
 	private List<AbstractAnnotatingJsonObjectValidator>  _validators;
 		
-	public JsonMsgSurveyLocationValidator(AwRequestAnnotator annotator, List<AbstractAnnotatingJsonObjectValidator> validators) {
+	public JsonMsgLocationValidator(AwRequestAnnotator annotator, List<AbstractAnnotatingJsonObjectValidator> validators) {
 		super(annotator);
 		
 		if(null == validators || validators.isEmpty()) {

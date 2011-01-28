@@ -18,7 +18,7 @@ public class MobilityModeExtendedJsonMessageCreator implements JsonMessageCreato
 //        "date":"2009-11-03 10:18:33",
 //        "time":1257272467077,
 //        "timezone":"EST",
-//        "subtype":"mode_features",
+//        "subtype":"sensor_data",
 //        "location": {
 //            "latitude":38.8977,
 //            "longitude":-77.0366,
@@ -49,20 +49,24 @@ public class MobilityModeExtendedJsonMessageCreator implements JsonMessageCreato
 			double latitude = ValueCreator.latitude();
 			double longitude = ValueCreator.longitude();
 			long epoch = ValueCreator.epoch();
+			String locationStatus = ValueCreator.randomLocationStatus();
 			
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("date", date);
 			map.put("time", epoch);
 			map.put("timezone", tz);
 			map.put("subtype", subtype);
+			map.put("location_status", locationStatus);
 			
-			Map<String, Object> location = new HashMap<String, Object>();
-			location.put("latitude", latitude);
-			location.put("longitude", longitude);
-			location.put("accuracy", ValueCreator.randomPositiveFloat());
-			location.put("provider", ValueCreator.randomProvider());
-			location.put("timestamp", ValueCreator.date());
-			map.put("location", location);
+			if(! "unavailable".equals(locationStatus)) {
+				Map<String, Object> location = new HashMap<String, Object>();
+				location.put("latitude", latitude);
+				location.put("longitude", longitude);
+				location.put("accuracy", ValueCreator.randomPositiveFloat());
+				location.put("provider", ValueCreator.randomProvider());
+				location.put("timestamp", ValueCreator.date());
+				map.put("location", location);
+			}
 			
 			Map<String, Object> sensorData = new HashMap<String, Object>();
 			sensorData.put("speed", ValueCreator.randomPositiveDouble());
@@ -82,8 +86,9 @@ public class MobilityModeExtendedJsonMessageCreator implements JsonMessageCreato
 			List<Map<String,Object>> wifiEntries = new ArrayList<Map<String,Object>>();
 			for(int j = 0; j < numberOfWifiEntries; j++) {
 				Map<String, Object> entry = new HashMap<String, Object>();
-				entry.put("ssid", ValueCreator.randomString(ValueCreator.randomPositiveIntModulus(25)));
-				entry.put("strength", ValueCreator.randomPositiveIntModulus(255));
+				entry.put("ssid", ValueCreator.randomMacAddress());
+				int s = ValueCreator.randomPositiveIntModulus(120);
+				entry.put("strength", (s - (2 * s)));
 				wifiEntries.add(entry);
 			}
 			sensorData.put("wifi_data", wifiEntries);

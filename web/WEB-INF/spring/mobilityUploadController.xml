@@ -25,6 +25,7 @@
         <ref bean="authWithHashedPasswordService" />
         <ref bean="jsonMessageSyntaxValidationService" />
         <ref bean="mobilityMessageContentValidationService" />
+        <!-- TODO add mode classification step -->
         <ref bean="mobilityDataPacketBuilderService" />
         <ref bean="mobilityDataStorageService" />
       </list>
@@ -36,8 +37,6 @@
       <list>
         <ref bean="userNameValidator" />
         <ref bean="hashedPasswordValidator" />
-        <!-- any validator that simply checked for a empty string has been removed because it was redundant with 
-             validation performed in the servlet world -->
       </list>
     </property>
     <property name="postProcessingService">
@@ -113,27 +112,20 @@
             <ref bean="jsonMsgDateValidator" />
             <ref bean="jsonMsgTimeValidator" />
             <ref bean="jsonMsgTimezoneValidator" />
+            <ref bean="jsonMsgLocationStatusValidator" />
             <ref bean="jsonMsgLocationValidator" />
-            <ref bean="jsonMsgLatitudeValidator" />
-            <ref bean="jsonMsgLongitudeValidator" />
-            <ref bean="jsonMsgLocationAccuracyValidator" />
-            <ref bean="jsonMsgLocationProviderValidator" />
             <ref bean="jsonMsgModeOnlyModeValidator" />
           </list>
         </entry>
         <entry>
-          <key><value>mode_features</value></key>
+          <key><value>sensor_data</value></key>
           <list>
             <ref bean="jsonMsgDateValidator" />
             <ref bean="jsonMsgTimeValidator" />
             <ref bean="jsonMsgTimezoneValidator" />
+            <ref bean="jsonMsgLocationStatusValidator" />
             <ref bean="jsonMsgLocationValidator" />
-            <ref bean="jsonMsgLatitudeValidator" />
-            <ref bean="jsonMsgLongitudeValidator" />
-            <ref bean="jsonMsgLocationAccuracyValidator" />
-            <ref bean="jsonMsgLocationProviderValidator" />
-            <ref bean="jsonMsgModeOnlyModeValidator" />            
-            <ref bean="jsonMsgFeaturesExistValidator" />
+            <ref bean="jsonMsgSensorDataExistsValidator" />
           </list>
         </entry>
       </map>
@@ -277,19 +269,19 @@
     </constructor-arg>
   </bean>
 
-  <bean id="jsonMsgFeaturesExistValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgNamedObjectValidator">
+  <bean id="jsonMsgSensorDataExistsValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgNamedObjectValidator">
     <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
         <constructor-arg index="0">
           <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
           	<property name="code" value="0506" />
-          	<property name="text" value="missing or invalid features" />
+          	<property name="text" value="missing or invalid sensor data" />
           </bean>
         </constructor-arg>  
       </bean>
     </constructor-arg>
     <constructor-arg index="1">
-      <value>features</value>
+      <value>sensor_data</value>
     </constructor-arg>
   </bean>
 
@@ -301,8 +293,8 @@
           <bean class="edu.ucla.cens.awserver.domain.MobilityModeOnlyDataPacketBuilder" />
         </entry>
          <entry>
-          <key><value>mobility-mode_features</value></key>
-          <bean class="edu.ucla.cens.awserver.domain.MobilityModeFeaturesDataPacketBuilder"></bean>
+          <key><value>mobility-sensor_data</value></key>
+          <bean class="edu.ucla.cens.awserver.domain.MobilityModeSensorDataPacketBuilder"></bean>
         </entry>
       </map>
     </constructor-arg>   

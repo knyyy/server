@@ -55,9 +55,9 @@ public class DataPacketBuilderService implements Service {
 				
 				String subtype = JsonUtils.getStringFromJsonObject(JsonUtils.getJsonObjectFromJsonArray(jsonArray, i), "subtype");
 				
-				if("mode_features".equals(subtype)) {
+				if("sensor_data".equals(subtype)) {
 					
-					builderName = "mobility-mode_features";
+					builderName = "mobility-sensor_data";
 					
 				} else if("mode_only".equals(subtype)) {
 					

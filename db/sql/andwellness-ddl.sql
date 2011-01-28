@@ -101,19 +101,15 @@ CREATE TABLE survey_response (
   id integer unsigned NOT NULL auto_increment,
   user_id smallint(6) unsigned NOT NULL,
   campaign_configuration_id smallint(4) unsigned NOT NULL,
-  
   client varchar(250) NOT NULL,
-  
   msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL, 
   phone_timezone varchar(32) NOT NULL,
- 
   survey_id varchar(250) NOT NULL,    -- a survey id as defined in a configuration at the XPath //surveyId
   survey text NOT NULL,               -- the max length for text is 21843 UTF-8 chars
   launch_context text,                -- trigger and other data
   location_status tinytext NOT NULL,  -- one of: unavailable, valid, stale, inaccurate 
-  location text,                      -- JSON location data: longitude, latitude, accuracy, provider      
-   
+  location text,                      -- JSON location data: longitude, latitude, accuracy, provider
   upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone  
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   
@@ -121,7 +117,6 @@ CREATE TABLE survey_response (
   INDEX (user_id, campaign_configuration_id),
   INDEX (user_id, upload_timestamp),
   UNIQUE (user_id, survey_id, epoch_millis), -- handle duplicate survey uploads
-  
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,    
   CONSTRAINT FOREIGN KEY (campaign_configuration_id) REFERENCES campaign_configuration (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -134,13 +129,11 @@ CREATE TABLE survey_response (
 CREATE TABLE prompt_response (
   id integer unsigned NOT NULL auto_increment,
   survey_response_id integer unsigned NOT NULL,
-  
   prompt_id varchar(250) NOT NULL,  -- a prompt id as defined in a configuration at the XPath //promptId
   prompt_type varchar(250) NOT NULL, -- a prompt type as defined in a configuration at the XPath //promptType
   repeatable_set_id varchar(250), -- a repeatable set id as defined in a configuration at the XPath //repeatableSetId
   repeatable_set_iteration tinyint unsigned,
   response text NOT NULL,   -- the data format is defined by the prompt type: a string or a JSON string
-   
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   
   PRIMARY KEY (id),
@@ -157,10 +150,8 @@ CREATE TABLE prompt_response (
 -- --------------------------------------------------------------------
 CREATE TABLE url_based_resource (
     id  integer unsigned NOT NULL auto_increment,
-    user_id smallint(6) unsigned NOT NULL, 
-    
+    user_id smallint(6) unsigned NOT NULL,
     client varchar(250) NOT NULL,
-    
     uuid char (36) NOT NULL, -- joined with prompt_response.response to retrieve survey context for an item
     url text,
     audit_timestamp timestamp default current_timestamp on update current_timestamp,
@@ -174,58 +165,44 @@ CREATE TABLE url_based_resource (
 -- High-frequency "mode only" mobility data. Mobility data is *not*
 -- linked to a campaign.
 -- --------------------------------------------------------------------
-CREATE TABLE mobility_mode_only_entry (
+CREATE TABLE mobility_mode_only (
   id bigint unsigned NOT NULL auto_increment,
-  user_id smallint(6) unsigned NOT NULL,
-  
-  client varchar(250) NOT NULL,
-  
+  user_id smallint unsigned NOT NULL,
+  client tinytext NOT NULL,
   msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL,
   phone_timezone varchar(32) NOT NULL,
-  latitude double,
-  longitude double,
-  accuracy double,
-  provider varchar(250),
+  location_status tinytext NOT NULL,
+  location text NOT NULL,
   mode varchar(30) NOT NULL,
-  
   upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone
-  
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   
   PRIMARY KEY (id),
   INDEX (user_id, upload_timestamp),
   UNIQUE (user_id, epoch_millis), -- enforce no-duplicates rule at the table level
-  
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------------------
--- High-frequency "mode + features" mobility data. Mobility data is 
+-- High-frequency "mode + sensor data" mobility data. Mobility data is 
 -- *not* linked to a campaign.
 -- --------------------------------------------------------------------
-CREATE TABLE mobility_mode_features_entry (
+CREATE TABLE mobility_extended (
   id integer unsigned NOT NULL auto_increment,
-  user_id smallint(6) unsigned NOT NULL,
-  
-  client varchar(250) NOT NULL,
-  
+  user_id smallint unsigned NOT NULL,
+  client tinytext NOT NULL,
   msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL,
   phone_timezone varchar(32) NOT NULL,
-  
-  -- todo - migrate the following four columns to a location_context (see survey_response)
-  latitude double,
-  longitude double,
-  accuracy double,
-  provider varchar(250),
-  
+  location_status tinytext NOT NULL,
+  location text NOT NULL,
+  sensor_data mediumtext NOT NULL,
+  classifier_version tinytext NOT NULL,
   mode varchar(30) NOT NULL,
-  
-  features text NOT NULL,
-  
   upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
+  
   PRIMARY KEY (id),
   INDEX (user_id, upload_timestamp),
   UNIQUE INDEX (user_id, epoch_millis),

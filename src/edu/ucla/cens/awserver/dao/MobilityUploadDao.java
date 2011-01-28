@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -19,7 +18,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import edu.ucla.cens.awserver.domain.DataPacket;
-import edu.ucla.cens.awserver.domain.MobilityModeFeaturesDataPacket;
+import edu.ucla.cens.awserver.domain.MobilitySensorDataPacket;
 import edu.ucla.cens.awserver.domain.MobilityModeOnlyDataPacket;
 import edu.ucla.cens.awserver.request.AwRequest;
 
@@ -32,15 +31,15 @@ import edu.ucla.cens.awserver.request.AwRequest;
 public class MobilityUploadDao extends AbstractUploadDao {
 	private static Logger _logger = Logger.getLogger(MobilityUploadDao.class);
 
-	private final String _insertMobilityModeOnlySql =   "insert into mobility_mode_only_entry"
-	                                                  + " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude,"
-	                                                  + " longitude, accuracy, provider, mode, client, upload_timestamp)"
-	                                                  + " values (?,?,?,?,?,?,?,?,?,?,?)";
+	private final String _insertMobilityModeOnlySql =   "INSERT INTO mobility_mode_only"
+	                                                  + " (user_id, msg_timestamp, epoch_millis, phone_timezone, location_status," 
+	                                                  + " location, mode, client, upload_timestamp)"
+	                                                  + " VALUES (?,?,?,?,?,?,?,?,?)";
 
-	private final String _insertMobilityModeFeaturesSql =   "insert into mobility_mode_features_entry"
-			                                              + " (user_id, msg_timestamp, epoch_millis, phone_timezone, latitude," 
-			                                              + " longitude, accuracy, provider, mode, features, client,"
-			                                              + " upload_timestamp) values (?,?,?,?,?,?,?,?,?,?,?,?)";
+	private final String _insertMobilityModeFeaturesSql =   "INSERT INTO mobility_extended"
+			                                              + " (user_id, msg_timestamp, epoch_millis, phone_timezone,"
+			                                              +	" location_status, location, mode, sensor_data, classifier_version,"
+			                                              +	" client, upload_timestamp) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 	
 	public MobilityUploadDao(DataSource datasource) {
 		super(datasource);
@@ -91,11 +90,11 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					index++;
 					int numberOfRowsUpdated = 0;
 					
-					if(dataPacket instanceof MobilityModeFeaturesDataPacket) { // the order of these instanceofs is important because
-						                                                       // a MobilityModeFeaturesDataPacket is a 
+					if(dataPacket instanceof MobilitySensorDataPacket) { // the order of these instanceofs is important because
+						                                                       // a MobilitySensorDataPacket is a 
 						                                                       // MobilityModeOnlyDataPacket -- need to check for the 
 						                                                       // superclass first
-						numberOfRowsUpdated = insertMobilityModeFeatures((MobilityModeFeaturesDataPacket)dataPacket, userId, client);
+						numberOfRowsUpdated = insertMobilityModeFeatures((MobilitySensorDataPacket)dataPacket, userId, client);
 						
 					} else if (dataPacket instanceof MobilityModeOnlyDataPacket){
 						
@@ -108,7 +107,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					
 					if(1 != numberOfRowsUpdated) {
 						throw new DataAccessException("inserted multiple rows even though one row was intended. sql: " 
-								+  ((dataPacket instanceof MobilityModeFeaturesDataPacket) 
+								+  ((dataPacket instanceof MobilitySensorDataPacket) 
 										? _insertMobilityModeFeaturesSql : _insertMobilityModeOnlySql)); 
 					}
 					
@@ -191,25 +190,11 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					ps.setTimestamp(2, Timestamp.valueOf(dataPacket.getDate()));
 					ps.setLong(3, dataPacket.getEpochTime());
 					ps.setString(4, dataPacket.getTimezone());
-					
-					if(dataPacket.getLatitude().isNaN()) {
-						ps.setNull(5, Types.DOUBLE);
-					} else {
-						ps.setDouble(5, dataPacket.getLatitude());
-					}
-					
-					if(dataPacket.getLongitude().isNaN()) { 
-						ps.setNull(6, Types.DOUBLE);
-					} else {
-						ps.setDouble(6, dataPacket.getLongitude());
-					}
-										
-					ps.setDouble(7, dataPacket.getAccuracy());
-					ps.setString(8, dataPacket.getProvider());
-					ps.setString(9, dataPacket.getMode());
-					ps.setString(10, client);
-					ps.setTimestamp(11, new Timestamp(System.currentTimeMillis()));
-					
+					ps.setString(5, dataPacket.getLocationStatus());
+					ps.setString(6, dataPacket.getLocation());
+					ps.setString(7, dataPacket.getMode());
+					ps.setString(8, client);
+					ps.setTimestamp(9, new Timestamp(System.currentTimeMillis()));
 					return ps;
 				}
 			}
@@ -219,35 +204,24 @@ public class MobilityUploadDao extends AbstractUploadDao {
 	/**
 	 * Insert a row into mobility_mode_features_entry. 
 	 */
-	private int insertMobilityModeFeatures(final MobilityModeFeaturesDataPacket dataPacket, final int userId, final String client) {
+	private int insertMobilityModeFeatures(final MobilitySensorDataPacket dataPacket, final int userId, final String client) {
 		
 		return getJdbcTemplate().update( 
 			new PreparedStatementCreator() {
 				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
 					PreparedStatement ps = connection.prepareStatement(_insertMobilityModeFeaturesSql);
+
 					ps.setInt(1, userId);
 					ps.setTimestamp(2, Timestamp.valueOf(dataPacket.getDate()));
 					ps.setLong(3, dataPacket.getEpochTime());
 					ps.setString(4, dataPacket.getTimezone());
-					
-					if(dataPacket.getLatitude().isNaN()) {
-						ps.setNull(5, Types.DOUBLE);
-					} else {
-						ps.setDouble(5, dataPacket.getLatitude());
-					}
-					
-					if(dataPacket.getLongitude().isNaN()) { 
-						ps.setNull(6, Types.DOUBLE);
-					} else {
-						ps.setDouble(6, dataPacket.getLongitude());
-					}
-					
-					ps.setDouble(7, dataPacket.getAccuracy());
-					ps.setString(8, dataPacket.getProvider());
-					ps.setString(9, dataPacket.getMode());
-					ps.setString(10, dataPacket.getFeaturesString());
-					ps.setString(11, client);
-					ps.setTimestamp(12, new Timestamp(System.currentTimeMillis()));
+					ps.setString(5, dataPacket.getLocationStatus());
+					ps.setString(6, dataPacket.getLocation());
+					ps.setString(7, /*dataPacket.getMode()*/"test");
+					ps.setString(8, dataPacket.getSensorDataString());
+					ps.setString(9, /*dataPacket.getClassifierVersion()*/"test");
+					ps.setString(10, client);
+					ps.setTimestamp(11, new Timestamp(System.currentTimeMillis()));
 											
 					return ps;
 				}
@@ -257,16 +231,14 @@ public class MobilityUploadDao extends AbstractUploadDao {
 	
 	private void logErrorDetails(DataPacket dataPacket, int userId, String client) {
 		
-		if(dataPacket instanceof MobilityModeFeaturesDataPacket) {
+		if(dataPacket instanceof MobilitySensorDataPacket) {
 			
-			MobilityModeFeaturesDataPacket mmfdp = (MobilityModeFeaturesDataPacket) dataPacket;
+			MobilitySensorDataPacket mmfdp = (MobilitySensorDataPacket) dataPacket;
 			
 			_logger.error("an error occurred when atempting to run this SQL '" + _insertMobilityModeFeaturesSql + "' with the following" +
 				" parameters: " + userId + ", " + Timestamp.valueOf(mmfdp.getDate()) + ", " + mmfdp.getEpochTime() + ", " +
-				mmfdp.getTimezone() + ", " + (mmfdp.getLatitude().equals(Double.NaN) ? "null" : mmfdp.getLatitude()) +  ", " + 
-			    (mmfdp.getLongitude().equals(Double.NaN) ? "null" : mmfdp.getLongitude()) + ", " + mmfdp.getAccuracy() + ", " +
-			    mmfdp.getProvider() + ", " +  mmfdp.getMode() + ", " + 
-			    mmfdp.getFeaturesString() + ", " + client);
+				mmfdp.getTimezone() + ", " + mmfdp.getLocationStatus() + ", " + mmfdp.getLocation() + ", " + ", " + 
+			    mmfdp.getSensorDataString() + ", " + client);
 			 
 		} else {
 			
@@ -274,9 +246,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 
 			_logger.error("an error occurred when atempting to run this SQL '" + _insertMobilityModeOnlySql +"' with the following " +
 				"parameters: " + userId + ", " + mmodp.getDate() + ", " + mmodp.getEpochTime() + ", " + mmodp.getTimezone() + ", "
-				+ (mmodp.getLatitude().equals(Double.NaN) ? "null" : mmodp.getLatitude()) + ", " + 
-				(mmodp.getLongitude().equals(Double.NaN) ? "null" : mmodp.getLongitude()) + ", " + mmodp.getAccuracy() + " ," + 
-				mmodp.getProvider() + " ," + mmodp.getMode() + ", " + client);
+				 + mmodp.getLocationStatus() + ", " + mmodp.getLocation() + " ," + mmodp.getMode() + ", " + client);
 		}
 	}
 }
