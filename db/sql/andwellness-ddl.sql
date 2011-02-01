@@ -8,7 +8,7 @@ USE andwellness;
 -- having a campaign configuration in the system. 
 -- --------------------------------------------------------------------
 CREATE TABLE campaign (
-  id smallint(4) unsigned NOT NULL auto_increment,
+  id int unsigned NOT NULL auto_increment,
   name varchar(250) NOT NULL,
   label varchar(500) default NULL, -- can be used as a separate display label
   PRIMARY KEY (id),
@@ -19,8 +19,8 @@ CREATE TABLE campaign (
 -- Links surveys (stored in raw XML format) to a campaign. 
 -- --------------------------------------------------------------------
 CREATE TABLE campaign_configuration (
-  id smallint(4) unsigned NOT NULL auto_increment,
-  campaign_id smallint(4) unsigned NOT NULL,
+  id int unsigned NOT NULL auto_increment,
+  campaign_id int unsigned NOT NULL,
   version varchar(250) NOT NULL,
   xml mediumtext NOT NULL, -- the max length for mediumtext is roughly 5.6 million UTF-8 chars
   PRIMARY KEY (id),
@@ -32,7 +32,7 @@ CREATE TABLE campaign_configuration (
 -- System users.
 -- -----------------------------------------------------------------------
 CREATE TABLE user (
-  id smallint(6) unsigned NOT NULL auto_increment,
+  id int unsigned NOT NULL auto_increment,
   login_id varchar(15) NOT NULL,
   password varchar(100) NOT NULL,
   enabled bit NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE user (
 -- line registration process. **
 -- ---------------------------------------------------------------------
 CREATE TABLE user_personal (
-  id smallint(6) unsigned NOT NULL auto_increment,
+  id int unsigned NOT NULL auto_increment,
   email_address varchar(320),
   json_data text,
   PRIMARY KEY (id)
@@ -63,8 +63,8 @@ CREATE TABLE user_personal (
 -- entry.
 -- ---------------------------------------------------------------------
 CREATE TABLE user_user_personal (
-	user_id smallint(6) unsigned NOT NULL,
-	user_personal_id smallint(6) unsigned NOT NULL,
+	user_id int unsigned NOT NULL,
+	user_personal_id int unsigned NOT NULL,
 	PRIMARY KEY (user_id, user_personal_id),
 	CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT FOREIGN KEY (user_personal_id) REFERENCES user_personal (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -74,7 +74,7 @@ CREATE TABLE user_user_personal (
 -- User roles.
 -- --------------------------------------------------------------------
 CREATE TABLE user_role (
-  id tinyint(1) unsigned NOT NULL auto_increment,
+  id tinyint unsigned NOT NULL auto_increment,
   label varchar(50) NOT NULL,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -84,10 +84,10 @@ CREATE TABLE user_role (
 -- for each campaign they belong to.
 -- --------------------------------------------------------------------
 CREATE TABLE user_role_campaign (
-  id smallint(6) unsigned NOT NULL auto_increment,
-  user_id smallint(6) unsigned NOT NULL,
-  campaign_id smallint(4) unsigned NOT NULL,
-  user_role_id tinyint(1) unsigned NOT NULL,
+  id int unsigned NOT NULL auto_increment,
+  user_id int unsigned NOT NULL,
+  campaign_id int unsigned NOT NULL,
+  user_role_id tinyint unsigned NOT NULL,
   PRIMARY KEY (id),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT FOREIGN KEY (campaign_id) REFERENCES campaign (id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -98,9 +98,9 @@ CREATE TABLE user_role_campaign (
 -- Stores survey responses for a user in a campaign 
 -- --------------------------------------------------------------------
 CREATE TABLE survey_response (
-  id integer unsigned NOT NULL auto_increment,
-  user_id smallint(6) unsigned NOT NULL,
-  campaign_configuration_id smallint(4) unsigned NOT NULL,
+  id int unsigned NOT NULL auto_increment,
+  user_id int unsigned NOT NULL,
+  campaign_configuration_id int unsigned NOT NULL,
   client varchar(250) NOT NULL,
   msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL, 
@@ -127,8 +127,8 @@ CREATE TABLE survey_response (
 -- are stored.
 -- --------------------------------------------------------------------
 CREATE TABLE prompt_response (
-  id integer unsigned NOT NULL auto_increment,
-  survey_response_id integer unsigned NOT NULL,
+  id int unsigned NOT NULL auto_increment,
+  survey_response_id int unsigned NOT NULL,
   prompt_id varchar(250) NOT NULL,  -- a prompt id as defined in a configuration at the XPath //promptId
   prompt_type varchar(250) NOT NULL, -- a prompt type as defined in a configuration at the XPath //promptType
   repeatable_set_id varchar(250), -- a repeatable set id as defined in a configuration at the XPath //repeatableSetId
@@ -149,8 +149,8 @@ CREATE TABLE prompt_response (
 -- UUID is an implicit link into the prompt_response table.
 -- --------------------------------------------------------------------
 CREATE TABLE url_based_resource (
-    id  integer unsigned NOT NULL auto_increment,
-    user_id smallint(6) unsigned NOT NULL,
+    id int unsigned NOT NULL auto_increment,
+    user_id int unsigned NOT NULL,
     client varchar(250) NOT NULL,
     uuid char (36) NOT NULL, -- joined with prompt_response.response to retrieve survey context for an item
     url text,
@@ -166,20 +166,20 @@ CREATE TABLE url_based_resource (
 -- linked to a campaign.
 -- --------------------------------------------------------------------
 CREATE TABLE mobility_mode_only (
-  id bigint unsigned NOT NULL auto_increment,
-  user_id smallint unsigned NOT NULL,
+  id int unsigned NOT NULL auto_increment,
+  user_id int unsigned NOT NULL,
   client tinytext NOT NULL,
   msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL,
   phone_timezone varchar(32) NOT NULL,
   location_status tinytext NOT NULL,
-  location text NOT NULL,
+  location text,
   mode varchar(30) NOT NULL,
   upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   
   PRIMARY KEY (id),
-  INDEX (user_id, upload_timestamp),
+  INDEX (user_id, msg_timestamp),
   UNIQUE (user_id, epoch_millis), -- enforce no-duplicates rule at the table level
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -189,22 +189,23 @@ CREATE TABLE mobility_mode_only (
 -- *not* linked to a campaign.
 -- --------------------------------------------------------------------
 CREATE TABLE mobility_extended (
-  id integer unsigned NOT NULL auto_increment,
-  user_id smallint unsigned NOT NULL,
+  id int unsigned NOT NULL auto_increment,
+  user_id int unsigned NOT NULL,
   client tinytext NOT NULL,
   msg_timestamp datetime NOT NULL,
   epoch_millis bigint unsigned NOT NULL,
   phone_timezone varchar(32) NOT NULL,
   location_status tinytext NOT NULL,
-  location text NOT NULL,
-  sensor_data mediumtext NOT NULL,
-  classifier_version tinytext NOT NULL,
+  location text,
+  sensor_data text NOT NULL,
+  features text NOT NULL,
+  classifier_version tinytext NOT NULL, 
   mode varchar(30) NOT NULL,
   upload_timestamp datetime NOT NULL, -- the upload time based on the server time and timezone
   audit_timestamp timestamp default current_timestamp on update current_timestamp,
   
   PRIMARY KEY (id),
-  INDEX (user_id, upload_timestamp),
+  INDEX (user_id, msg_timestamp),
   UNIQUE INDEX (user_id, epoch_millis),
   CONSTRAINT FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
