@@ -89,7 +89,7 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 						
 						entry.put("metadata", metadataArray);
 						entry.put("label", result.getPromptId()); // was result.getDisplayLabel()
-						entry.put("value", result.getDisplayValue());
+						entry.put("value", handleDataType(result.getDisplayValue())); 
 						
 						if(null != result.getUnit()) {
 							entry.put("unit", result.getUnit());
@@ -174,4 +174,26 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 			result.setUtcTimestamp(DateUtils.timestampStringToUtc(result.getTimestamp(), result.getTimezone()));
 		}
 	}
+	
+	private Object handleDataType(Object object) {
+		try {
+			
+			return Integer.parseInt(String.valueOf(object));
+			
+		} catch(NumberFormatException nfe) {  
+			
+			// ok, maybe it's a float
+			
+			try {
+				
+				return Float.parseFloat(String.valueOf(object));
+				
+			} catch (NumberFormatException nfe2) {
+				
+			}
+		}
+		
+		return object;
+	}
+
 }

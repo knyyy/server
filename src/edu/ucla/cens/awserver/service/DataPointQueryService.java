@@ -31,6 +31,11 @@ public class DataPointQueryService extends AbstractDaoService {
 		_configurationCacheService = configurationCacheService;
 	}
 	
+	/**
+	 * Retrieves data points and creates a result list of DataPointQueryResults.
+	 * 
+	 * TODO - this method has lots of redundancy that could be cleaned up.
+	 */
 	@Override
 	public void execute(AwRequest awRequest) {
 		DataPointQueryAwRequest req = (DataPointQueryAwRequest) awRequest;
@@ -41,7 +46,7 @@ public class DataPointQueryService extends AbstractDaoService {
 		CampaignNameVersion cnv = new CampaignNameVersion(req.getCampaignName(), req.getCampaignVersion());
 		
 		// TODO - what if the end user has selected a metadata data point? it means there will be redundancy between the 
-		// dataPointId and the metadataPromptIds. not really the end of world, just sloppy.
+		// dataPointId and the metadataPromptIds. not really the end of world, just sloppy. Clients should disallow it.
 		
 		Configuration config = (Configuration) _configurationCacheService.lookup(cnv);
 		List<String> metadataPromptIds = new ArrayList<String>();
@@ -90,65 +95,57 @@ public class DataPointQueryService extends AbstractDaoService {
 					
 					if(null != value) {
 						
-						Number number = toNumber(value);
+						result.setDisplayValue(value);
 						
-						if(null != number) {
-							result.setDisplayValue(number);
-						} else {
-							result.setDisplayValue(value);
-						}
+					} else { 
 						
-					} else { // just use the response if there is no display value
+						result.setDisplayValue(result.getResponse());
 						
-						result.setDisplayValue(toNumber(result.getResponse()));
 					}
 					
 				} else if(PromptTypeUtils.isMultiChoiceType(result.getPromptType())) {
 					
 					JSONArray responseArray = JsonUtils.getJsonArrayFromString(String.valueOf(result.getResponse()));
 					
-					if(null == responseArray) { // very bad - this means we have invalid data in the db
-						_logger.error("unparseable JSON array found for multi-choice response: " + result.getResponse());
-						throw new ServiceException("unparseable JSONArray: " + result.getResponse());
-					}
+					if(null != responseArray) {
 					
-					JSONArray valueArray = new JSONArray();
-					int length = responseArray.length();
-					
-					for(int j = 0; j < length; j++) {
+						JSONArray valueArray = new JSONArray();
+						int length = responseArray.length();
 						
-						Object value = config.getValueForChoiceKey(result.getSurveyId(), result.getRepeatableSetId(), 
-							result.getPromptId(), JsonUtils.getStringFromJsonArray(responseArray, j)
-						);
+						for(int j = 0; j < length; j++) {
+							
+							Object value = config.getValueForChoiceKey(result.getSurveyId(), result.getRepeatableSetId(), 
+								result.getPromptId(), JsonUtils.getStringFromJsonArray(responseArray, j)
+							);
+							
+							if(null == value) {
+								
+								break;
+								
+							} else {
+								
+								valueArray.put(value);
+							}
+						}
 						
-						if(null == value) { // ok, get the label
-//							Object label = config.getLabelForChoiceKey(result.getSurveyId(), result.getRepeatableSetId(), 
-//								result.getPromptId(), JsonUtils.getStringFromJsonArray(responseArray, j)
-//							);
-//							
-//							result.setDisplayValue(label);
-							break;
+						if(valueArray.length() != length) {
+							
+							result.setDisplayValue(valueArray);
 							
 						} else {
 							
-							valueArray.put(value);
+							result.setDisplayValue(result.getResponse());
 						}
-					}
 					
-					if(null == result.getDisplayValue()) {
-						result.setDisplayValue(valueArray);
-					}
-					
-				} else { 
-					
-					if(PromptTypeUtils.isNumberPromptType(result.getPromptType())) { // check for a number to avoid numbers being
-						                                                             // quoted in the JSON output
-						result.setDisplayValue(toNumber(result.getResponse())); 
-						
 					} else {
 						
 						result.setDisplayValue(result.getResponse());
+						
 					}
+					
+				} else { 
+						
+					result.setDisplayValue(result.getResponse());
 				}
 				
 			} else {
@@ -165,65 +162,55 @@ public class DataPointQueryService extends AbstractDaoService {
 					
 					if(null != value) {
 						
-						Number number = toNumber(value);
-						
-						if(null != number) {
-							result.setDisplayValue(number);
-						} else {
-							result.setDisplayValue(value);
-						}
+						result.setDisplayValue(value);
 						
 					} else {
-						// single_choice response values are always integers based on our specification
-						result.setDisplayValue(toNumber(result.getResponse()));
+
+						result.setDisplayValue(result.getResponse());
 					}
 				
 				} else if (PromptTypeUtils.isMultiChoiceType(result.getPromptType())) {
 					
 					JSONArray responseArray = JsonUtils.getJsonArrayFromString(String.valueOf(result.getResponse()));
 					
-					if(null == responseArray) { // very bad - this means we have invalid data in the db
-						throw new IllegalStateException("unparseable JSONArray: " + result.getResponse());
-					}
+					if(null != responseArray) {
 					
-					
-					JSONArray valueArray = new JSONArray();
-					int length = responseArray.length();
-					
-					for(int j = 0; j < length; j++) {
+						JSONArray valueArray = new JSONArray();
+						int length = responseArray.length();
 						
-						Object value = config.getValueForChoiceKey(result.getSurveyId(), result.getRepeatableSetId(), 
-							result.getPromptId(), JsonUtils.getStringFromJsonArray(responseArray, j)
-						);
+						for(int j = 0; j < length; j++) {
+							
+							Object value = config.getValueForChoiceKey(result.getSurveyId(), result.getRepeatableSetId(), 
+								result.getPromptId(), JsonUtils.getStringFromJsonArray(responseArray, j)
+							);
+							
+							if(null == value) {
+
+								break;
+								
+							} else {
+								
+								valueArray.put(value);
+							}
+						}
 						
-						if(null == value) { // ok, get the label
-//							Object label = config.getLabelForChoiceKey(result.getSurveyId(), result.getRepeatableSetId(), 
-//								result.getPromptId(), JsonUtils.getStringFromJsonArray(responseArray, j)
-//							);
-//							
-//							result.setDisplayValue(label);
-							break;
+						if(valueArray.length() != length) {
+							
+							result.setDisplayValue(valueArray);
 							
 						} else {
 							
-							valueArray.put(value);
+							result.setDisplayValue(result.getResponse());
 						}
-					}
-					
-					if(null == result.getDisplayValue()) {
-						result.setDisplayValue(valueArray);
-					}
-					
-				} else {
-					
-					if(PromptTypeUtils.isNumberPromptType(result.getPromptType())) { // check for a number to avoid numbers being
-                                                                                     // quoted in the JSON output
-						result.setDisplayValue(toNumber(result.getResponse())); 
 
-					} else {
-
+					} else { 
+						
 						result.setDisplayValue(result.getResponse());
 					}
+										
+				} else {
+					
+					result.setDisplayValue(result.getResponse());
 				}
 			}
 		}
@@ -231,28 +218,5 @@ public class DataPointQueryService extends AbstractDaoService {
 		if(_logger.isDebugEnabled()) {
 			_logger.debug(req.getResultList());
 		}
-	}
-	
-	private Number toNumber(Object object) {
-		try {
-			
-			return Integer.parseInt(String.valueOf(object));
-			
-		} catch(NumberFormatException nfe) {  
-			
-			// ok, maybe it's a float
-			
-			try {
-				
-				return Float.parseFloat(String.valueOf(object));
-				
-			} catch (NumberFormatException nfe2) {
-				
-				_logger.warn("found value that is unparseable as a number: " + object);
-			
-			}
-		}
-		
-		return null;
 	}
 }
