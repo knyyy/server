@@ -9,6 +9,9 @@ import edu.ucla.cens.awserver.dao.Dao;
 import edu.ucla.cens.awserver.request.AwRequest;
 import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
 
+/**
+ * @author selsky
+ */
 public class MobilityQueryUserCheckService extends AbstractAnnotatingService {
 	private static Logger _logger = Logger.getLogger(MobilityQueryUserCheckService.class);
 	private Dao _loggedInUserCampaignDao;
@@ -28,11 +31,13 @@ public class MobilityQueryUserCheckService extends AbstractAnnotatingService {
 	
 	@Override
 	public void execute(AwRequest awRequest) {
+		// find all of the campaigns the logged-in user belongs to
 		_loggedInUserCampaignDao.execute(awRequest);
 		@SuppressWarnings("unchecked")
 		List<String> queryResults = (List<String>) awRequest.getResultList();
 		List<String> loggedInUserCampaigns = new ArrayList<String>(queryResults);
 		
+		// find all of the campaigns the user in the query parameters belongs to
 		_queryUserCampaignDao.execute(awRequest);
 		
 		for(String campaignName : loggedInUserCampaigns) {
