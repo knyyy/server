@@ -5,12 +5,11 @@ package edu.ucla.cens.awserver.request;
  * 
  * @author selsky
  */
-public class MobilityDataPointQueryAwRequest extends ResultListAwRequest {
+public class MobilityQueryAwRequest extends ResultListAwRequest {
 	private String _startDate;
 	private String _endDate;
 	private String _userNameRequestParam;
 	private String _client;
-	private String _queryId;
 	
 	public String getStartDate() {
 		return _startDate;
@@ -42,13 +41,5 @@ public class MobilityDataPointQueryAwRequest extends ResultListAwRequest {
 
 	public void setClient(String client) {
 		_client = client;
-	}
-
-	public String getQueryId() {
-		return _queryId;
-	}
-
-	public void setQueryId(String queryId) {
-		_queryId = queryId;
 	}
 }

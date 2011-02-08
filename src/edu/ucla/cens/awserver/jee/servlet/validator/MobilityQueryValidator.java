@@ -11,18 +11,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 /**
- * Validator for inbound data to the mobility data point API.
+ * Validator for inbound data to the mobility query.
  * 
  * @author selsky
  */
-public class MobilityDataPointQueryValidator extends AbstractHttpServletRequestValidator {
-	private static Logger _logger = Logger.getLogger(MobilityDataPointQueryValidator.class);
+public class MobilityQueryValidator extends AbstractHttpServletRequestValidator {
+	private static Logger _logger = Logger.getLogger(MobilityQueryValidator.class);
 	private List<String> _parameterList;
 	
-	/**
-	 */
-	public MobilityDataPointQueryValidator() {
-		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"s","e","u","ci","i","t"}));
+	public MobilityQueryValidator() {
+		_parameterList = new ArrayList<String>(Arrays.asList(new String[]{"s","u","ci","t"}));
 	}
 	
 	public boolean validate(HttpServletRequest httpServletRequest) {
@@ -30,7 +28,7 @@ public class MobilityDataPointQueryValidator extends AbstractHttpServletRequestV
 		
 		// Check for missing or extra parameters
 		if(parameterMap.size() != _parameterList.size()) {				
-			_logger.warn("an incorrect number of parameters was found for an data point query: " + parameterMap.size());
+			_logger.warn("an incorrect number of parameters was found for a mobility query: " + parameterMap.size());
 			return false;
 		}
 		
@@ -53,20 +51,16 @@ public class MobilityDataPointQueryValidator extends AbstractHttpServletRequestV
 		}
 		
 		String s = (String) httpServletRequest.getParameter("s");
-		String e = (String) httpServletRequest.getParameter("e");
 		String u = (String) httpServletRequest.getParameter("u");
 		String ci = (String) httpServletRequest.getParameter("ci");
-		String i = (String) httpServletRequest.getParameter("i");
 		String t = (String) httpServletRequest.getParameter("t");
 		
 		// Check for abnormal lengths (buffer overflow attack)
 		
 		if(greaterThanLength("startDate", "s", s, 10) 
-		   || greaterThanLength("endDate", "e", e, 10)
 		   || greaterThanLength("client", "ci",ci, 250)
 		   || greaterThanLength("userName", "u", u, 15)
-		   || greaterThanLength("authToken", "t", t, 36)
-		   || greaterThanLength("queryId", "i", i, 250)) {
+		   || greaterThanLength("authToken", "t", t, 36)) {
 			
 			_logger.warn("found an input parameter that exceeds its allowed length");
 			return false;

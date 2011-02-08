@@ -412,12 +412,12 @@
     <url-pattern>/q/i</url-pattern>
   </servlet-mapping>
   
-  <!--  Handle mobility data point queries -->
+  <!--  Handle mobility queries -->
   <servlet>
     <description>
-      runs mobility data point queries 
+      runs mobility queries 
     </description>
-    <servlet-name>MobilityDataPointQueryServlet</servlet-name>
+    <servlet-name>MobilityQueryServlet</servlet-name>
     <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
     <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
           The param-value elements are Spring bean ids.    
@@ -428,21 +428,54 @@
     </init-param>
     <init-param>
       <param-name>awRequestCreatorName</param-name>
-      <param-value>mobilityDataPointQueryAwRequestCreator</param-value>
+      <param-value>mobilityQueryAwRequestCreator</param-value>
     </init-param>
     <init-param>
       <param-name>httpServletRequestValidatorName</param-name>
-      <param-value>mobilityDataPointQueryHttpServletRequestValidator</param-value>
+      <param-value>mobilityQueryHttpServletRequestValidator</param-value>
     </init-param>
     <init-param>
       <param-name>responseWriterName</param-name>
-      <param-value>successOrFailResponseWriter</param-value>
+      <param-value>mobilityQueryResponseWriter</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
-    <servlet-name>MobilityDataPointQueryServlet</servlet-name>
+    <servlet-name>MobilityQueryServlet</servlet-name>
     <url-pattern>/q/m</url-pattern>
+  </servlet-mapping>
+
+  <!--  Handle "chunked" mobility queries -->
+  <servlet>
+    <description>
+      runs chunked mobility queries 
+    </description>
+    <servlet-name>ChunkedMobilityQueryServlet</servlet-name>
+    <servlet-class>edu.ucla.cens.awserver.jee.servlet.AwDataServlet</servlet-class>
+    <!--  The following init-params are used to map the servlet to Spring-configured beans that ultimately service the request. 
+          The param-value elements are Spring bean ids.    
+    -->
+    <init-param>
+      <param-name>controllerName</param-name>
+      <param-value>chunkedMobilityDataPointQueryController</param-value>
+    </init-param>
+    <init-param>
+      <param-name>awRequestCreatorName</param-name>
+      <param-value>chunkedMobilityQueryAwRequestCreator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>httpServletRequestValidatorName</param-name>
+      <param-value>chunkedMobilityQueryHttpServletRequestValidator</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseWriterName</param-name>
+      <param-value>mobilityQueryResponseWriter</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ChunkedMobilityQueryServlet</servlet-name>
+    <url-pattern>/q/mc</url-pattern>
   </servlet-mapping>
 
 

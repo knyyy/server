@@ -4,29 +4,18 @@ package edu.ucla.cens.awserver.domain;
  * @author selsky
  */
 public class MobilityQueryResult {
-	private Double _longitude;
-	private Double _latitude;
-	private String _mode;
+	private Object _value;
 	private String _timestamp;
 	private String _timezone;
+	private String _utcTimestamp;
+	private String _locationStatus;
+	private String _location;
 	
-	public Double getLongitude() {
-		return _longitude;
+	public Object getValue() {
+		return _value;
 	}
-	public void setLongitude(Double longitude) {
-		_longitude = longitude;
-	}
-	public Double getLatitude() {
-		return _latitude;
-	}
-	public void setLatitude(Double latitude) {
-		_latitude = latitude;
-	}
-	public String getMode() {
-		return _mode;
-	}
-	public void setMode(String mode) {
-		_mode = mode;
+	public void setValue(Object value) {
+		_value = value;
 	}
 	public String getTimestamp() {
 		return _timestamp;
@@ -39,5 +28,23 @@ public class MobilityQueryResult {
 	}
 	public void setTimezone(String timezone) {
 		_timezone = timezone;
+	}
+	public String getUtcTimestamp() {
+		return _utcTimestamp;
+	}
+	public void setUtcTimestamp(String utcTimestamp) {
+		_utcTimestamp = utcTimestamp;
+	}
+	public String getLocationStatus() {
+		return _locationStatus;
+	}
+	public void setLocationStatus(String locationStatus) {
+		_locationStatus = locationStatus;
+	}
+	public String getLocation() {
+		return _location;
+	}
+	public void setLocation(String location) {
+		_location = location;
 	}
 }

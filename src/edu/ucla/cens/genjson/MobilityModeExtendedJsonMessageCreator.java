@@ -83,15 +83,20 @@ public class MobilityModeExtendedJsonMessageCreator implements JsonMessageCreato
 			sensorData.put("accel_data", accelEntries);
 			
 			int numberOfWifiEntries = ValueCreator.randomPositiveIntModulus(20);
-			List<Map<String,Object>> wifiEntries = new ArrayList<Map<String,Object>>();
+			List<Map<String,Object>> wifiScanEntries = new ArrayList<Map<String,Object>>();
 			for(int j = 0; j < numberOfWifiEntries; j++) {
 				Map<String, Object> entry = new HashMap<String, Object>();
 				entry.put("ssid", ValueCreator.randomMacAddress());
 				int s = ValueCreator.randomPositiveIntModulus(120);
-				entry.put("strength", (s - (2 * s)));
-				wifiEntries.add(entry);
+				entry.put("strength", -s);
+				wifiScanEntries.add(entry);
 			}
-			sensorData.put("wifi_data", wifiEntries);
+			
+			Map<String, Object> wifiData = new HashMap<String, Object>();
+			wifiData.put("scan", wifiScanEntries);
+			wifiData.put("timestamp", ValueCreator.date());
+			sensorData.put("wifi_data", wifiData);
+			
 			sensorData.put("mode", ValueCreator.mode());
 			
 			map.put("sensor_data", sensorData);

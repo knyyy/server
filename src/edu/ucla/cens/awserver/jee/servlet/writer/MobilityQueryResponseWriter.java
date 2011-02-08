@@ -13,73 +13,80 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import edu.ucla.cens.awserver.domain.DataPointFunctionQueryResult;
 import edu.ucla.cens.awserver.domain.ErrorResponse;
+import edu.ucla.cens.awserver.domain.MobilityQueryResult;
 import edu.ucla.cens.awserver.request.AwRequest;
-import edu.ucla.cens.awserver.request.DataPointFunctionQueryAwRequest;
 import edu.ucla.cens.awserver.util.DateUtils;
 
 /**
  * @author selsky
  */
-public class DataPointFunctionQueryResponseWriter extends AbstractResponseWriter {
-	private static Logger _logger = Logger.getLogger(DataPointFunctionQueryResponseWriter.class);
+public class MobilityQueryResponseWriter extends AbstractResponseWriter {
+	private static Logger _logger = Logger.getLogger(MobilityQueryResponseWriter.class);
 	
-	public DataPointFunctionQueryResponseWriter(ErrorResponse errorResponse) {
+	public MobilityQueryResponseWriter(ErrorResponse errorResponse) {
 		super(errorResponse);
 	}
 	
 	@Override
 	public void write(HttpServletRequest request, HttpServletResponse response, AwRequest awRequest) {
-		DataPointFunctionQueryAwRequest req = (DataPointFunctionQueryAwRequest) awRequest;
 		Writer writer = null;
 		
 		try {
 			// Prepare for sending the response to the client
 			writer = new BufferedWriter(new OutputStreamWriter(getOutputStream(request, response)));
 			String responseText = null;
+			
+			// Sets the HTTP headers to disable caching
 			expireResponse(response);
+			
 			response.setContentType("application/json");
 			JSONObject rootObject = new JSONObject();
 			
-			// Convert the results to JSON for output. 
+			// Build the appropriate response 
 			if(! awRequest.isFailedRequest()) {
+				
 				rootObject.put("result", "success");
-				rootObject.put("label", req.getMetadata().getLabel());
-				rootObject.put("unit", req.getMetadata().getUnit());
-				rootObject.put("type", req.getMetadata().getType());
 				
 				@SuppressWarnings("unchecked")
-				List<DataPointFunctionQueryResult> results =  (List<DataPointFunctionQueryResult>) req.getResultList();
-				
-				_logger.info("found " + results.size() + " results");
-							
+				List<MobilityQueryResult> results =  (List<MobilityQueryResult>) awRequest.getResultList();
 				generateUtcTimestamps(results);
 				
 				JSONArray resultArray = new JSONArray();
 				
-				for(DataPointFunctionQueryResult result : results) {
-					JSONObject dataObject = new JSONObject();
-					dataObject.put("value", result.getValue());
-					dataObject.put("timestamp", result.getTimestamp());
-					dataObject.put("timezone", result.getTimezone());
-					dataObject.put("utc_timestamp", result.getUtcTimestamp());
-					dataObject.put("location_status", result.getLocationStatus());
-					dataObject.put("location", null == result.getLocation() ? null : new JSONObject(result.getLocation()));
-					resultArray.put(dataObject);
+				for(int i = 0; i < results.size(); i++) {
+					JSONObject entry = new JSONObject();
+					MobilityQueryResult result = results.get(i);
+					
+					entry.put("v", result.getValue());
+					entry.put("ts", result.getTimestamp());
+					entry.put("tz", result.getUtcTimestamp());
+					entry.put("ls", result.getLocationStatus());
+					if(! "unavailable".equals(result.getLocationStatus())) {
+						JSONObject location = new JSONObject(result.getLocation());
+						Object ts = location.remove("timestamp");
+						Object la = location.remove("latitude");
+						Object lo = location.remove("longitude");
+						Object ac = location.remove("accuracy");
+						Object pr = location.remove("provider");
+						location.put("ts", ts);
+						location.put("la", JSONObject.stringToValue(la.toString()));
+						location.put("lo", JSONObject.stringToValue(lo.toString()));
+						location.put("ac", JSONObject.stringToValue(ac.toString()));
+						location.put("pr", pr);
+						entry.put("l", location);
+					}
+					resultArray.put(entry);
 				}
 				
-				rootObject.put("data", resultArray);
+				rootObject.put("data", resultArray);				
 				responseText = rootObject.toString();
 				
 			} else {
 				
 				if(null != awRequest.getFailedRequestErrorMessage()) {
-					
 					responseText = awRequest.getFailedRequestErrorMessage();
-				
 				} else {
-				
 					responseText = generalJsonErrorMessage();
 				}
 			}
@@ -88,10 +95,10 @@ public class DataPointFunctionQueryResponseWriter extends AbstractResponseWriter
 			writer.write(responseText);
 		}
 		
-		catch(Exception e) { // catch Exception in order to avoid redundant catch block functionality (Java 7 will have 
-			                 // comma-separated catch clauses) 
+		catch(Exception e) { // catch Exception in order to avoid redundant catch block functionality
 			
-			_logger.error("an unrecoverable exception occurred while running an data point query", e);
+			_logger.error("an unrecoverable exception occurred while generating a response", e);
+			
 			try {
 				
 				writer.write(generalJsonErrorMessage());
@@ -119,9 +126,9 @@ public class DataPointFunctionQueryResponseWriter extends AbstractResponseWriter
 		}
 	}
 	
-	//TODO -- move to base class. A base class for results that contain UTC timestamps is also necessary
-	private void generateUtcTimestamps(List<DataPointFunctionQueryResult> results) {
-		for(DataPointFunctionQueryResult result : results) {
+	//TODO -- move to base class. A base class for Results that contain UTC timestamps is also necessary
+	private void generateUtcTimestamps(List<MobilityQueryResult> results) {
+		for(MobilityQueryResult result : results) {
 			result.setUtcTimestamp(DateUtils.timestampStringToUtc(result.getTimestamp(), result.getTimezone()));
 		}
 	}

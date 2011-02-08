@@ -11,16 +11,10 @@ import edu.ucla.cens.awserver.request.AwRequest;
  */
 public class SimpleQueryService extends AbstractDaoService {
 
-	/**
-     * Creates and instance of this class and passes dao to the super class constructor.  
-     */
     public SimpleQueryService(Dao dao) {
     	super(dao);
     }
 	
-    /**
-     * Dispatches to the DAO set on provided on construction.
-     */
 	public void execute(AwRequest awRequest) {
 		
 		try {

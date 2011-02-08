@@ -39,7 +39,7 @@ public class MobilityUploadDao extends AbstractUploadDao {
 	private final String _insertMobilityModeFeaturesSql =   "INSERT INTO mobility_extended"
 			                                              + " (user_id, msg_timestamp, epoch_millis, phone_timezone,"
 			                                              +	" location_status, location, mode, sensor_data, classifier_version,"
-			                                              +	" client, upload_timestamp) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+			                                              +	" features, client, upload_timestamp) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	public MobilityUploadDao(DataSource datasource) {
 		super(datasource);
@@ -220,8 +220,9 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					ps.setString(7, /*dataPacket.getMode()*/"test");
 					ps.setString(8, dataPacket.getSensorDataString());
 					ps.setString(9, /*dataPacket.getClassifierVersion()*/"test");
-					ps.setString(10, client);
-					ps.setTimestamp(11, new Timestamp(System.currentTimeMillis()));
+					ps.setString(10, /*dataPacket.getFeatures()*/"test");
+					ps.setString(11, client);
+					ps.setTimestamp(12, new Timestamp(System.currentTimeMillis()));
 											
 					return ps;
 				}

@@ -8,14 +8,13 @@
   
   <!-- Servlet-to-AW hooks -->
   <!-- "pre-validate" inbound data -->
-  <bean id="mobilityDataPointQueryHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MobilityDataPointQueryValidator" />
+  <bean id="mobilityQueryHttpServletRequestValidator" class="edu.ucla.cens.awserver.jee.servlet.validator.MobilityQueryValidator" />
   <!-- create AwRequest from data in the HttpServletRequest -->
-  <bean id="mobilityDataPointQueryAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.MobilityDataPointQueryAwRequestCreator" />
-  <!-- write outbound data, post-controller 
-  <bean id="mobilityDataPointQueryResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.MobilityDataPointQueryResponseWriter">
+  <bean id="mobilityQueryAwRequestCreator" class="edu.ucla.cens.awserver.jee.servlet.glue.MobilityQueryAwRequestCreator" />
+  <!-- write outbound data, post-controller --> 
+  <bean id="mobilityQueryResponseWriter" class="edu.ucla.cens.awserver.jee.servlet.writer.MobilityQueryResponseWriter">
     <constructor-arg index="0"><ref bean="severeErrorResponse" /></constructor-arg>
   </bean>
-  -->
     
   <!-- Controller - Many components used in the controller are shared with dataPointQueryController -->
   <bean id="mobilityDataPointQueryController" class="edu.ucla.cens.awserver.controller.ControllerImpl">
@@ -23,6 +22,7 @@
       <list>
         <ref bean="tokenBasedAuthenticationService" />
         <ref bean="mobilityQueryUserCheckService" />
+        <ref bean="mobilityQueryService" />
      </list>
     </constructor-arg>
     <constructor-arg index="1">
@@ -31,13 +31,12 @@
     <property name="validators">
       <list>
         <ref bean="startDateValidator" />
-        <ref bean="endDateValidator" />
         <ref bean="userTokenValidator" />
       </list>      
     </property>
-    <property name="featureName"><value>mobility data point query</value></property>
+    <property name="featureName"><value>mobility query</value></property>
   </bean>
-  
+    
   <bean id="mobilityQueryUserCheckService" class="edu.ucla.cens.awserver.service.MobilityQueryUserCheckService">
    <constructor-arg index="0">
       <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
@@ -63,18 +62,12 @@
     </constructor-arg>
   </bean>
   
-  <!--
-  <bean id="dataPointQueryService" class="edu.ucla.cens.awserver.service.DataPointQueryService">
-   <constructor-arg index="0">
-      <ref bean="dataPointQueryDao" />
-    </constructor-arg>
-    <constructor-arg index="1">
-      <ref bean="configurationCacheService" />
+  <bean id="mobilityQueryService" class="edu.ucla.cens.awserver.service.SimpleQueryService">
+    <constructor-arg index="0">
+      <bean id="mobilityQueryDao" class="edu.ucla.cens.awserver.dao.MobilityQueryDao">
+        <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
+      </bean>
     </constructor-arg>
   </bean>
   
-  <bean id="dataPointQueryDao" class="edu.ucla.cens.awserver.dao.DataPointQueryDao">
-    <constructor-arg index="0"><ref bean="dataSource" /></constructor-arg>
-  </bean>
-  -->
 </beans>

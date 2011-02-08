@@ -7,6 +7,8 @@ import edu.ucla.cens.awserver.request.AwRequest;
 /**
  * Service a data upload; dispatch to a DAO for persistence.
  * 
+ * This class is completely redundant with SimpleQueryService.
+ * 
  * @author selsky
  */
 public class DaoService implements Service {
