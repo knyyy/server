@@ -25,8 +25,8 @@
         <ref bean="authWithHashedPasswordService" />
         <ref bean="jsonMessageSyntaxValidationService" />
         <ref bean="mobilityMessageContentValidationService" />
-        <!-- TODO add mode classification step -->
         <ref bean="mobilityDataPacketBuilderService" />
+        <!-- TODO add mode classification step -->
         <ref bean="mobilityDataStorageService" />
       </list>
     </constructor-arg>
@@ -126,6 +126,9 @@
             <ref bean="jsonMsgLocationStatusValidator" />
             <ref bean="jsonMsgLocationValidator" />
             <ref bean="jsonMsgSensorDataExistsValidator" />
+            <ref bean="jsonMsgSensorDataModeValidator" />
+            <ref bean="jsonMsgSensorDataSpeedValidator" />
+            <ref bean="jsonMsgSensorDataAccelDataValidator" />
           </list>
         </entry>
       </map>
@@ -281,7 +284,49 @@
       </bean>
     </constructor-arg>
     <constructor-arg index="1">
-      <value>sensor_data</value>
+      <value>data</value>
+    </constructor-arg>
+  </bean>
+
+  <bean id="jsonMsgSensorDataModeValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgSensorDataModeValidator">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+        <constructor-arg index="0">
+          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+            <property name="code" value="0501" />
+            <property name="text" value="missing or invalid mode in mobility message" />
+          </bean>
+        </constructor-arg>  
+      </bean>
+    </constructor-arg>
+    <constructor-arg index="1">
+      <ref bean="mobilityModes" />
+    </constructor-arg>
+  </bean>
+
+  <bean id="jsonMsgSensorDataSpeedValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgSensorDataSpeedValidator">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+        <constructor-arg index="0">
+          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+            <property name="code" value="0504" />
+            <property name="text" value="missing or invalid speed in mobility message" />
+          </bean>
+        </constructor-arg>  
+      </bean>
+    </constructor-arg>
+  </bean>
+
+  <bean id="jsonMsgSensorDataAccelDataValidator" class="edu.ucla.cens.awserver.validator.json.JsonMsgSensorDataAccelDataValidator">
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.awserver.validator.json.FailedJsonRequestAnnotator">
+        <constructor-arg index="0">
+          <bean class="edu.ucla.cens.awserver.domain.ErrorResponse">
+            <property name="code" value="0503" />
+            <property name="text" value="missing or invalid accel_data in mobility message" />
+          </bean>
+        </constructor-arg>  
+      </bean>
     </constructor-arg>
   </bean>
 

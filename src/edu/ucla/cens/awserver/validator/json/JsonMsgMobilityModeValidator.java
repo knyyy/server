@@ -15,8 +15,8 @@ import edu.ucla.cens.awserver.validator.AwRequestAnnotator;
  */
 public class JsonMsgMobilityModeValidator extends AbstractAnnotatingJsonObjectValidator {
 //	private static Logger _logger = Logger.getLogger(JsonMsgMobilityModeValidator.class);
-	private String _key = "mode";
-	private List<String> _allowedValues;
+	protected String _key = "mode";
+	protected List<String> _allowedValues;
 		
 	/**
      * @throws IllegalArgumentException if the provded list for allowed values is null or empty

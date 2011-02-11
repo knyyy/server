@@ -26,7 +26,7 @@ public class MobilityModeExtendedJsonMessageCreator implements JsonMessageCreato
 //            "provider":"GPS",
 //            "timestamp":"2009-11-03 10:18:33"
 //        },
-//        "sensor_data":{
+//        "data":{
 //   	      "mode":"still",
 //            "speed":0.0,
 //            "accel_data":[{"x":0.0, "y":0.0,"z",0.0}],
@@ -72,7 +72,7 @@ public class MobilityModeExtendedJsonMessageCreator implements JsonMessageCreato
 			sensorData.put("speed", ValueCreator.randomPositiveDouble());
 			
 			List<Map<String,Object>> accelEntries = new ArrayList<Map<String,Object>>();
-			int numberOfAccelEntries = ValueCreator.randomPositiveIntModulus(30);
+			int numberOfAccelEntries = ValueCreator.randomPositiveIntModulus(30) + 1;
 			for(int j = 0; j < numberOfAccelEntries; j++) {
 				Map<String, Object> points = new HashMap<String, Object>();				
 				points.put("x", ValueCreator.randomDouble());
@@ -99,7 +99,7 @@ public class MobilityModeExtendedJsonMessageCreator implements JsonMessageCreato
 			
 			sensorData.put("mode", ValueCreator.mode());
 			
-			map.put("sensor_data", sensorData);
+			map.put("data", sensorData);
 			
 			jsonArray.put(map);
 		}
