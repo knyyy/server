@@ -26,7 +26,7 @@
         <ref bean="jsonMessageSyntaxValidationService" />
         <ref bean="mobilityMessageContentValidationService" />
         <ref bean="mobilityDataPacketBuilderService" />
-        <!-- TODO add mode classification step -->
+        <ref bean="mobilityClassificationService" />
         <ref bean="mobilityDataStorageService" />
       </list>
     </constructor-arg>
@@ -343,6 +343,12 @@
         </entry>
       </map>
     </constructor-arg>   
+  </bean>
+
+  <bean id="mobilityClassificationService" class="edu.ucla.cens.awserver.service.MobilityClassificationService" >
+    <constructor-arg index="0">
+      <bean class="edu.ucla.cens.mobilityclassifier.MobilityClassifier" />
+    </constructor-arg>
   </bean>
   
   <bean id="mobilityDataStorageService" class="edu.ucla.cens.awserver.service.DaoService" >

@@ -22,6 +22,7 @@
   	<include name="**/json-dot-org-2010-01-05.jar"/>
   	<include name="**/jbcrypt-0.3.jar"/>
   	<include name="**/xom-1.2.6.jar"/>
+  	<include name="**/MobilityClassifier.jar"/>
   </fileset>
 
   <fileset id="run-dependencies" dir="${component.repository}">
@@ -37,6 +38,7 @@
   	<include name="**/json-dot-org-2010-01-05.jar"/>
   	<include name="**/jbcrypt-0.3.jar"/>
   	<include name="**/xom-1.2.6.jar"/>
+  	<include name="**/MobilityClassifier.jar"/>
   </fileset>
 
   <path id="compile-classpath">

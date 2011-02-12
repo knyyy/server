@@ -12,13 +12,17 @@ import edu.ucla.cens.mobilityclassifier.Sample;
 public class MobilitySensorDataPacket extends MobilityModeOnlyDataPacket {
 	private String _sensorDataString;
 	
-	// Classifier output
+	// Classifier input from inbound sensor data
+	private Double _speed;
 	private List<Sample> _samples;
-	private List<Double> _n95Fft;
-	private List<Double> _fft;
-	private Double _n95Variance;
-	private Double _variance;
-	private Double _average;
+	
+	// Classifier output
+//	private List<Double> _n95Fft;
+//	private List<Double> _fft;
+//	private Double _n95Variance;
+//	private Double _variance;
+//	private Double _average;
+	private String _features; // n95Fft, fft, n95Variance, variance, average, mode 
 	private String _classifierMode;
 	private String _classifierVersion;
 	
@@ -45,45 +49,13 @@ public class MobilitySensorDataPacket extends MobilityModeOnlyDataPacket {
 	public void setSamples(List<Sample> samples) {
 		_samples = samples;
 	}
-
-	public List<Double> getN95Fft() {
-		return _n95Fft;
+	
+	public Double getSpeed() {
+		return _speed;
 	}
 
-	public void setN95Fft(List<Double> n95Fft) {
-		_n95Fft = n95Fft;
-	}
-
-	public List<Double> getFft() {
-		return _fft;
-	}
-
-	public void setFft(List<Double> fft) {
-		_fft = fft;
-	}
-
-	public Double getN95Variance() {
-		return _n95Variance;
-	}
-
-	public void setN95Variance(Double n95Variance) {
-		_n95Variance = n95Variance;
-	}
-
-	public Double getVariance() {
-		return _variance;
-	}
-
-	public void setVariance(Double variance) {
-		_variance = variance;
-	}
-
-	public Double getAverage() {
-		return _average;
-	}
-
-	public void setAverage(Double average) {
-		_average = average;
+	public void setSpeed(Double speed) {
+		_speed = speed;
 	}
 
 	public String getClassifierMode() {
@@ -93,15 +65,12 @@ public class MobilitySensorDataPacket extends MobilityModeOnlyDataPacket {
 	public void setClassifierMode(String classifierMode) {
 		_classifierMode = classifierMode;
 	}
+	
+	public String getFeatures() {
+		return _features;
+	}
 
-	@Override
-	public String toString() {
-		return "MobilitySensorDataPacket [_average=" + _average
-				+ ", _classifierMode=" + _classifierMode
-				+ ", _classifierVersion=" + _classifierVersion + ", _fft="
-				+ _fft + ", _n95Fft=" + _n95Fft + ", _n95Variance="
-				+ _n95Variance + ", _samples=" + _samples
-				+ ", _sensorDataString=" + _sensorDataString + ", _variance="
-				+ _variance + "]";
+	public void setFeatures(String features) {
+		_features = features;
 	}
 }

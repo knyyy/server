@@ -217,10 +217,10 @@ public class MobilityUploadDao extends AbstractUploadDao {
 					ps.setString(4, dataPacket.getTimezone());
 					ps.setString(5, dataPacket.getLocationStatus());
 					ps.setString(6, dataPacket.getLocation());
-					ps.setString(7, /*dataPacket.getMode()*/"test");
+					ps.setString(7, dataPacket.getMode());
 					ps.setString(8, dataPacket.getSensorDataString());
-					ps.setString(9, /*dataPacket.getClassifierVersion()*/"test");
-					ps.setString(10, /*dataPacket.getFeatures()*/"test");
+					ps.setString(9, dataPacket.getClassifierVersion());
+					ps.setString(10, dataPacket.getFeatures());
 					ps.setString(11, client);
 					ps.setTimestamp(12, new Timestamp(System.currentTimeMillis()));
 											
