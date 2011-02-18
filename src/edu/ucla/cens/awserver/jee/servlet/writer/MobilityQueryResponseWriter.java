@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.ucla.cens.awserver.domain.ChunkedMobilityQueryResult;
 import edu.ucla.cens.awserver.domain.ErrorResponse;
 import edu.ucla.cens.awserver.domain.MobilityQueryResult;
 import edu.ucla.cens.awserver.request.AwRequest;
@@ -59,6 +60,10 @@ public class MobilityQueryResponseWriter extends AbstractResponseWriter {
 					MobilityQueryResult result = results.get(i);
 					
 					entry.put("v", result.getValue());
+					if(result instanceof ChunkedMobilityQueryResult) {
+						entry.put("d", ((ChunkedMobilityQueryResult)result).getDuration());
+					}
+					
 					entry.put("ts", result.getTimestamp());
 					entry.put("tz", result.getUtcTimestamp());
 					entry.put("ls", result.getLocationStatus());

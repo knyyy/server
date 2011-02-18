@@ -1,6 +1,5 @@
 package edu.ucla.cens.awserver.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -37,11 +36,11 @@ public class MobilityClassificationService implements Service {
 				try {
 					
 					MobilitySensorDataPacket mdp = (MobilitySensorDataPacket) dataPacket;
-					Classification c = _classifier.classify((ArrayList) mdp.getSamples(), mdp.getSpeed()); // brent to fix this call
+					Classification c = _classifier.classify(mdp.getSamples(), mdp.getSpeed());
 					
 					JSONObject o = new JSONObject();
 					
-					if(c.isHasFeatures()) {
+					if(c.hasFeatures()) {
 						
 						Double average = c.getAverage();
 						Double n95Variance = c.getN95Variance();

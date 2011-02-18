@@ -1,5 +1,6 @@
 package edu.ucla.cens.awserver.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.dao.Dao;
 import edu.ucla.cens.awserver.dao.DataAccessException;
+import edu.ucla.cens.awserver.domain.ChunkedMobilityQueryResult;
 import edu.ucla.cens.awserver.domain.MobilityQueryResult;
 import edu.ucla.cens.awserver.request.AwRequest;
 
@@ -33,11 +35,17 @@ public class ChunkedMobilityQueryService extends AbstractDaoService {
 			@SuppressWarnings("unchecked")
 			List<MobilityQueryResult> results = (List<MobilityQueryResult>) awRequest.getResultList();
 			List<MobilityQueryResult> chunkedResults = new ArrayList<MobilityQueryResult>();
-			MobilityQueryResult currentChunkedResult = new MobilityQueryResult();
+			ChunkedMobilityQueryResult currentChunkedResult = new ChunkedMobilityQueryResult();
 			int count = 0, still = 0, walk = 0, run = 0, bike = 0, drive = 0;
+			String startTimestamp = null;
 			
-			for(int i = 0; i < results.size(); i++) {
+			for(int i = 0; i < results.size(); i++) { 
 				MobilityQueryResult result = results.get(i);
+				
+				if(0 == count) {
+					startTimestamp = result.getTimestamp();
+				}
+				
 				count++;
 				
 				currentChunkedResult.setLocation(result.getLocation());
@@ -59,29 +67,36 @@ public class ChunkedMobilityQueryService extends AbstractDaoService {
 					_logger.warn("unknown mobility mode found: " + result.getValue());
 				}
 				
-				if(10 == count || (i == (results.size() - 1))) {
+				if(10 == count || (i == (results.size() - 1)) ) {
+					
 					JSONObject o = new JSONObject();
+					
 					try {
 						o.put("still", still);
 						o.put("walk", walk);
 						o.put("run", run);
 						o.put("bike", bike);
 						o.put("drive", drive);
-					} catch (JSONException jsone) { // can never happen! 
+					} catch (JSONException jsone) { // can never happen unless there is a logical error in the try block
 						_logger.warn(jsone);
 					}
 					
 					currentChunkedResult.setValue(o);
+					currentChunkedResult.setDuration(calcDuration(startTimestamp, currentChunkedResult.getTimestamp()));
 					chunkedResults.add(currentChunkedResult);
 					count = 0; still = 0; walk = 0; run = 0; bike = 0; drive = 0;
 				}
-				
-				results.clear();
-				awRequest.setResultList(chunkedResults);
 			}
+			
+			results.clear();
+			awRequest.setResultList(chunkedResults);
 			
 		} catch (DataAccessException dae) {
 			throw new ServiceException(dae);
 		}
+	}
+	
+	private long calcDuration(String t1, String t2) {
+		return Timestamp.valueOf(t2).getTime() - Timestamp.valueOf(t1).getTime();
 	}
 }
