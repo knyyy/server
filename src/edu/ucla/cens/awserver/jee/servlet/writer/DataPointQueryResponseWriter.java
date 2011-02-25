@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.ucla.cens.awserver.domain.DataPointQueryResult;
@@ -114,7 +115,7 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 						JSONObject metadataEntry = new JSONObject();
 						metadataEntry.put("id", result.getPromptId());
 						metadataEntry.put("type", result.getPromptType());
-						metadataEntry.put("value", result.getDisplayValue());
+						metadataEntry.put("value", handleDataType(result.getDisplayValue()));
 						metadataArray.put(metadataEntry);
 					}
 				}
@@ -175,6 +176,9 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 		}
 	}
 	
+	/**
+	 * Convert the data to the correct type so quoting in the JSON serialization is handled properly. 
+	 */
 	private Object handleDataType(Object object) {
 		try {
 			
@@ -190,10 +194,33 @@ public class DataPointQueryResponseWriter extends AbstractResponseWriter {
 				
 			} catch (NumberFormatException nfe2) {
 				
+				// is it a JSON Array?
+				
+				if(String.valueOf(object).startsWith("[")) {
+					
+					try {
+					
+						return new JSONArray(String.valueOf(object));
+						
+					} catch (JSONException jsone) { // bad!! this means there is malformed data in the db
+						
+						_logger.error("cannot create JSON array from data: " + object, jsone);
+					}
+					
+				} else if(String.valueOf(object).startsWith("{")) { // or a JSON Object?
+					
+					try {
+						
+						return new JSONObject(String.valueOf(object));
+						
+					} catch (JSONException jsone) { // bad!! this means there is malformed data in the db
+						
+						_logger.error("cannot create JSON object from data: " + object, jsone);
+					}
+				}
 			}
 		}
 		
 		return object;
 	}
-
 }
