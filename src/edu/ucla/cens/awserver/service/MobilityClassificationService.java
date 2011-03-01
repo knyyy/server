@@ -31,8 +31,8 @@ public class MobilityClassificationService implements Service {
 		List<DataPacket> dataPackets = awRequest.getDataPackets();
 		
 		for(DataPacket dataPacket : dataPackets) {
-			if(dataPacket instanceof MobilitySensorDataPacket) { // TODO it is most likely the case that only one subtype will be 
-				                                                 // uploaded at a time
+			if(dataPacket instanceof MobilitySensorDataPacket) { // most likely there will only be one subtype per upload, but
+				                                                 // the subtypes could be mixed
 				try {
 					
 					MobilitySensorDataPacket mdp = (MobilitySensorDataPacket) dataPacket;
@@ -63,9 +63,10 @@ public class MobilityClassificationService implements Service {
 					
 					o.put("mode", c.getMode());
 					mdp.setFeatures(o.toString());
-					mdp.setClassifierVersion("1.0"); // brent to add a version call to MobilityClassifier
+					mdp.setClassifierVersion(MobilityClassifier.getVersion());
 			
-				} catch (JSONException jsone) { // if this happens, there is a logical error somewhere
+				} catch (JSONException jsone) { // if this happens, it means the o.put() calls above failed. missing data in the 
+					                            // Classification object?
 				
 					_logger.error("failed to build JSON Object using mobility features data", jsone);
 				}
