@@ -45,8 +45,8 @@ public class SurveyUploadDao extends AbstractUploadDao {
 	
 	private final String _insertPromptResponse = "INSERT into prompt_response" +
 	                                             " (survey_response_id, repeatable_set_id, repeatable_set_iteration," +
-	                                             " prompt_type, prompt_id, response)" +
-	                                             " VALUES (?,?,?,?,?,?)";
+	                                             " prompt_type, prompt_id, response, privacy_state)" +
+	                                             " VALUES (?,?,?,?,?,?,?)";
 	
 	public SurveyUploadDao(DataSource dataSource) {
 		super(dataSource);
@@ -175,6 +175,7 @@ public class SurveyUploadDao extends AbstractUploadDao {
 									ps.setString(4, prdp.getType());
 									ps.setString(5, prdp.getPromptId());
 									ps.setString(6, prdp.getValue());
+									ps.setString(7, "private");
 									
 									return ps;
 								}

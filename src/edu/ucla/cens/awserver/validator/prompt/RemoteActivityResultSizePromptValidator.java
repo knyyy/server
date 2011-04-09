@@ -52,5 +52,4 @@ public class RemoteActivityResultSizePromptValidator extends AbstractPromptValid
 		
 		return(responseJsonArray.length() <= (numRetries + 1));
 	}
-
 }
