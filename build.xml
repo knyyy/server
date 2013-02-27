@@ -231,7 +231,7 @@ it up and remove the warnings.</echo>
 
   <target name="dist" depends="test, javac" description="Compiles Java files and creates WAR.">
     <mkdir dir="${dist}"/>
-    <exec executable="git" outputproperty="git.revision" failifexecutionfails="true">
+    <exec executable="git.cmd" outputproperty="git.revision" failifexecutionfails="true">
       <arg value="log"/>
       <arg value="--pretty=format:%h"/>
       <arg value="-1"/>
@@ -263,7 +263,7 @@ it up and remove the warnings.</echo>
 
   <target name="dist-no_ssl" depends="test, javac" description="Compiles Java files and creates WAR.">
     <mkdir dir="${dist}"/>
-    <exec executable="git" outputproperty="git.revision" failifexecutionfails="true">
+    <exec executable="git.cmd" outputproperty="git.revision" failifexecutionfails="true">
       <arg value="log"/>
       <arg value="--pretty=format:%h"/>
       <arg value="-1"/>
@@ -353,5 +353,42 @@ it up and remove the warnings.</echo>
       <property key="sonar.java.target" value="1.6" />
     </sonar:sonar>
   </target>
-  
+
+    <!-- FAISAL: remote deployment stuff here -->
+    <!-- Configure the directory into which the web application is built -->
+
+    <!-- Configure the context path for this application -->
+    <property name="path"     value="/app" />
+
+    <!-- Configure properties to access the Manager application -->
+    <property name="url"      value="http://hrungnir.dyndns.org:8080/manager/text" />
+    <property name="username" value="falquaddoomi" />
+    <property name="password" value="c10v3r" />
+    <property name="warpath" value="${dist}/${ant.project.name}-${app_version}-no_ssl.war" />
+
+    <!-- Configure the custom Ant tasks for the Manager application -->
+    <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask"/>
+    <taskdef name="list"      classname="org.apache.catalina.ant.ListTask"/>
+    <taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask"/>
+    <taskdef name="resources" classname="org.apache.catalina.ant.ResourcesTask"/>
+    <taskdef name="start"     classname="org.apache.catalina.ant.StartTask"/>
+    <taskdef name="stop"      classname="org.apache.catalina.ant.StopTask"/>
+    <taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask"/>
+
+    <!-- Executable Targets -->
+    <target name="tomcat:deploy" description="Install web application" depends="dist-no_ssl">
+        <deploy url="${url}" username="${username}" password="${password}" path="${path}" war="file:${warpath}"/>
+    </target>
+
+    <target name="tomcat:redeploy" description="Install web application" depends="dist-no_ssl">
+        <deploy url="${url}" update="true" username="${username}" password="${password}" path="${path}" war="file:${warpath}"/>
+    </target>
+
+    <target name="tomcat:reload" description="Reload web application">
+        <reload  url="${url}" username="${username}" password="${password}" path="${path}"/>
+    </target>
+
+    <target name="tomcat:undeploy" description="Remove web application">
+        <undeploy url="${url}" username="${username}" password="${password}" path="${path}"/>
+    </target>
 </project>
