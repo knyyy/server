@@ -108,13 +108,33 @@
     <servlet-name>RequestServlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
-  
+
+    <!-- endpoints for oauth access confirmation and for serving tokens upon request -->
+    <servlet>
+        <servlet-name>OAuth2AuthorizationServlet</servlet-name>
+        <servlet-class>org.ohmage.oauth2provider.servlets.OAuth2AuthorizationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OAuth2AuthorizationServlet</servlet-name>
+        <url-pattern>/oauth/authorize</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OAuth2TokenServlet</servlet-name>
+        <servlet-class>org.ohmage.oauth2provider.servlets.OAuth2TokenServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OAuth2TokenServlet</servlet-name>
+        <url-pattern>/oauth/token</url-pattern>
+    </servlet-mapping>
+
   <!-- For ohamge 2.x and up, the server app is effectively headless. There is probably a better way to return headers only.
        empty.html is returned in order override the default Tomcat error pages. It is rarely a good idea to give away 
        information about the app server and the Tomcat pages do just that. -->
   <welcome-file-list>
     <welcome-file>/empty.html</welcome-file>
   </welcome-file-list>
+    <!--
   <error-page>
     <error-code>500</error-code>
     <location>/empty.html</location>
@@ -127,6 +147,7 @@
     <error-code>405</error-code>
     <location>/empty.html</location>
   </error-page>
+    -->
   
   <!-- Parameter with comma separated list of files (or patterns) that tells Spring where to pick up bean configurations. -->
   <context-param>

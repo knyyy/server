@@ -61,7 +61,18 @@
   <filter-mapping>
     <filter-name>ClientFilter</filter-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping> 
+  </filter-mapping>
+
+    <!-- FAISAL: testing spring security filters here -->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
   <!--  The default Tomcat Servlet used to locate and serve static content -->
   <servlet>
@@ -108,6 +119,16 @@
     <servlet-name>RequestServlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+
+    <!-- endpoints for oauth access confirmation and for serving tokens upon request -->
+    <servlet>
+        <servlet-name>OAuth2AuthorizationServlet</servlet-name>
+        <jsp-file>/oauth2/access.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OAuth2AuthorizationServlet</servlet-name>
+        <url-pattern>/oauth/authorize</url-pattern>
+    </servlet-mapping>
   
   <!-- For ohmage 2.x and up, the server app is effectively headless. There is probably a better way to return headers only.
        empty.html is returned in order override the default Tomcat error pages. It is rarely a good idea to give away 
@@ -115,6 +136,7 @@
   <welcome-file-list>
     <welcome-file>/empty.html</welcome-file>
   </welcome-file-list>
+    <!--
   <error-page>
     <error-code>500</error-code>
     <location>/empty.html</location>
@@ -126,7 +148,8 @@
   <error-page>
     <error-code>405</error-code>
     <location>/empty.html</location>
-  </error-page>   
+  </error-page>
+    -->
   
   <!-- Parameter with comma separated list of files (or patterns) that tells Spring where to pick up bean configurations. -->
   <context-param>

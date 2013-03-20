@@ -1,0 +1,31 @@
+body {
+    font-family: Tahoma, sans-serif; font-size: 13px;
+    background: #ccc url('../img/diagonal_stripes.png');
+}
+h1 { margin: 0; padding: 0; }
+.vertical td { padding: 3px; }
+.vertical .label { font-weight: bold; }
+
+p { width: 450px; }
+
+#trunk {
+    width: 600px; margin: 30px auto;
+}
+
+.panel {
+    background: white;
+    padding: 20px; margin-bottom: 30px;
+    border: solid 1px #aaa;
+    box-shadow: 0px 0px 0px 10px rgba(0,0,0,0.15);
+}
+
+.message {
+    margin: 10px -20px;
+    margin-bottom: 20px;
+    padding-left: 20px;
+    background: #fff9e9;
+    border-top: solid 1px #ccc;
+    border-bottom: solid 1px #ccc;
+}
+
+.panel .button { width: 80px; }

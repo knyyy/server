@@ -23,6 +23,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.amber.oauth2.common.OAuth;
+import org.apache.amber.oauth2.common.exception.OAuthProblemException;
+import org.apache.amber.oauth2.common.exception.OAuthSystemException;
+import org.apache.amber.oauth2.common.message.OAuthResponse;
+import org.apache.amber.oauth2.common.message.types.ParameterStyle;
+import org.apache.amber.oauth2.rs.request.OAuthAccessResourceRequest;
+import org.apache.amber.oauth2.rs.response.OAuthRSResponse;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -103,6 +110,47 @@ public abstract class UserRequest extends Request {
 				if((tokenLocation != null) && (tUser == null)) {
 					tUser = retrieveToken(httpRequest, tokenLocation);
 				}
+
+                // FAISAL: if all other mechanisms have failed, check the
+                // request for oauth2 headers and get a user based on that.
+
+                if (tUser == null && httpRequest.getHeader("Authorization") != null) {
+                    // FIXME: there are more cases that this could be an oauth
+                    // request than just having an Authorization header
+
+                    try {
+                        // Make the OAuth Request out of this request and validate it
+                        // Specify where you expect OAuth access token (request header, body or query string)
+                        OAuthAccessResourceRequest oauthRequest = new
+                                OAuthAccessResourceRequest(httpRequest, ParameterStyle.BODY);
+
+                        // Get the access token
+                        String accessToken = oauthRequest.getAccessToken();
+                    }
+                    catch(OAuthProblemException ex) {
+                        //if something goes wrong
+                        //build error response
+                        try {
+                            OAuthResponse oauthResponse = OAuthRSResponse
+                                    .errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
+                                    .setRealm("Album Example")
+                                    .buildHeaderMessage();
+
+                            // FIXME: store that this should be responded to as an oauth failure
+                            // and not a regular ohmage failure
+
+                            /*
+                            response.addDateHeader(OAuth.HeaderType.WWW_AUTHENTICATE,
+                                    oauthResponse.getHeader(OAuth.HeaderType.WWW_AUTHENTICATE));
+                            */
+                        } catch (OAuthSystemException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                    }
+                    catch (OAuthSystemException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
 				
 				if(tUser == null) {
 					throw new ValidationException(
