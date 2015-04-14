@@ -41,7 +41,10 @@ public final class PreferenceCache extends KeyValueCache {
 	// When we are requesting a cache in the Spring files, we use this
 	// to reference which key we want.
 	public static final String CACHE_KEY = "preferenceCache";
-	
+
+	//Auth token timer from db
+	public static final String KEY_AUTH_TOKEN_TIMER = "auth_token_time";
+
 	// Known campaign privacy states.
 	public static final String KEY_DEFAULT_CAN_CREATE_PRIVILIEGE = "default_can_create_privilege";
 	public static final String KEY_DEFAULT_SURVEY_RESPONSE_SHARING_STATE = "default_survey_response_sharing_state";
