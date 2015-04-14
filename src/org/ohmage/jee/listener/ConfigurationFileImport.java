@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2013 Open mHealth
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,7 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
  * number of the configuration options may be chosen, and all users of this
  * class should have a default in place.
  * </p>
- * 
+ *
  * <p>
  * The file will be loaded when the web application starts. The main usage for
  * this class is the {@link #getCustomProperties()} function.
@@ -45,11 +45,11 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 public class ConfigurationFileImport
 	extends PropertyPlaceholderConfigurer
 	implements ServletContextListener {
-	
+
 	/**
 	 * The location of the default configuration file.
 	 */
-	private static final String CONFIG_FILE_DEFAULT = 
+	private static final String CONFIG_FILE_DEFAULT =
 		"WEB-INF/config/default.properties";
 	/**
 	 * The default location for the configuration file on Windows.
@@ -62,34 +62,34 @@ public class ConfigurationFileImport
 	 */
 	private static final String CONFIG_FILE_DEFAULT_POSIX =
 		"/etc/ohmage.conf";
-	
+
 	/**
 	 * The logger for this class.
 	 */
 	private static final Logger LOGGER =
 		Logger.getLogger(ConfigurationFileImport.class.getName());
-	
+
 	/**
 	 * The properties merged between the defaults and the custom ones.
 	 */
 	private static final Properties PROPERTIES = new Properties();
-	
+
 	/**
 	 * The array of Properties files that were decoded from all of the possible
 	 * configuration files.
-	 * 
+	 *
 	 * @see #CONFIG_FILE_DEFAULT
 	 * @see #CONFIG_FILE_DEFAULT_POSIX
 	 * @see #CONFIG_FILE_DEFAULT_WINDOWS
 	 */
 	private static final Properties[] PROPERTIES_ARRAY = new Properties[2];
-	
+
 	/**
 	 * Default constructor. This will set the properties array for the
 	 * {@link PropertyPlaceholderConfigurer}, which may be empty if
 	 * {@link #contextInitialized(ServletContextEvent)} has not yet been
 	 * called at least once.
-	 * 
+	 *
 	 * @see PropertyPlaceholderConfigurer#setPropertiesArray(Properties[])
 	 */
 	public ConfigurationFileImport() {
@@ -105,33 +105,42 @@ public class ConfigurationFileImport
 		// An empty Properties object that will be populated with the default
 		// configuration.
 		Properties defaultProperties = new Properties();
-		File defaultConfiguration = 
-			new File(
-				event.getServletContext().getRealPath("/") + 
+		File defaultConfiguration;
+		if(System.getProperty("os.name").toLowerCase().startsWith("mac")){
+			defaultConfiguration = new File(
+				event.getServletContext().getRealPath("/") + "/" +
 					CONFIG_FILE_DEFAULT);
+		}
+		else{
+			defaultConfiguration = new File(
+				event.getServletContext().getRealPath("/") +
+					CONFIG_FILE_DEFAULT);
+		}
 		try {
 			defaultProperties.load(new FileReader(defaultConfiguration));
+
 		}
 		// The default properties file didn't exist, which is alarming.
 		catch(FileNotFoundException e) {
 			LOGGER
 				.log(
-					Level.WARNING, 
+					Level.WARNING,
 					"The default properties file is missing: " +
 						defaultConfiguration.getAbsolutePath(),
 					e);
+
 		}
 		// There was an error reading the default properties file.
 		catch(IOException e) {
 			LOGGER
 				.log(
-					Level.WARNING, 
+					Level.WARNING,
 					"There was an error reading the default properties " +
 						"file: " +
 						defaultConfiguration.getAbsolutePath(),
 					e);
 		}
-		
+
 		// Get a handler for the properties file based on the operating system.
 		File propertiesFile;
 		if(System.getProperty("os.name").contains("Windows")) {
@@ -140,7 +149,7 @@ public class ConfigurationFileImport
 		else {
 			propertiesFile = new File(CONFIG_FILE_DEFAULT_POSIX);
 		}
-		
+
 		// Attempts to retrieve the custom configuration file and store it.
 		Properties customProperties = new Properties();
 		try {
@@ -163,16 +172,16 @@ public class ConfigurationFileImport
 		catch(IOException e) {
 			LOGGER
 				.log(
-					Level.WARNING, 
+					Level.WARNING,
 					"There was an error reading the properties file: " +
 						propertiesFile.getAbsolutePath(),
 					e);
 		}
-		
+
 		// Set the properties files.
 		PROPERTIES_ARRAY[0] = defaultProperties;
 		PROPERTIES_ARRAY[1] = customProperties;
-		
+
 		// Create a merged properties and save it.
 		for(Object key : defaultProperties.keySet()) {
 			PROPERTIES.put(key, defaultProperties.get(key));
@@ -190,11 +199,11 @@ public class ConfigurationFileImport
 	public void contextDestroyed(ServletContextEvent event) {
 		// Do nothing.
 	}
-	
+
 	/**
-	 * Returns the custom properties defined by the external configuration 
+	 * Returns the custom properties defined by the external configuration
 	 * file.
-	 * 
+	 *
 	 * @return A valid {@link Properties} object, which may or may not contain
 	 * 		   the desired property.
 	 */
