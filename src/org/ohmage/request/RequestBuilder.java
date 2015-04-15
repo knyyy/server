@@ -80,17 +80,7 @@ import org.ohmage.request.survey.annotation.PromptResponseAnnotationCreationRequ
 import org.ohmage.request.survey.annotation.PromptResponseAnnotationReadRequest;
 import org.ohmage.request.survey.annotation.SurveyResponseAnnotationCreationRequest;
 import org.ohmage.request.survey.annotation.SurveyResponseAnnotationReadRequest;
-import org.ohmage.request.user.UserActivationRequest;
-import org.ohmage.request.user.UserChangePasswordRequest;
-import org.ohmage.request.user.UserCreationRequest;
-import org.ohmage.request.user.UserDeletionRequest;
-import org.ohmage.request.user.UserInfoReadRequest;
-import org.ohmage.request.user.UserPasswordResetRequest;
-import org.ohmage.request.user.UserReadRequest;
-import org.ohmage.request.user.UserRegistrationRequest;
-import org.ohmage.request.user.UserSearchRequest;
-import org.ohmage.request.user.UserStatsReadRequest;
-import org.ohmage.request.user.UserUpdateRequest;
+import org.ohmage.request.user.*;
 import org.ohmage.request.video.VideoReadRequest;
 import org.ohmage.request.visualization.VizPromptDistributionRequest;
 import org.ohmage.request.visualization.VizPromptTimeseriesRequest;
@@ -212,7 +202,9 @@ public final class RequestBuilder implements ServletContextAware {
 	private String apiUserUpdate;
 	private String apiUserChangePassword;
 	private String apiUserDelete;
-	
+
+	private String apiUserValidate;
+
 	// Registration
 	private String apiRegistrationRead;
 	
@@ -355,6 +347,10 @@ public final class RequestBuilder implements ServletContextAware {
 		apiUserUpdate = apiRoot + "/user/update";
 		apiUserChangePassword = apiRoot + "/user/change_password";
 		apiUserDelete = apiRoot + "/user/delete";
+
+		// User validate, pmsys
+		apiUserValidate = apiRoot + "/user/validate";
+
 
 		// Registration
 		apiRegistrationRead = apiRoot + "/registration/read";
@@ -620,6 +616,13 @@ public final class RequestBuilder implements ServletContextAware {
 		else if(apiUserDelete.equals(requestUri)) {
 			return new UserDeletionRequest(httpRequest);
 		}
+		//validate
+		else if(apiUserValidate.equals(requestUri)){
+			LOGGER.info("UserValidate Request");
+			//return new validate
+			return new UserValidateRequest(httpRequest);
+
+		}
 		// Registration
 		else if(apiRegistrationRead.equals(requestUri)) {
 			return new RegistrationReadRequest(httpRequest);
@@ -748,6 +751,8 @@ public final class RequestBuilder implements ServletContextAware {
 				apiUserUpdate.equals(uri) ||
 				apiUserChangePassword.equals(uri) ||
 				apiUserDelete.equals(uri) ||
+				//Validate
+				apiUserValidate.equals(uri) ||
 				// Registration
 				apiRegistrationRead.equals(uri) ||
 				// Video
@@ -1333,6 +1338,16 @@ public final class RequestBuilder implements ServletContextAware {
 	 */
 	public String getApiUserDelete() {
 		return apiUserDelete;
+	}
+
+
+	/**
+	 * Returns apiUserDelete.
+	 *
+	 * @return The apiUserDelete.
+	 */
+	public String getApiUserValdiate() {
+		return apiUserValidate;
 	}
 
 	/**
