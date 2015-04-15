@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.ohmage.domain.User;
+import org.ohmage.exception.CacheMissException;
 import org.ohmage.exception.DomainException;
 import org.springframework.beans.factory.DisposableBean;
 
@@ -41,7 +42,8 @@ public final class UserBin extends TimerTask implements DisposableBean {
 	/**
 	 * This is the length of an authentication token.
 	 */
-	public static final int LIFETIME = 1000 * 60 * 15;
+	//public static final int LIFETIME = 1000 * 60 * 15;
+	public static int LIFETIME;
 	private static final int EXECUTION_PERIOD = 60000;
 
 	/**
@@ -91,6 +93,46 @@ public final class UserBin extends TimerTask implements DisposableBean {
 	 *        lifetime?
 	 */
 	private UserBin() {
+		try{
+			String prop = PreferenceCache.instance().lookup(PreferenceCache.KEY_AUTH_TOKEN_TIMER);
+			LOGGER.info("prop:" + prop);
+			Integer time = Integer.parseInt(prop);
+			LIFETIME = time.intValue();
+		}
+		catch(CacheMissException c){
+			LOGGER.warn("The Preference cache doesn't know about 'known' key:" + PreferenceCache.KEY_AUTH_TOKEN_TIMER + "\n Setting it to standard timer 15 mins");
+			LIFETIME = 1000 * 60 * 15;
+		}
+		catch(NumberFormatException n){
+			LOGGER.warn("The Preference cache could not parse key:" + PreferenceCache.KEY_AUTH_TOKEN_TIMER + "\n" +
+					" Setting it to standard timer 15 mins");
+			LIFETIME = 1000 * 60 * 15;
+
+		}
+		//Set auth token timer here, load from properties.
+		LOGGER.info("Users will live for " +
+			LIFETIME +
+			" milliseconds and the executioner will run every " +
+			EXECUTION_PERIOD +
+			" milliseconds");
+
+		EXECUTIONER.schedule(this, EXECUTION_PERIOD * 2, EXECUTION_PERIOD);
+
+		initialized = true;
+	}
+	/**
+	 * @param lifetime
+	 *        controls the number of milliseconds a User object will be
+	 *        permitted to be resident in the bin
+	 * @param executionPeriod
+	 *        controls how often the bin is checked for expired USERS
+	 *
+	 *        TODO Enforce a max lifetime? TODO Enforce period relative to
+	 *        lifetime?
+	 */
+	private UserBin(int timer) {
+		LIFETIME = timer;
+		//Set auth token timer here, load from properties.
 		LOGGER.info("Users will live for " +
 			LIFETIME +
 			" milliseconds and the executioner will run every " +

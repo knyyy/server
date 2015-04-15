@@ -13,4 +13,5 @@ INSERT INTO preference(p_key, p_value) VALUES
     ('audio_directory', '/opt/ohmage/userdata/audio'),
     ('audit_log_location', '/opt/ohmage/logs/audits/'),
     ('fully_qualified_domain_name', 'localhost'),
-    ('ssl_enabled', 'false');
+    ('ssl_enabled', 'false'),
+    ('auth_token_timer', '900000');
