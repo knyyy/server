@@ -41,6 +41,7 @@ import org.ohmage.request.clazz.ClassRosterReadRequest;
 import org.ohmage.request.clazz.ClassRosterUpdateRequest;
 import org.ohmage.request.clazz.ClassSearchRequest;
 import org.ohmage.request.clazz.ClassUpdateRequest;
+import org.ohmage.request.custom.CustomResponseReadRequest;
 import org.ohmage.request.document.DocumentCreationRequest;
 import org.ohmage.request.document.DocumentDeletionRequest;
 import org.ohmage.request.document.DocumentReadContentsRequest;
@@ -204,6 +205,7 @@ public final class RequestBuilder implements ServletContextAware {
 	private String apiUserDelete;
 
 	private String apiUserValidate;
+	private String apiCustomResponseRead;
 
 	// Registration
 	private String apiRegistrationRead;
@@ -350,6 +352,7 @@ public final class RequestBuilder implements ServletContextAware {
 
 		// User validate, pmsys
 		apiUserValidate = apiRoot + "/user/validate";
+		apiCustomResponseRead = apiRoot + "/customResponse/read";
 
 
 		// Registration
@@ -622,6 +625,11 @@ public final class RequestBuilder implements ServletContextAware {
 			//return new validate
 			return new UserValidateRequest(httpRequest);
 
+		}
+		//custom
+		else if(apiCustomResponseRead.equals(requestUri)){
+			LOGGER.info("CustomResponseRead request");
+			return new CustomResponseReadRequest(httpRequest);
 		}
 		// Registration
 		else if(apiRegistrationRead.equals(requestUri)) {

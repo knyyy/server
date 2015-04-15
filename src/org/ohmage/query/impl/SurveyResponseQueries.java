@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,7 +60,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  * @author Joshua Selsky
  */
 public class SurveyResponseQueries extends Query implements ISurveyResponseQueries {
-	
+	private static final Logger LOGGER = Logger.getLogger(SurveyResponseQueries.class);
 	private static final String SQL_GET_CAMPAIGN_URN_FOR_SURVEY_ID =
 	    "SELECT urn " +
 	    "FROM campaign, survey_response " +
@@ -435,6 +436,8 @@ public class SurveyResponseQueries extends Query implements ISurveyResponseQueri
 				sortOrder,
 				parameters);
 
+		//LOGGER.info("[SQL Query]: " + sql);
+		//LOGGER.info("[SQL parameters]: " + parameters.toArray()[0]);
 		// This is necessary to map tiny integers in SQL to Java's integer.
 		final Map<String, Class<?>> typeMapping = new HashMap<String, Class<?>>();
 		typeMapping.put("tinyint", Integer.class);
@@ -474,21 +477,27 @@ public class SurveyResponseQueries extends Query implements ISurveyResponseQueri
 						// If the result set is empty, we can simply return an
 						// empty list.
 						if(! rs.next()) {
+							LOGGER.info("Resultset is empty!!!!!");
 							totalCount.add(0);
 							return Collections.emptyList();
 						}
+						else{
+							LOGGER.info("Resultset is not empty!");
+						}
+
 						
 						// Keep track of the number of survey responses we have
 						// skipped.
 						int surveyResponsesSkipped = 0;
 						// Continue while there are more survey responses to
 						// skip.
+
 						while(surveyResponsesSkipped < surveyResponsesToSkip) {
-							// Get the ID for the survey response we are 
+							// Get the ID for the survey response we are
 							// skipping.
 							String surveyResponseId = rs.getString("uuid");
 							surveyResponsesSkipped++;
-							
+
 							// Continue to skip rows as long as there are rows
 							// to skip and those rows have the same survey
 							// response ID.
@@ -502,15 +511,16 @@ public class SurveyResponseQueries extends Query implements ISurveyResponseQueri
 								}
 							}
 						}
-						
+
 						// Create a list of the results.
 						List<SurveyResponse> result =
 								new LinkedList<SurveyResponse>();
-						
+
 						// Cycle through the rows until the maximum number of
 						// rows has been processed or there are no more rows to
 						// process.
 						int surveyResponsesProcessed = 0;
+
 						while(surveyResponsesProcessed < surveyResponsesToProcess) {
 							// We have not yet processed this survey response,
 							// so we need to process it and then continue
@@ -843,6 +853,7 @@ public class SurveyResponseQueries extends Query implements ISurveyResponseQueri
 		// Begin with the SQL string which gets all results or the one that
 		// aggregates results.
 		StringBuilder sqlBuilder = new StringBuilder(SQL_BASE_WHERE);
+	//	LOGGER.info("buildSql: " + campaign.getId());
 		parameters.add(campaign.getId());
 		
 		// Catch any query exceptions.
@@ -1111,6 +1122,8 @@ public class SurveyResponseQueries extends Query implements ISurveyResponseQueri
 				sqlBuilder.append(", uuid");
 			}
 		}
+
+
 		
 		return sqlBuilder.toString();
 	}

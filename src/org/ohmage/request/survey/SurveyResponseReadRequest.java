@@ -627,6 +627,7 @@ public final class SurveyResponseReadRequest
 		
 		surveyResponsesToSkip = tSurveyResponsesToSkip;
 		surveyResponsesToProcess = tSurveyResponsesToProcess;
+		LOGGER.info("resposneToProcess" + surveyResponsesToProcess);
 	}
 	
 	/*
