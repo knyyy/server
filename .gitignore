@@ -8,3 +8,5 @@ web/WEB-INF/properties/system.properties
 thirdparty
 /nbproject/
 .settings
+*.iml
+.idea/
