@@ -27,7 +27,7 @@ public class UserValidateRequest extends UserRequest {
 
     @Override
     public void service() {
-
+        authenticate(AllowNewAccount.NEW_ACCOUNT_DISALLOWED);
     }
 
     @Override
