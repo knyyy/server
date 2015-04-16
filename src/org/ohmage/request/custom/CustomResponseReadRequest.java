@@ -320,7 +320,7 @@ public class CustomResponseReadRequest extends UserRequest {
                             //add prompt to json aray.
                             JSONObject res = processResponse(time, surveyResponse.getResponses());
                             //Put the res into array
-                            arrUser.put(arrUser);
+                            arrUser.put(res);
                             //Add user with array
                             objUser.put(username, arrUser);
                         }
